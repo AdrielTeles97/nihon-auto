@@ -79,7 +79,7 @@ export function ProductCardImage({
       src={src}
       alt={alt}
       fill
-      className={cn('object-cover group-hover:scale-105 transition-transform duration-300', className)}
+      className={cn('object-contain group-hover:scale-105 transition-transform duration-300 bg-white p-2', className)}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       {...props}
     />

@@ -1,169 +1,263 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { brandsService } from '@/services/brands';
+import { NextRequest, NextResponse } from 'next/server'
+import { brandsService } from '@/services/brands'
+import { getProducts } from '@/services/wordpress'
 
-// Mock data - Em produção, isso viria do WordPress/banco de dados
-const suppliers = [
-  {
-    id: '3m',
-    name: '3M',
-    slug: '3m',
-    logo: '/images/suppliers/3m-logo.svg',
-    description: 'Líder mundial em inovação, oferecendo soluções premium para cuidado automotivo.',
-    website: 'https://www.3m.com.br',
-    total_products: 47,
-    categories: ['Compostos', 'Lixas', 'Ceras', 'Acessórios'],
-    featured: true,
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-01-15T10:00:00Z'
-  },
-  {
-    id: 'vonixx',
-    name: 'VONIXX',
-    slug: 'vonixx',
-    logo: '/images/suppliers/vonixx-logo.svg',
-    description: 'Marca brasileira especializada em produtos de alta performance para detalhamento.',
-    website: 'https://www.vonixx.com.br',
-    total_products: 32,
-    categories: ['Shampoos', 'Removedores', 'Pretinhos', 'Ceras'],
-    featured: true,
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-01-15T10:00:00Z'
-  },
-  {
-    id: 'chemical-guys',
-    name: 'Chemical Guys',
-    slug: 'chemical-guys',
-    logo: '/images/suppliers/chemical-guys-logo.svg',
-    description: 'Marca americana premium com produtos inovadores para entusiastas automotivos.',
-    website: 'https://www.chemicalguys.com',
-    total_products: 28,
-    categories: ['Shampoos', 'Ceras', 'Microfibras', 'Detalhamento'],
-    featured: true,
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-01-15T10:00:00Z'
-  },
-  {
-    id: 'meguiars',
-    name: 'MEGUIAR\'S',
-    slug: 'meguiars',
-    logo: '/images/suppliers/meguiars-logo.svg',
-    description: 'Tradição e qualidade há mais de 120 anos no cuidado automotivo profissional.',
-    website: 'https://www.meguiars.com',
-    total_products: 35,
-    categories: ['Shampoos', 'Compostos', 'Ceras', 'Pneus'],
-    featured: true,
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-01-15T10:00:00Z'
-  }
-];
+// Interface para Supplier baseado nas marcas do WooCommerce
+interface Supplier {
+    id: number
+    name: string
+    slug: string
+    logo?: string
+    description?: string
+    website?: string
+    featured?: boolean
+    products?: any[]
+    banner?: string
+    video?: string
+    categoryCount?: number
+    totalProducts?: number
+    categories?: string[]
+    created_at?: string
+    updated_at?: string
+}
 
-// GET /api/suppliers - Listar todos os fornecedores
+// Função para buscar produtos por marca
+async function getProductsByBrand(brandName: string) {
+    try {
+        const productsResponse = await getProducts({
+            filters: { brand: brandName },
+            limit: 50
+        })
+        return productsResponse.products
+    } catch (error) {
+        console.error(`Erro ao buscar produtos da marca ${brandName}:`, error)
+        return []
+    }
+}
+
+// Função para criar supplier baseado na marca do WooCommerce
+async function createSupplierFromBrand(brand: any): Promise<Supplier> {
+    const products = await getProductsByBrand(brand.name)
+
+    // Extrair categorias únicas dos produtos
+    const categories = [...new Set(products.map(p => p.category))].filter(
+        Boolean
+    )
+
+    return {
+        id: brand.id,
+        name: brand.name,
+        slug: brand.slug,
+        logo: brand.logo || `/images/suppliers/${brand.slug}-logo.svg`,
+        description: `Produtos premium da marca ${brand.name} para cuidado automotivo.`,
+        website: brand.website || '',
+        featured: brand.featured || false,
+        products: products.slice(0, 6), // Limitar a 6 produtos para performance
+        banner: `/images/banners/${brand.slug}-banner.jpg`,
+        video: `/videos/${brand.slug}-showcase.mp4`,
+        categoryCount: categories.length,
+        totalProducts: products.length,
+        categories: categories,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+    }
+}
+
+// GET /api/suppliers - Listar todos os fornecedores baseado nas marcas do WooCommerce
 export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const featured = searchParams.get('featured');
-    const category = searchParams.get('category');
-    const search = searchParams.get('search');
-    const syncWithBrands = searchParams.get('sync') === 'true';
+    try {
+        const { searchParams } = new URL(request.url)
+        const featured = searchParams.get('featured')
+        const category = searchParams.get('category')
+        const search = searchParams.get('search')
+        const withProducts = searchParams.get('products') === 'true'
 
-    let filteredSuppliers = [...suppliers];
+        console.log('🔍 Buscando fornecedores das marcas do WooCommerce...')
 
-    // Sincronizar com marcas do WordPress se solicitado
-    if (syncWithBrands) {
-      try {
-        filteredSuppliers = await brandsService.syncSuppliersWithBrands(filteredSuppliers);
-        console.log('Fornecedores sincronizados com marcas do WordPress');
-      } catch (error) {
-        console.warn('Erro ao sincronizar com marcas do WordPress:', error);
-        // Continuar com dados locais em caso de erro
-      }
-    }
+        // Buscar marcas do WooCommerce
+        const wpBrands = await brandsService.getWordPressBrands()
+        console.log(`📦 Encontradas ${wpBrands.length} marcas no WooCommerce`)
 
-    // Filtrar por destaque
-    if (featured === 'true') {
-      filteredSuppliers = filteredSuppliers.filter(supplier => supplier.featured);
-    }
+        if (wpBrands.length === 0) {
+            console.warn(
+                '⚠️  Nenhuma marca encontrada no WooCommerce, usando dados fallback'
+            )
 
-    // Filtrar por categoria
-    if (category) {
-      filteredSuppliers = filteredSuppliers.filter(supplier => 
-        supplier.categories.some(cat => 
-          cat.toLowerCase().includes(category.toLowerCase())
+            // Fallback para dados mock se não houver marcas
+            const mockSuppliers: Supplier[] = [
+                {
+                    id: 1,
+                    name: 'YAMAHA',
+                    slug: 'yamaha',
+                    logo: '/images/suppliers/yamaha-logo.svg',
+                    description:
+                        'Marca premium de qualidade internacional para cuidado automotivo',
+                    website: 'https://yamaha.com.br',
+                    featured: true,
+                    products: [],
+                    banner: '/images/banners/yamaha-banner.jpg',
+                    video: '/videos/yamaha-showcase.mp4',
+                    categoryCount: 3,
+                    totalProducts: 15,
+                    categories: ['Eletrônicos', 'Acessórios', 'Premium'],
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                }
+            ]
+
+            return NextResponse.json({
+                success: true,
+                data: mockSuppliers,
+                total: mockSuppliers.length,
+                source: 'mock',
+                message:
+                    'Usando dados fallback - configure as marcas no WooCommerce'
+            })
+        }
+
+        // Converter marcas do WooCommerce em fornecedores
+        const suppliers: Supplier[] = []
+
+        for (const brand of wpBrands) {
+            try {
+                const supplier = await createSupplierFromBrand(brand)
+                suppliers.push(supplier)
+                console.log(
+                    `✅ Fornecedor criado: ${supplier.name} (${supplier.totalProducts} produtos)`
+                )
+            } catch (error) {
+                console.error(
+                    `❌ Erro ao criar fornecedor para marca ${brand.name}:`,
+                    error
+                )
+            }
+        }
+
+        // Aplicar filtros
+        let filteredSuppliers = suppliers
+
+        // Filtrar por destaque
+        if (featured === 'true') {
+            filteredSuppliers = filteredSuppliers.filter(
+                supplier => supplier.featured
+            )
+        }
+
+        // Filtrar por categoria
+        if (category) {
+            filteredSuppliers = filteredSuppliers.filter(supplier =>
+                supplier.categories?.some((cat: string) =>
+                    cat.toLowerCase().includes(category.toLowerCase())
+                )
+            )
+        }
+
+        // Filtrar por busca
+        if (search) {
+            filteredSuppliers = filteredSuppliers.filter(
+                supplier =>
+                    supplier.name
+                        .toLowerCase()
+                        .includes(search.toLowerCase()) ||
+                    supplier.description
+                        ?.toLowerCase()
+                        .includes(search.toLowerCase())
+            )
+        }
+
+        // Se não quiser produtos, remover para reduzir payload
+        if (!withProducts) {
+            filteredSuppliers = filteredSuppliers.map(supplier => {
+                const { products, ...supplierWithoutProducts } = supplier
+                return supplierWithoutProducts
+            })
+        }
+
+        console.log(`🎯 Retornando ${filteredSuppliers.length} fornecedores`)
+
+        return NextResponse.json({
+            success: true,
+            data: filteredSuppliers,
+            total: filteredSuppliers.length,
+            source: 'woocommerce',
+            filters_applied: {
+                featured: featured === 'true',
+                category: category || null,
+                search: search || null,
+                with_products: withProducts
+            }
+        })
+    } catch (error) {
+        console.error('❌ Erro ao buscar fornecedores:', error)
+        return NextResponse.json(
+            {
+                success: false,
+                error: 'Erro interno do servidor',
+                message:
+                    error instanceof Error ? error.message : 'Erro desconhecido'
+            },
+            { status: 500 }
         )
-      );
     }
-
-    // Filtrar por busca
-    if (search) {
-      filteredSuppliers = filteredSuppliers.filter(supplier => 
-        supplier.name.toLowerCase().includes(search.toLowerCase()) ||
-        supplier.description.toLowerCase().includes(search.toLowerCase())
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: filteredSuppliers,
-      total: filteredSuppliers.length,
-      synced_with_wordpress: syncWithBrands
-    });
-  } catch (error) {
-    console.error('Erro ao buscar fornecedores:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
-  }
 }
 
-// POST /api/suppliers - Criar novo fornecedor
+// POST /api/suppliers - Criar novo fornecedor/marca
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    
-    // Validação básica
-    if (!body.name || !body.slug || !body.description) {
-      return NextResponse.json(
-        { success: false, error: 'Campos obrigatórios: name, slug, description' },
-        { status: 400 }
-      );
+    try {
+        const body = await request.json()
+
+        // Validação básica
+        if (!body.name || !body.slug || !body.description) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: 'Campos obrigatórios: name, slug, description'
+                },
+                { status: 400 }
+            )
+        }
+
+        // Criar marca no WooCommerce
+        const newBrand = await brandsService.createOrUpdateBrand({
+            name: body.name,
+            slug: body.slug,
+            logo: body.logo,
+            website: body.website,
+            featured: body.featured || false
+        })
+
+        if (!newBrand) {
+            return NextResponse.json(
+                { success: false, error: 'Erro ao criar marca no WooCommerce' },
+                { status: 500 }
+            )
+        }
+
+        // Converter para supplier
+        const supplier = await createSupplierFromBrand(newBrand)
+
+        console.log(`✅ Novo fornecedor criado: ${supplier.name}`)
+
+        return NextResponse.json(
+            {
+                success: true,
+                data: supplier,
+                message: 'Fornecedor criado com sucesso'
+            },
+            { status: 201 }
+        )
+    } catch (error) {
+        console.error('❌ Erro ao criar fornecedor:', error)
+        return NextResponse.json(
+            {
+                success: false,
+                error: 'Erro interno do servidor',
+                message:
+                    error instanceof Error ? error.message : 'Erro desconhecido'
+            },
+            { status: 500 }
+        )
     }
-
-    // Verificar se o slug já existe
-    const existingSupplier = suppliers.find(s => s.slug === body.slug);
-    if (existingSupplier) {
-      return NextResponse.json(
-        { success: false, error: 'Slug já existe' },
-        { status: 409 }
-      );
-    }
-
-    const newSupplier = {
-      id: body.slug,
-      name: body.name,
-      slug: body.slug,
-      logo: body.logo || '/images/suppliers/default-logo.svg',
-      description: body.description,
-      website: body.website || '',
-      total_products: body.total_products || 0,
-      categories: body.categories || [],
-      featured: body.featured || false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    // Em produção, salvar no banco de dados
-    suppliers.push(newSupplier);
-
-    return NextResponse.json({
-      success: true,
-      data: newSupplier
-    }, { status: 201 });
-  } catch (error) {
-    console.error('Erro ao criar fornecedor:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
-  }
 }
+
+export type { Supplier }

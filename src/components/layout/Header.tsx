@@ -21,16 +21,21 @@ export function Header({ onSearchChange }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isInHeroSection, setIsInHeroSection] = useState(true);
+  const [isInHeroSection, setIsInHeroSection] = useState(false);
   const { scrollToSection } = useSmoothScroll();
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 50);
-      // Assume hero section is roughly the first viewport height
-      setIsInHeroSection(scrollY < window.innerHeight * 0.8);
+      
+      // Only show hero styling on homepage and when at the top
+      const isHomePage = window.location.pathname === '/';
+      setIsInHeroSection(isHomePage && scrollY < window.innerHeight * 0.8);
     };
+
+    // Initial check
+    handleScroll();
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);

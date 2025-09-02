@@ -36,7 +36,7 @@ export function ProductCard({ product, viewMode = 'grid' }: ProductCardProps) {
       <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
         <div className="flex">
           <Link href={`/produtos/${product.slug}`} className="flex-shrink-0">
-            <div className="relative w-32 h-32 overflow-hidden bg-gray-100 rounded-lg">
+            <div className="relative w-32 h-32 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
               <ProductCardImage
                 src={product.image}
                 alt={product.name}
@@ -121,7 +121,7 @@ export function ProductCard({ product, viewMode = 'grid' }: ProductCardProps) {
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
       <Link href={`/produtos/${product.slug}`}>
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
+        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 border-b border-gray-200">
           <ProductCardImage
             src={product.image}
             alt={product.name}
