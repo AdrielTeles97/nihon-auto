@@ -85,7 +85,7 @@ export default function ProdutosPage() {
                 <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(239,68,68,0.1)_25%,transparent_25%),linear-gradient(-45deg,rgba(239,68,68,0.1)_25%,transparent_25%)] bg-[length:60px_60px]" />
                 </div>
-                
+
                 <div className="container mx-auto px-4 relative">
                     <div className="max-w-4xl mx-auto text-center">
                         <h1 className="text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6">
@@ -94,10 +94,12 @@ export default function ProdutosPage() {
                         </h1>
                         <p className="text-xl font-medium text-gray-700 mb-8 max-w-3xl mx-auto">
                             Descubra nossa linha completa de{' '}
-                            <span className="font-semibold text-red-600">produtos automotivos</span>{' '}
+                            <span className="font-semibold text-red-600">
+                                produtos automotivos
+                            </span>{' '}
                             das melhores marcas do mercado
                         </p>
-                        
+
                         {/* Banner space - can be used for promotional banners */}
                         <div className="mt-12 max-w-5xl mx-auto">
                             <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-8 text-white shadow-2xl">
@@ -107,7 +109,8 @@ export default function ProdutosPage() {
                                             🔥 Ofertas Especiais
                                         </h3>
                                         <p className="text-red-100">
-                                            Encontre produtos com até 30% de desconto
+                                            Encontre produtos com até 30% de
+                                            desconto
                                         </p>
                                     </div>
                                     <div className="flex items-center space-x-4 text-sm">
@@ -254,9 +257,22 @@ export default function ProdutosPage() {
                                     <>
                                         {filteredProducts.length > 0 ? (
                                             <>
-                                                {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
-                                                {(selectedCategory || selectedBrand || searchTerm) && (
-                                                    <span className="text-red-600"> com filtros aplicados</span>
+                                                {filteredProducts.length}{' '}
+                                                produto
+                                                {filteredProducts.length !== 1
+                                                    ? 's'
+                                                    : ''}{' '}
+                                                encontrado
+                                                {filteredProducts.length !== 1
+                                                    ? 's'
+                                                    : ''}
+                                                {(selectedCategory ||
+                                                    selectedBrand ||
+                                                    searchTerm) && (
+                                                    <span className="text-red-600">
+                                                        {' '}
+                                                        com filtros aplicados
+                                                    </span>
                                                 )}
                                             </>
                                         ) : (
@@ -265,21 +281,28 @@ export default function ProdutosPage() {
                                     </>
                                 )}
                             </h2>
-                            {(selectedCategory || selectedBrand || searchTerm) && (
+                            {(selectedCategory ||
+                                selectedBrand ||
+                                searchTerm) && (
                                 <div className="flex flex-wrap gap-2 text-sm text-gray-600">
                                     {searchTerm && (
                                         <span>
-                                            Busca: <strong>&ldquo;{searchTerm}&rdquo;</strong>
+                                            Busca:{' '}
+                                            <strong>
+                                                &ldquo;{searchTerm}&rdquo;
+                                            </strong>
                                         </span>
                                     )}
                                     {selectedCategory && (
                                         <span>
-                                            Categoria: <strong>{selectedCategory}</strong>
+                                            Categoria:{' '}
+                                            <strong>{selectedCategory}</strong>
                                         </span>
                                     )}
                                     {selectedBrand && (
                                         <span>
-                                            Marca: <strong>{selectedBrand}</strong>
+                                            Marca:{' '}
+                                            <strong>{selectedBrand}</strong>
                                         </span>
                                     )}
                                 </div>

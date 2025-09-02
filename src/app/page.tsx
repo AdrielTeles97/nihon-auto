@@ -174,21 +174,31 @@ export default function Home() {
                         transition={{ duration: 1, delay: 1 }}
                     >
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight">
-                            <span className="font-extralight text-red-300">Nihon</span>{' '}
+                            <span className="font-extralight text-red-300">
+                                Nihon
+                            </span>{' '}
                             <span className="font-bold text-white">Auto</span>
                         </h1>
                         <p className="text-xl md:text-2xl lg:text-3xl font-light mb-8 max-w-4xl mx-auto leading-relaxed">
                             Acessórios Automotivos{' '}
-                            <span className="font-semibold text-red-300">Premium</span>{' '}
+                            <span className="font-semibold text-red-300">
+                                Premium
+                            </span>{' '}
                             com a qualidade japonesa que você procura
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-lg">
-                            <span className="font-medium opacity-90">✨ Qualidade Premium</span>
-                            <span className="font-medium opacity-90">🚀 Entrega Rápida</span>
-                            <span className="font-medium opacity-90">🔒 Compra Segura</span>
+                            <span className="font-medium opacity-90">
+                                ✨ Qualidade Premium
+                            </span>
+                            <span className="font-medium opacity-90">
+                                🚀 Entrega Rápida
+                            </span>
+                            <span className="font-medium opacity-90">
+                                🔒 Compra Segura
+                            </span>
                         </div>
                     </motion.div>
-                    
+
                     {/* Buttons positioned at the end with justify-end */}
                     <motion.div
                         className="flex flex-col sm:flex-row gap-8 justify-center"
@@ -255,7 +265,7 @@ export default function Home() {
                     <div className="absolute inset-0 opacity-10">
                         <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_35%,rgba(255,255,255,0.1)_35%,rgba(255,255,255,0.1)_65%,transparent_65%)] bg-[length:20px_20px]" />
                     </div>
-                    
+
                     <div className="container mx-auto px-4 relative">
                         <div className="text-center text-white">
                             <motion.div
@@ -268,7 +278,8 @@ export default function Home() {
                                     🔥 OFERTAS ESPECIAIS 🔥
                                 </h2>
                                 <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto">
-                                    Aproveite descontos imperdíveis em produtos selecionados das melhores marcas
+                                    Aproveite descontos imperdíveis em produtos
+                                    selecionados das melhores marcas
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                                     <motion.div
@@ -317,7 +328,9 @@ export default function Home() {
                             </h2>
                             <p className="text-xl font-medium text-gray-600 max-w-3xl mx-auto mb-8">
                                 Parcerias estratégicas com as{' '}
-                                <span className="font-semibold text-red-600">melhores marcas</span>{' '}
+                                <span className="font-semibold text-red-600">
+                                    melhores marcas
+                                </span>{' '}
                                 do mercado automotivo
                             </p>
                             <motion.div
@@ -368,18 +381,17 @@ export default function Home() {
                                     <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent group-hover:from-black/50 transition-all duration-300" />
                                     <div className="absolute inset-0 flex items-center justify-start p-8">
                                         <div className="text-white max-w-md">
-                                            <motion.h3 
+                                            <motion.h3
                                                 className="text-2xl md:text-4xl font-bold mb-4"
                                                 whileHover={{ scale: 1.05 }}
                                             >
                                                 Ofertas Imperdíveis
                                             </motion.h3>
                                             <p className="text-lg md:text-xl mb-4 opacity-90">
-                                                Produtos premium com os melhores preços do mercado
+                                                Produtos premium com os melhores
+                                                preços do mercado
                                             </p>
-                                            <Button 
-                                                className="bg-red-600 hover:bg-red-700 text-white font-bold"
-                                            >
+                                            <Button className="bg-red-600 hover:bg-red-700 text-white font-bold">
                                                 Explorar Agora
                                                 <ArrowRight className="ml-2 h-5 w-5" />
                                             </Button>
@@ -396,7 +408,10 @@ export default function Home() {
                             transition={{ duration: 0.8, delay: 0.2 }}
                             viewport={{ once: true }}
                         >
-                            <Link href="/produtos?brand=yamaha" className="block group">
+                            <Link
+                                href="/produtos?brand=yamaha"
+                                className="block group"
+                            >
                                 <div className="relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 group-hover:scale-[1.02]">
                                     <Image
                                         src="/images/banners/yamaha-banner.svg"
@@ -408,16 +423,17 @@ export default function Home() {
                                     <div className="absolute inset-0 bg-gradient-to-l from-black/40 to-transparent group-hover:from-black/50 transition-all duration-300" />
                                     <div className="absolute inset-0 flex items-center justify-end p-8">
                                         <div className="text-white max-w-md text-right">
-                                            <motion.h3 
+                                            <motion.h3
                                                 className="text-xl md:text-3xl font-bold mb-3"
                                                 whileHover={{ scale: 1.05 }}
                                             >
                                                 Produtos Yamaha
                                             </motion.h3>
                                             <p className="text-base md:text-lg mb-4 opacity-90">
-                                                Qualidade e tradição em cada produto
+                                                Qualidade e tradição em cada
+                                                produto
                                             </p>
-                                            <Button 
+                                            <Button
                                                 variant="outline"
                                                 className="border-white text-white hover:bg-white hover:text-black font-bold"
                                             >
@@ -449,8 +465,12 @@ export default function Home() {
                             >
                                 <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white text-center shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:scale-105">
                                     <div className="text-4xl mb-4">🚚</div>
-                                    <h3 className="text-xl font-bold mb-2">Frete Grátis</h3>
-                                    <p className="text-green-100">Acima de R$ 150</p>
+                                    <h3 className="text-xl font-bold mb-2">
+                                        Frete Grátis
+                                    </h3>
+                                    <p className="text-green-100">
+                                        Acima de R$ 150
+                                    </p>
                                 </div>
                             </motion.div>
 
@@ -465,8 +485,12 @@ export default function Home() {
                             >
                                 <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white text-center shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:scale-105">
                                     <div className="text-4xl mb-4">💳</div>
-                                    <h3 className="text-xl font-bold mb-2">Parcele em 12x</h3>
-                                    <p className="text-blue-100">Sem juros no cartão</p>
+                                    <h3 className="text-xl font-bold mb-2">
+                                        Parcele em 12x
+                                    </h3>
+                                    <p className="text-blue-100">
+                                        Sem juros no cartão
+                                    </p>
                                 </div>
                             </motion.div>
 
@@ -481,8 +505,12 @@ export default function Home() {
                             >
                                 <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white text-center shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:scale-105">
                                     <div className="text-4xl mb-4">💬</div>
-                                    <h3 className="text-xl font-bold mb-2">Suporte 24h</h3>
-                                    <p className="text-purple-100">Atendimento especializado</p>
+                                    <h3 className="text-xl font-bold mb-2">
+                                        Suporte 24h
+                                    </h3>
+                                    <p className="text-purple-100">
+                                        Atendimento especializado
+                                    </p>
                                 </div>
                             </motion.div>
                         </div>
@@ -508,11 +536,18 @@ export default function Home() {
                         >
                             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
                                 <span className="font-medium">Produtos em</span>{' '}
-                                <span className="text-red-600 font-bold">Destaque</span>
+                                <span className="text-red-600 font-bold">
+                                    Destaque
+                                </span>
                             </h2>
                             <p className="text-xl font-normal text-gray-600 max-w-3xl mx-auto mb-8">
-                                <span className="font-semibold">Seleção especial</span> dos produtos mais procurados
-                                pelos nossos <span className="font-medium text-red-600">clientes</span>
+                                <span className="font-semibold">
+                                    Seleção especial
+                                </span>{' '}
+                                dos produtos mais procurados pelos nossos{' '}
+                                <span className="font-medium text-red-600">
+                                    clientes
+                                </span>
                             </p>
                             <motion.div
                                 className="w-32 h-1 bg-gradient-to-r from-red-500 to-red-600 mx-auto rounded-full"
