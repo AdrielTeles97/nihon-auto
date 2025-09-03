@@ -60,7 +60,7 @@ export interface WordPressProduct {
     disponivel?: boolean;
     brand?: string;
     gallery?: string[];
-    specifications?: Record<string, any>;
+      specifications?: Record<string, string>;
   };
   slug: string;
 }

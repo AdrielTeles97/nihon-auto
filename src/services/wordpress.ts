@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { cache } from '@/lib/cache';
 
 // WordPress/WooCommerce API interfaces
 export interface Product {
@@ -12,7 +13,7 @@ export interface Product {
   inStock: boolean;
   slug: string;
   gallery?: string[];
-  specifications?: Record<string, any>;
+  specifications?: Record<string, string>;
 }
 
 // WooCommerce Product interface
@@ -51,12 +52,6 @@ export interface WooCommerceProduct {
   }[];
 }
 
-export interface WordPressMedia {
-  id: number;
-  source_url: string;
-  alt_text: string;
-}
-
 export interface Category {
   id: number;
   name: string;
@@ -84,9 +79,7 @@ export interface ProductsResponse {
 }
 
 // API Configuration (usar apenas variáveis de ambiente)
-const WORDPRESS_BASE_URL = (process.env.NEXT_PUBLIC_WORDPRESS_API_URL?.replace('/wp-json/wp/v2', '')) || '';
 const WC_API_BASE_URL = process.env.NEXT_PUBLIC_WOOCOMMERCE_API_URL || '';
-const WP_API_BASE_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || '';
 
 // WooCommerce API credentials (NUNCA deixe chaves no código)
 const WC_CONSUMER_KEY = process.env.WOOCOMMERCE_CONSUMER_KEY || '';
@@ -108,21 +101,8 @@ const wcApi = axios.create({
   }
 });
 
-const wpApi = axios.create({
-  baseURL: WP_API_BASE_URL,
-  timeout: 10000,
-});
 
-// Helper function to fetch media
-async function fetchMedia(mediaId: number): Promise<string> {
-  try {
-    const response = await wpApi.get<WordPressMedia>(`/media/${mediaId}`);
-    return response.data.source_url;
-  } catch (error) {
-    console.error('Erro ao buscar mídia:', error);
-    return '/placeholder-product.svg';
-  }
-}
+// Helper function to fetch media (reserved for future use)
 
 // Transform WooCommerce product to our Product interface
 function transformWooCommerceProduct(wcProduct: WooCommerceProduct): Product {
@@ -154,10 +134,13 @@ function transformWooCommerceProduct(wcProduct: WooCommerceProduct): Product {
     inStock: wcProduct.stock_status === 'instock',
     slug: wcProduct.slug,
     gallery,
-    specifications: wcProduct.attributes?.reduce((specs, attr) => {
-      specs[attr.name] = attr.options.join(', ');
-      return specs;
-    }, {} as Record<string, any>) || {}
+    specifications: wcProduct.attributes?.reduce<Record<string, string>>(
+      (specs, attr) => {
+        specs[attr.name] = attr.options.join(', ');
+        return specs;
+      },
+      {}
+    ) || {}
   };
 }
 
@@ -170,6 +153,9 @@ export async function getProducts(options?: {
 }): Promise<ProductsResponse> {
   const { filters, page = 1, limit = 12, brand } = options || {};
   const perPage = limit;
+  const cacheKey = `products:${JSON.stringify({ filters, page, limit, brand })}`;
+  const cached = cache.get<ProductsResponse>(cacheKey);
+  if (cached) return cached;
   try {
     // No client, redireciona para API interna para não expor credenciais
     if (typeof window !== 'undefined') {
@@ -185,9 +171,11 @@ export async function getProducts(options?: {
 
       const res = await fetch(`/api/products?${params.toString()}`);
       if (!res.ok) throw new Error(`Erro API interna /api/products: ${res.status}`);
-      return res.json();
+      const data = await res.json();
+      cache.set(cacheKey, data);
+      return data;
     }
-    const params: any = {
+    const params: Record<string, unknown> = {
       page,
       per_page: perPage,
       status: 'publish'
@@ -219,26 +207,28 @@ export async function getProducts(options?: {
     if (brandFilter) {
       try {
         const brandRes = await wcApi.get('/products/brands', { params: { slug: brandFilter } });
-        const brandData = Array.isArray(brandRes.data) ? brandRes.data[0] : null;
-        if (brandData?.id) {
-          // Muitos plugins usam "brand" como query param com ID
-          (params as any).brand = brandData.id;
-        }
-      } catch (e) {
+          const brandData = Array.isArray(brandRes.data)
+            ? brandRes.data[0]
+            : null;
+          if (brandData?.id) {
+            // Muitos plugins usam "brand" como query param com ID
+            params.brand = brandData.id;
+          }
+      } catch {
         // Continua sem brand param; faremos filtro local como fallback
       }
     }
 
     // Try to fetch from WooCommerce API first
     const response = await wcApi.get<WooCommerceProduct[]>('/products', { params });
-    
-    const products: Product[] = response.data.map(wcProduct => 
+
+    const products: Product[] = response.data.map(wcProduct =>
       transformWooCommerceProduct(wcProduct)
     );
 
     // Filtro local (fallback caso a API não tenha aplicado)
     let filteredProducts = products;
-    if (brandFilter && !(params as any).brand) {
+    if (brandFilter && !('brand' in params)) {
       filteredProducts = filteredProducts.filter((p) => {
         const b = (p.brand || '').toLowerCase();
         const needle = brandFilter.toLowerCase();
@@ -250,7 +240,7 @@ export async function getProducts(options?: {
     const totalPages = parseInt(response.headers['x-wp-totalpages'] || '1');
     const totalItems = parseInt(response.headers['x-wp-total'] || '0');
 
-    return {
+    const result = {
       products: filteredProducts,
       pagination: {
         currentPage: page,
@@ -259,6 +249,8 @@ export async function getProducts(options?: {
         itemsPerPage: perPage,
       },
     };
+    cache.set(cacheKey, result);
+    return result;
   } catch (error) {
     console.error('Erro ao buscar produtos do WooCommerce:', error);
     // Return empty result if WooCommerce API fails
@@ -276,9 +268,14 @@ export async function getProducts(options?: {
 
 // Fetch single product
 export async function getProduct(id: number): Promise<Product | null> {
+  const cacheKey = `product:${id}`;
+  const cached = cache.get<Product>(cacheKey);
+  if (cached) return cached;
   try {
     const response = await wcApi.get<WooCommerceProduct>(`/products/${id}`);
-    return transformWooCommerceProduct(response.data);
+    const product = transformWooCommerceProduct(response.data);
+    cache.set(cacheKey, product);
+    return product;
   } catch (error) {
     console.error('Erro ao buscar produto do WooCommerce:', error);
     return null;
@@ -287,15 +284,25 @@ export async function getProduct(id: number): Promise<Product | null> {
 
 // Buscar produto por slug
 export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const cacheKey = `product-slug:${slug}`;
+  const cached = cache.get<Product | null>(cacheKey);
+  if (cached) return cached;
   try {
     if (typeof window !== 'undefined') {
       const res = await fetch(`/api/products/${slug}`);
       if (!res.ok) return null;
-      return res.json();
+      const data = await res.json();
+      cache.set(cacheKey, data);
+      return data;
     }
     const response = await wcApi.get<WooCommerceProduct[]>('/products', { params: { slug } });
-    if (response.data.length === 0) return null;
-    return transformWooCommerceProduct(response.data[0]);
+    if (response.data.length === 0) {
+      cache.set(cacheKey, null);
+      return null;
+    }
+    const product = transformWooCommerceProduct(response.data[0]);
+    cache.set(cacheKey, product);
+    return product;
   } catch (error) {
     console.error('Erro ao buscar produto por slug:', error);
     return null;
@@ -304,28 +311,44 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
 // Fetch categories
 export async function getCategories(): Promise<Category[]> {
+  const cacheKey = 'categories';
+  const cached = cache.get<Category[]>(cacheKey);
+  if (cached) return cached;
   try {
     const response = await wcApi.get('/products/categories');
-    return response.data.map((cat: any) => ({
+    interface WooCommerceCategory {
+      id: number;
+      name: string;
+      slug: string;
+      count: number;
+    }
+    const categories = (response.data as WooCommerceCategory[]).map(cat => ({
       id: cat.id,
       name: cat.name,
       slug: cat.slug,
       count: cat.count,
     }));
+    cache.set(cacheKey, categories);
+    return categories;
   } catch (error) {
     console.warn('WooCommerce API não disponível, usando categorias mock:', error);
-    return [
+    const categories = [
       { id: 1, name: 'Smartphones', slug: 'smartphones', count: 10 },
       { id: 2, name: 'Notebooks', slug: 'notebooks', count: 15 },
       { id: 3, name: 'Tablets', slug: 'tablets', count: 8 },
       { id: 4, name: 'Acessórios', slug: 'acessorios', count: 12 },
       { id: 5, name: 'Audio & Video', slug: 'audio-video', count: 6 }
     ];
+    cache.set(cacheKey, categories);
+    return categories;
   }
 }
 
 // Buscar produtos em destaque
 export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
+  const cacheKey = `featured:${limit}`;
+  const cached = cache.get<Product[]>(cacheKey);
+  if (cached) return cached;
   try {
     const response = await wcApi.get('/products', {
       params: {
@@ -334,7 +357,9 @@ export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
         status: 'publish'
       }
     });
-    return response.data.map(transformWooCommerceProduct);
+    const products = response.data.map(transformWooCommerceProduct);
+    cache.set(cacheKey, products);
+    return products;
   } catch (error) {
     console.error('Erro ao buscar produtos em destaque:', error);
     return [];
@@ -378,6 +403,9 @@ function transformWooCommerceBrand(wcBrand: WooCommerceBrand): Brand {
 
 // Buscar marcas do WooCommerce
 export async function getBrands(): Promise<Brand[]> {
+  const cacheKey = 'brands';
+  const cached = cache.get<Brand[]>(cacheKey);
+  if (cached) return cached;
   try {
     const response = await wcApi.get('/products/brands', {
       params: {
@@ -385,7 +413,9 @@ export async function getBrands(): Promise<Brand[]> {
         hide_empty: true // Só mostrar marcas que têm produtos
       }
     });
-    return response.data.map(transformWooCommerceBrand);
+    const brands = response.data.map(transformWooCommerceBrand);
+    cache.set(cacheKey, brands);
+    return brands;
   } catch (error) {
     console.error('Erro ao buscar marcas do WooCommerce:', error);
     // Retornar array vazio em caso de erro - não usar dados mockados

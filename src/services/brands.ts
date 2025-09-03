@@ -1,4 +1,5 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
+import { cache } from '@/lib/cache'
 
 interface WordPressBrand {
     id: number
@@ -32,12 +33,12 @@ interface Supplier {
     description?: string
     website?: string
     featured?: boolean
-    products?: any[]
+    products?: unknown[]
 }
 
 class BrandsService {
     private baseUrl: string
-    private wpApi: any
+    private wpApi: AxiosInstance
 
     constructor() {
         this.baseUrl =
@@ -59,6 +60,11 @@ class BrandsService {
 
     // Fetch brands from WordPress/WooCommerce API
     async fetchWordPressBrands(): Promise<WordPressBrand[]> {
+        const cacheKey = 'wordpress-brands'
+        const cached = cache.get<WordPressBrand[]>(cacheKey)
+        if (cached) {
+            return cached
+        }
         try {
             console.log('🌐 Fazendo requisição para WooCommerce brands...')
             console.log('🔗 URL:', `${this.baseUrl}/products/brands`)
@@ -79,7 +85,16 @@ class BrandsService {
             console.log('🔍 Primeira marca raw:', response.data[0])
 
             // Transformar dados do WooCommerce para o formato esperado
-            const transformedBrands = response.data.map((brand: any) => ({
+            interface WooCommerceBrandRaw {
+                id: number
+                name: string
+                slug: string
+                description?: string
+                image?: { id: number; src: string }
+                meta?: { website?: string; featured?: boolean }
+            }
+
+            const transformedBrands = (response.data as WooCommerceBrandRaw[]).map(brand => ({
                 id: brand.id,
                 name: brand.name,
                 slug: brand.slug,
@@ -101,11 +116,12 @@ class BrandsService {
 
             console.log(
                 '🔄 Marcas transformadas:',
-                transformedBrands.map((b: any) => ({
+                transformedBrands.map(b => ({
                     name: b.name,
                     hasImage: !!b.image
                 }))
             )
+            cache.set(cacheKey, transformedBrands)
             return transformedBrands
         } catch (error) {
             console.error(
@@ -119,11 +135,15 @@ class BrandsService {
 
     // Convert WordPress brand to our Brand interface
     private convertWordPressBrandToBrand(wpBrand: WordPressBrand): Brand {
+        const logo =
+            wpBrand.image?.source_url ||
+            wpBrand.meta?.logo_url ||
+            '/placeholder-brand.svg'
         return {
             id: wpBrand.id,
             name: wpBrand.name,
             slug: wpBrand.slug,
-            logo: wpBrand.image?.source_url || wpBrand.meta?.logo_url,
+            logo,
             website: wpBrand.meta?.website,
             featured: wpBrand.meta?.featured || false
         }

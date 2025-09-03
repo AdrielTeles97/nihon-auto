@@ -48,7 +48,7 @@ export function SupplierSections() {
         const response = await fetch('/api/brands');
         if (response.ok) {
           const result = await response.json();
-          const brands: any[] = result.data || [];
+            const brands: WordPressBrand[] = result.data || [];
           
           // Buscar produtos do WordPress para cada marca
           const suppliersData: Supplier[] = await Promise.all(

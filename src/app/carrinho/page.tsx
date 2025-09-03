@@ -379,18 +379,18 @@ export default function CarrinhoPage() {
             <div>
               <h4 className="font-semibold mb-4">Produtos</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="/produtos" className="hover:text-white">Todos os Produtos</a></li>
-                <li><a href="/categorias" className="hover:text-white">Categorias</a></li>
-                <li><a href="/marcas" className="hover:text-white">Marcas</a></li>
+                  <li><Link href="/produtos" className="hover:text-white">Todos os Produtos</Link></li>
+                  <li><Link href="/categorias" className="hover:text-white">Categorias</Link></li>
+                  <li><Link href="/marcas" className="hover:text-white">Marcas</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-4">Empresa</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="/sobre" className="hover:text-white">Sobre Nós</a></li>
-                <li><a href="/contato" className="hover:text-white">Contato</a></li>
-                <li><a href="/termos" className="hover:text-white">Termos de Uso</a></li>
+                  <li><Link href="/sobre" className="hover:text-white">Sobre Nós</Link></li>
+                  <li><Link href="/contato" className="hover:text-white">Contato</Link></li>
+                  <li><Link href="/termos" className="hover:text-white">Termos de Uso</Link></li>
               </ul>
             </div>
             
