@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Star, Shield, Truck, HeadphonesIcon } from "lucide-react";
+import { ArrowRight, Shield, Truck, HeadphonesIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/layout/Header";
 import { FeaturedProductGrid } from "@/components/product/ProductGrid";
@@ -12,26 +12,23 @@ import CategoriesSection from "@/components/sections/CategoriesSection";
 import { Product } from "@/types";
 import { getProducts } from "@/services/wordpress";
 import { ScrollReveal } from "@/components/motion-primitives/scroll-reveal";
-import { AnimatedText, TypewriterText } from "@/components/motion-primitives/animated-text";
 import { motion } from "framer-motion";
+import HeroSection from "@/components/sections/HeroSection";
 
 export default function Home() {
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const loadFeaturedProducts = async () => {
             try {
                 setLoading(true);
-                setError(null);
 
                 // Buscar os primeiros 6 produtos como produtos em destaque
                 const productsData = await getProducts({});
                 setFeaturedProducts(productsData.products.slice(0, 6));
             } catch (err) {
                 console.error("Erro ao carregar produtos em destaque:", err);
-                setError("Erro ao carregar produtos. WordPress pode não estar configurado.");
 
                 // Fallback para produtos mock em caso de erro
                 const mockProducts: Product[] = [
@@ -93,140 +90,16 @@ export default function Home() {
         <div className="min-h-screen bg-white">
             <Header />
 
-            {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-                {/* Background Image with Overlay */}
-                <motion.div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-                    style={{
-                        backgroundImage: "url(/images/nihon-auto-template1.png)",
-                    }}
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 8, ease: "easeOut" }}
-                />
-                <motion.div
-                    className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/60"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1.5 }}
-                />
-
-                {/* Animated particles */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {[
-                        { left: 21.6, top: 92.2, delay: 0 },
-                        { left: 13.2, top: 31.1, delay: 0.5 },
-                        { left: 94.0, top: 24.9, delay: 1.0 },
-                        { left: 54.5, top: 28.2, delay: 1.5 },
-                        { left: 73.8, top: 67.5, delay: 0.2 },
-                        { left: 43.1, top: 58.6, delay: 0.7 },
-                        { left: 11.5, top: 67.9, delay: 1.2 },
-                        { left: 18.6, top: 95.3, delay: 1.7 },
-                        { left: 82.6, top: 34.2, delay: 0.3 },
-                        { left: 54.1, top: 38.5, delay: 0.8 },
-                        { left: 76.6, top: 95.6, delay: 1.3 },
-                        { left: 24.0, top: 13.0, delay: 1.8 },
-                        { left: 30.5, top: 4.5, delay: 0.4 },
-                        { left: 24.4, top: 96.6, delay: 0.9 },
-                        { left: 47.6, top: 53.1, delay: 1.4 },
-                        { left: 7.3, top: 63.0, delay: 1.9 },
-                        { left: 15.7, top: 6.9, delay: 0.6 },
-                        { left: 80.9, top: 60.7, delay: 1.1 },
-                        { left: 38.1, top: 28.2, delay: 1.6 },
-                        { left: 8.2, top: 68.0, delay: 0.1 },
-                    ].map((particle, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute w-1 h-1 bg-red-500/30 rounded-full"
-                            style={{
-                                left: `${particle.left}%`,
-                                top: `${particle.top}%`,
-                            }}
-                            animate={{
-                                y: [0, -20, 0],
-                                opacity: [0.3, 0.8, 0.3],
-                            }}
-                            transition={{
-                                duration: 3 + (i % 3),
-                                repeat: Infinity,
-                                delay: particle.delay,
-                            }}
-                        />
-                    ))}
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10 text-center text-white px-4 max-w-5xl mx-auto">
-                    {/* Main title and subtitle area */}
-                    <motion.div
-                        className="mb-12"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, delay: 1 }}
-                    >
-                        <h1 className="text-6xl lg:text-8xl font-bold mb-6 tracking-wider">
-                            <span className="text-white">NIHON</span>
-                            <br />
-                            <span className="text-red-500">ACESSÓRIOS</span>
-                        </h1>
-                        <p className="text-xl lg:text-2xl text-gray-200 max-w-3xl mx-auto leading-relaxed">
-                            Excelência em peças automotivas de alta qualidade
-                        </p>
-                    </motion.div>
-
-                    {/* Buttons positioned lower, above scroll indicator */}
-                    <motion.div
-                        className="flex flex-col sm:flex-row gap-8 justify-center mb-16"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 3 }}
-                    >
-                        <motion.div whileHover={{ scale: 1.08, y: -3 }} whileTap={{ scale: 0.95 }}>
-                            <Link href="/produtos">
-                                <Button
-                                    size="lg"
-                                    className="bg-red-600 hover:bg-red-700 text-white px-12 py-4 text-lg font-bold border-0 shadow-2xl rounded-md"
-                                >
-                                    Explorar Produtos
-                                    <ArrowRight className="ml-3 h-5 w-5" />
-                                </Button>
-                            </Link>
-                        </motion.div>
-                        <motion.div whileHover={{ scale: 1.08, y: -3 }} whileTap={{ scale: 0.95 }}>
-                            <Link href="/sobre">
-                                <Button
-                                    size="lg"
-                                    variant="outline"
-                                    className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-black px-12 py-4 text-lg font-bold rounded-md shadow-2xl pointer"
-                                >
-                                    Nossa História
-                                </Button>
-                            </Link>
-                        </motion.div>
-                    </motion.div>
-                </div>
-
-                {/* Scroll indicator */}
-                <motion.div
-                    className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 3.5 }}
-                >
-                    <motion.div
-                        className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"
-                        animate={{ y: [0, 10, 0] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                    >
-                        <motion.div
-                            className="w-1 h-3 bg-white/70 rounded-full mt-2"
-                            animate={{ opacity: [1, 0, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                        />
-                    </motion.div>
-                </motion.div>
-            </section>
+            <HeroSection
+                backgroundImage="/images/nihon-auto-template1.png"
+                productImage="/images/nihon-hiro.png"
+                productImageAlt="Acessórios automotivos"
+                title="NIHON"
+                highlight="ACESSÓRIOS"
+                subtitle="Excelência em peças automotivas de alta qualidade"
+                primaryAction={{ label: "Explorar Produtos", href: "/produtos" }}
+                secondaryAction={{ label: "Nossa História", href: "/sobre" }}
+            />
 
             {/* Marcas em Destaque com LogoCloud */}
             <ScrollReveal>
