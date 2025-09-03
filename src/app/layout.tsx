@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
 import { Toaster } from "@/components/ui/sonner";
+import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: "Nihon Auto Center - Catálogo Virtual",
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className={`${manrope.className} antialiased`}>
         <CartProvider>
           {children}
+          <Footer />
           <Toaster />
         </CartProvider>
       </body>
