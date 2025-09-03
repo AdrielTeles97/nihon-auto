@@ -100,41 +100,39 @@ export function ProductCard({ product, viewMode = 'grid' }: ProductCardProps) {
   }
 
   return (
-    <div className="group relative">
-      <div className="aspect-square w-full overflow-hidden rounded-md bg-gray-100">
-        <Link href={`/produtos/${product.slug}`}>
+    <Card className="group relative overflow-hidden border border-gray-100 hover:shadow-lg transition-all">
+      <Link href={`/produtos/${product.slug}`}> 
+        <div className="aspect-square overflow-hidden bg-gray-100">
           <ProductCardImage
             src={product.image}
             alt={product.name}
             className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
           />
-        </Link>
-        {!product.inStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-            <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900">
-              Fora de Estoque
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="mt-4 flex justify-between">
-        <div>
-          <h3 className="text-sm font-medium text-gray-900">
-            <Link href={`/produtos/${product.slug}`}>{product.name}</Link>
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">{product.category}</p>
+          {!product.inStock && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+              <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900">
+                Fora de Estoque
+              </span>
+            </div>
+          )}
         </div>
-        <p className="text-sm font-medium text-gray-900">
+      </Link>
+      <CardContent className="p-4">
+        <h3 className="text-sm font-medium text-gray-900 mb-1">
+          <Link href={`/produtos/${product.slug}`}>{product.name}</Link>
+        </h3>
+        <p className="text-sm text-gray-500">{product.category}</p>
+      </CardContent>
+      <CardFooter className="flex items-center justify-between p-4 pt-0">
+        <span className="text-sm font-medium text-gray-900">
           {formatPrice(product.price)}
-        </p>
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-        <div className="flex gap-2">
+        </span>
+        <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
           <Button
             size="sm"
             variant="outline"
             onClick={handleWhatsApp}
-            className="border-white text-white hover:bg-white hover:text-gray-900"
+            className="border-red-200 text-red-600 hover:bg-red-50"
           >
             Orçamento
           </Button>
@@ -144,12 +142,12 @@ export function ProductCard({ product, viewMode = 'grid' }: ProductCardProps) {
             disabled={!product.inStock}
             className="bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-300"
           >
-            <ShoppingCart className="h-4 w-4" />
+            <ShoppingCart className="h-4 w-4 mr-1" />
             {product.inStock ? 'Adicionar' : 'Indisponível'}
           </Button>
         </div>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }
 

@@ -36,6 +36,16 @@ interface WordPressBrand {
   count: number;
 }
 
+interface WPProduct {
+  id: number;
+  name: string;
+  price: string;
+  images?: { src: string }[];
+  slug: string;
+  categories?: { name: string }[];
+  stock_status?: string;
+}
+
 export default function SupplierSections() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +66,7 @@ export default function SupplierSections() {
               const wpProductsResponse = await productsResponse.json();
               const wpProducts = (wpProductsResponse.products || []).slice(0, 3);
 
-              const products: Product[] = wpProducts.map((product: any) => ({
+              const products: Product[] = wpProducts.map((product: WPProduct) => ({
                 id: product.id,
                 name: product.name,
                 price: parseFloat(product.price) || 0,
@@ -116,7 +126,7 @@ export default function SupplierSections() {
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Nossos <span className="text-blue-600">Fornecedores</span>
+          Nossos <span className="text-red-600">Fornecedores</span>
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Descubra produtos das marcas mais respeitadas do mercado.

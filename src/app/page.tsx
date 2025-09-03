@@ -13,7 +13,8 @@ import { Product } from "@/types";
 import { getProducts } from "@/services/wordpress";
 import { ScrollReveal } from "@/components/motion-primitives/scroll-reveal";
 import { motion } from "framer-motion";
-import HeroSection from "@/components/sections/HeroSection";
+import BannerCarousel from "@/components/sections/BannerCarousel";
+import { AnimatedText } from "@/components/motion-primitives/animated-text";
 
 export default function Home() {
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -90,16 +91,7 @@ export default function Home() {
         <div className="min-h-screen bg-white">
             <Header />
 
-            <HeroSection
-                backgroundImage="/images/nihon-auto-template1.png"
-                productImage="/images/nihon-hiro.png"
-                productImageAlt="Acessórios automotivos"
-                title="NIHON"
-                highlight="ACESSÓRIOS"
-                subtitle="Excelência em peças automotivas de alta qualidade"
-                primaryAction={{ label: "Explorar Produtos", href: "/produtos" }}
-                secondaryAction={{ label: "Nossa História", href: "/sobre" }}
-            />
+            <BannerCarousel />
 
             {/* Marcas em Destaque com LogoCloud */}
             <ScrollReveal>
@@ -223,7 +215,7 @@ export default function Home() {
                             viewport={{ once: true }}
                         >
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                                Números que <span className="text-red-600">Impressionam</span>
+                                Números que <span className="text-red-600"><AnimatedText text="Impressionam" /></span>
                             </h2>
                             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                                 Nossa trajetória de sucesso refletida em números
@@ -259,7 +251,7 @@ export default function Home() {
                                             }}
                                             viewport={{ once: true }}
                                         >
-                                            {stat.number}
+                                <AnimatedText text={stat.number} />
                                         </motion.div>
                                         <div className="text-gray-700 font-medium text-lg group-hover:text-red-700 transition-colors">
                                             {stat.label}
@@ -289,7 +281,7 @@ export default function Home() {
                             viewport={{ once: true }}
                         >
                             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                                Por que escolher a <span className="text-red-600">Nihon?</span>
+                                Por que escolher a <span className="text-red-600"><AnimatedText text="Nihon?" /></span>
                             </h2>
                             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                                 Diferenciais que fazem toda a diferença na sua experiência
