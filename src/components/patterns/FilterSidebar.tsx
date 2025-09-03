@@ -45,20 +45,30 @@ export function FilterSidebar({
   );
 
   return (
-    <aside className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6 shadow-sm">
-      <div className="mb-4">
-        <h3 className="text-2xl font-bold tracking-tight text-gray-900">{title}</h3>
+    <aside className="relative bg-white rounded-2xl border border-gray-200 p-4 md:p-6 shadow-lg overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute top-0 right-0 w-20 h-20 opacity-5">
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <image href="/images/noise/noise-red.svg" width="100%" height="100%" className="object-cover" />
+        </svg>
+      </div>
+      
+      <div className="mb-6 relative z-10">
+        <h3 className="text-2xl font-bold tracking-tight text-gray-900 mb-1">{title}</h3>
+        <div className="w-12 h-1 bg-gradient-to-r from-red-600 to-red-800 rounded-full"></div>
       </div>
 
       {/* Categorias */}
-      <div className="py-4 border-t first:border-t-0">
+      <div className="py-4 border-t border-gray-100 first:border-t-0 relative z-10">
         <button
           type="button"
-          className="w-full flex items-center justify-between text-left"
+          className="w-full flex items-center justify-between text-left group hover:text-red-600 transition-colors"
           onClick={() => toggle("categorias")}
         >
-          <span className="text-sm font-semibold text-gray-900">Categorias</span>
-          <span className="text-gray-400">{openGroups.categorias ? "–" : "+"}</span>
+          <span className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors">Categorias</span>
+          <span className="text-gray-400 group-hover:text-red-500 transition-colors font-bold text-lg">
+            {openGroups.categorias ? "−" : "+"}
+          </span>
         </button>
         {openGroups.categorias && (
           <ul className="mt-3 space-y-2 text-sm">
@@ -67,7 +77,7 @@ export function FilterSidebar({
                 <input
                   type="radio"
                   name="category"
-                  className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                  className="rounded border-gray-300 text-red-600 focus:ring-red-500 focus:ring-offset-0"
                   checked={selectedCategory === null}
                   onChange={() => onCategoryChange(null)}
                 />
@@ -80,7 +90,7 @@ export function FilterSidebar({
                   <input
                     type="radio"
                     name="category"
-                    className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    className="rounded border-gray-300 text-red-600 focus:ring-red-500 focus:ring-offset-0"
                     checked={selectedCategory === c}
                     onChange={() => onCategoryChange(c)}
                   />
@@ -94,14 +104,16 @@ export function FilterSidebar({
 
       {/* Marcas */}
       {brands.length > 0 && (
-        <div className="py-4 border-t">
+        <div className="py-4 border-t border-gray-100">
           <button
             type="button"
-            className="w-full flex items-center justify-between text-left"
+            className="w-full flex items-center justify-between text-left group hover:text-red-600 transition-colors"
             onClick={() => toggle("marcas")}
           >
-            <span className="text-sm font-semibold text-gray-900">Marcas</span>
-            <span className="text-gray-400">{openGroups.marcas ? "–" : "+"}</span>
+            <span className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors">Marcas</span>
+            <span className="text-gray-400 group-hover:text-red-500 transition-colors font-bold text-lg">
+              {openGroups.marcas ? "−" : "+"}
+            </span>
           </button>
           {openGroups.marcas && (
             <ul className="mt-3 space-y-2 text-sm">
@@ -110,7 +122,7 @@ export function FilterSidebar({
                   <input
                     type="radio"
                     name="brand"
-                    className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    className="rounded border-gray-300 text-red-600 focus:ring-red-500 focus:ring-offset-0"
                     checked={selectedBrand === null}
                     onChange={() => onBrandChange(null)}
                   />
@@ -123,7 +135,7 @@ export function FilterSidebar({
                     <input
                       type="radio"
                       name="brand"
-                      className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                      className="rounded border-gray-300 text-red-600 focus:ring-red-500 focus:ring-offset-0"
                       checked={selectedBrand === b}
                       onChange={() => onBrandChange(b)}
                     />
@@ -137,39 +149,41 @@ export function FilterSidebar({
       )}
 
       {/* Preço */}
-      <div className="py-4 border-t">
+      <div className="py-4 border-t border-gray-100 relative z-10">
         <button
           type="button"
-          className="w-full flex items-center justify-between text-left"
+          className="w-full flex items-center justify-between text-left group hover:text-red-600 transition-colors"
           onClick={() => toggle("preco")}
         >
-          <span className="text-sm font-semibold text-gray-900">Preço</span>
-          <span className="text-gray-400">{openGroups.preco ? "–" : "+"}</span>
+          <span className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors">Preço</span>
+          <span className="text-gray-400 group-hover:text-red-500 transition-colors font-bold text-lg">
+            {openGroups.preco ? "−" : "+"}
+          </span>
         </button>
         {openGroups.preco && (
           <div className="mt-3 grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-[11px] text-gray-500 mb-1">Mínimo</label>
+              <label className="block text-xs font-medium text-gray-600 mb-2">Mínimo</label>
               <input
                 type="number"
                 min={0}
                 step={1}
                 value={minPrice ?? ""}
                 onChange={(e) => onMinPriceChange?.(e.target.value === "" ? null : Math.max(0, Number(e.target.value)))}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-                placeholder="0"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                placeholder="R$ 0"
               />
             </div>
             <div>
-              <label className="block text-[11px] text-gray-500 mb-1">Máximo</label>
+              <label className="block text-xs font-medium text-gray-600 mb-2">Máximo</label>
               <input
                 type="number"
                 min={0}
                 step={1}
                 value={maxPrice ?? ""}
                 onChange={(e) => onMaxPriceChange?.(e.target.value === "" ? null : Math.max(0, Number(e.target.value)))}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-                placeholder="∞"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                placeholder="R$ ∞"
               />
             </div>
           </div>
@@ -177,10 +191,10 @@ export function FilterSidebar({
       </div>
 
       {hasAnyFilter && (
-        <div className="pt-6">
+        <div className="pt-6 relative z-10">
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors"
             onClick={() => {
               onCategoryChange(null);
               onBrandChange(null);

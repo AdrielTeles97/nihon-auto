@@ -79,7 +79,7 @@ export function Header({ onSearchChange }: HeaderProps) {
           <nav className="hidden md:flex items-center space-x-8">
             {[
               { href: '/', label: 'Início' },
-              { href: '/produtos', label: 'Produtos' },
+              { href: '/produtos', label: 'Catálogo' },
               { href: '/categorias', label: 'Categorias' },
               { href: '/sobre', label: 'Sobre' },
               { href: '/contato', label: 'Contato' },
@@ -227,4 +227,3 @@ export function Header({ onSearchChange }: HeaderProps) {
     </motion.header>
   );
 }
-

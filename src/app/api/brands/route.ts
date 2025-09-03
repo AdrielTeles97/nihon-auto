@@ -1,5 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBrands } from '@/services/wordpress';
+import axios from 'axios';
+
+const WC_API_BASE_URL = process.env.NEXT_PUBLIC_WOOCOMMERCE_API_URL || '';
+const WC_CONSUMER_KEY = process.env.WOOCOMMERCE_CONSUMER_KEY || '';
+const WC_CONSUMER_SECRET = process.env.WOOCOMMERCE_CONSUMER_SECRET || '';
+
+if (!WC_API_BASE_URL || !WC_CONSUMER_KEY || !WC_CONSUMER_SECRET) {
+  console.error('WooCommerce API configuration missing');
+}
+
+const wcApi = axios.create({
+  baseURL: WC_API_BASE_URL,
+  timeout: 10000,
+  params: {
+    consumer_key: WC_CONSUMER_KEY,
+    consumer_secret: WC_CONSUMER_SECRET
+  }
+});
 
 // GET /api/brands - Listar todas as marcas
 export async function GET(request: NextRequest) {
@@ -10,11 +27,25 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     
     // Buscar marcas do WooCommerce
-    let brands = await getBrands();
+    const response = await wcApi.get('/products/brands', {
+      params: {
+        hide_empty: false,
+        per_page: 100
+      }
+    });
+    
+    let brands = response.data.map((brand: any) => ({
+      id: brand.id,
+      name: brand.name,
+      slug: brand.slug,
+      description: brand.description || '',
+      count: brand.count || 0,
+      image: brand.image?.src || null
+    }));
     
     // Aplicar filtro de busca se fornecido
     if (search) {
-      brands = brands.filter(brand => 
+      brands = brands.filter((brand: any) => 
         brand.name.toLowerCase().includes(search.toLowerCase()) ||
         brand.description.toLowerCase().includes(search.toLowerCase())
       );

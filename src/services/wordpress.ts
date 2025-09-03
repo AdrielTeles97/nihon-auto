@@ -61,7 +61,10 @@ export interface Category {
   id: number;
   name: string;
   slug: string;
+  description?: string;
   count?: number;
+  image?: string;
+  parent?: number;
 }
 
 export interface ProductFilters {
@@ -71,6 +74,7 @@ export interface ProductFilters {
   maxPrice?: number;
   brand?: string;
   inStock?: boolean;
+  sort?: 'relevance' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc';
 }
 
 export interface ProductsResponse {
@@ -214,6 +218,31 @@ export async function getProducts(options?: {
       params.stock_status = filters.inStock ? 'instock' : 'outofstock';
     }
 
+    // Aplicar ordenação
+    if (filters?.sort) {
+      switch (filters.sort) {
+        case 'price-asc':
+          params.orderby = 'price';
+          params.order = 'asc';
+          break;
+        case 'price-desc':
+          params.orderby = 'price';
+          params.order = 'desc';
+          break;
+        case 'name-asc':
+          params.orderby = 'title';
+          params.order = 'asc';
+          break;
+        case 'name-desc':
+          params.orderby = 'title';
+          params.order = 'desc';
+          break;
+        default:
+          // relevance - usar ordenação padrão do WooCommerce
+          break;
+      }
+    }
+
     // Resolver brand -> ID (WooCommerce Brands) se informado
     const brandFilter = brand || filters?.brand;
     if (brandFilter) {
@@ -305,22 +334,15 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 // Fetch categories
 export async function getCategories(): Promise<Category[]> {
   try {
-    const response = await wcApi.get('/products/categories');
-    return response.data.map((cat: any) => ({
-      id: cat.id,
-      name: cat.name,
-      slug: cat.slug,
-      count: cat.count,
-    }));
+    const response = await fetch('/api/categories');
+    if (!response.ok) {
+      throw new Error('Falha ao buscar categorias');
+    }
+    const data = await response.json();
+    return data.success ? data.data : [];
   } catch (error) {
-    console.warn('WooCommerce API não disponível, usando categorias mock:', error);
-    return [
-      { id: 1, name: 'Smartphones', slug: 'smartphones', count: 10 },
-      { id: 2, name: 'Notebooks', slug: 'notebooks', count: 15 },
-      { id: 3, name: 'Tablets', slug: 'tablets', count: 8 },
-      { id: 4, name: 'Acessórios', slug: 'acessorios', count: 12 },
-      { id: 5, name: 'Audio & Video', slug: 'audio-video', count: 6 }
-    ];
+    console.error('Erro ao buscar categorias:', error);
+    throw new Error('Não foi possível carregar as categorias');
   }
 }
 
@@ -379,15 +401,13 @@ function transformWooCommerceBrand(wcBrand: WooCommerceBrand): Brand {
 // Buscar marcas do WooCommerce
 export async function getBrands(): Promise<Brand[]> {
   try {
-    const response = await wcApi.get('/products/brands', {
-      params: {
-        per_page: 100,
-        hide_empty: true // Só mostrar marcas que têm produtos
-      }
-    });
-    return response.data.map(transformWooCommerceBrand);
+    const response = await fetch('/api/brands/wordpress');
+    if (!response.ok) {
+      throw new Error('Falha ao buscar marcas');
+    }
+    return await response.json();
   } catch (error) {
-    console.error('Erro ao buscar marcas do WooCommerce:', error);
+    console.error('Erro ao buscar marcas:', error);
     // Retornar array vazio em caso de erro - não usar dados mockados
     return [];
   }

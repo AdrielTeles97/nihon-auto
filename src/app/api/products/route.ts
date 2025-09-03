@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
     const inStock = searchParams.get('inStock');
+    const sort = searchParams.get('sort') as 'relevance' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc' || undefined;
 
     // Buscar produtos do WordPress/WooCommerce
     const products = await getProducts({
@@ -24,15 +25,11 @@ export async function GET(request: NextRequest) {
         minPrice: minPrice ? Number(minPrice) : undefined,
         maxPrice: maxPrice ? Number(maxPrice) : undefined,
         inStock: typeof inStock === 'string' ? inStock === 'true' : undefined,
+        sort,
       },
     });
 
-    // Compatibilidade: alguns consumidores esperam um array simples
-    const format = searchParams.get('format');
-    if (format !== 'full' && (brand || search || category)) {
-      return NextResponse.json(products.products);
-    }
-
+    // Sempre retornar o formato completo com paginação
     return NextResponse.json(products);
   } catch (error) {
     console.error('Erro ao buscar produtos:', error);

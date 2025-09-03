@@ -20,6 +20,7 @@ interface Brand {
     id: number
     name: string
     slug: string
+    description?: string
     logo?: string
     website?: string
     featured?: boolean
@@ -83,8 +84,7 @@ class BrandsService {
                 id: brand.id,
                 name: brand.name,
                 slug: brand.slug,
-                description:
-                    brand.description || `Produtos da marca ${brand.name}`,
+                description: brand.description ? brand.description.replace(/<[^>]*>/g, '').trim() : '',
                 image: brand.image
                     ? {
                           id: brand.image.id,
@@ -123,6 +123,7 @@ class BrandsService {
             id: wpBrand.id,
             name: wpBrand.name,
             slug: wpBrand.slug,
+            description: wpBrand.description ? wpBrand.description.replace(/<[^>]*>/g, '').trim() : '',
             logo: wpBrand.image?.source_url || wpBrand.meta?.logo_url,
             website: wpBrand.meta?.website,
             featured: wpBrand.meta?.featured || false
