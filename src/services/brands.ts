@@ -29,12 +29,15 @@ class BrandsService {
             console.log('🔗 URL:', `${this.baseUrl}/products/brands`)
 
             // Fazer requisição real para a API do WooCommerce
-            const response = await this.wpApi.get<WordPressBrand[]>('/products/brands', {
-                params: {
-                    per_page: 100,
-                    hide_empty: false // Mudei para false para pegar todas as marcas
+            const response = await this.wpApi.get<WordPressBrand[]>(
+                '/products/brands',
+                {
+                    params: {
+                        per_page: 100,
+                        hide_empty: false // Mudei para false para pegar todas as marcas
+                    }
                 }
-            })
+            )
 
             console.log(
                 `📥 Response status: ${response.status}, dados:`,
@@ -44,18 +47,27 @@ class BrandsService {
             console.log('🔍 Primeira marca raw:', response.data[0])
 
             // Transformar dados do WooCommerce para o formato esperado
-            const transformedBrands: WordPressBrand[] = response.data.map((brand) => ({
-                id: brand.id,
-                name: brand.name,
-                slug: brand.slug,
-                description: brand.description ? brand.description.replace(/<[^>]*>/g, '').trim() : '',
-                image: brand.image ? { id: brand.image.id, src: brand.image.src } : null,
-                count: brand.count ?? 0
-            }))
+            const transformedBrands: WordPressBrand[] = response.data.map(
+                brand => ({
+                    id: brand.id,
+                    name: brand.name,
+                    slug: brand.slug,
+                    description: brand.description
+                        ? brand.description.replace(/<[^>]*>/g, '').trim()
+                        : '',
+                    image: brand.image
+                        ? { id: brand.image.id, src: brand.image.src }
+                        : null,
+                    count: brand.count ?? 0
+                })
+            )
 
             console.log(
                 '🔄 Marcas transformadas:',
-                transformedBrands.map((b) => ({ name: b.name, hasImage: !!b.image }))
+                transformedBrands.map(b => ({
+                    name: b.name,
+                    hasImage: !!b.image
+                }))
             )
             return transformedBrands
         } catch (error) {
@@ -74,7 +86,9 @@ class BrandsService {
             id: wpBrand.id,
             name: wpBrand.name,
             slug: wpBrand.slug,
-            description: wpBrand.description ? wpBrand.description.replace(/<[^>]*>/g, '').trim() : '',
+            description: wpBrand.description
+                ? wpBrand.description.replace(/<[^>]*>/g, '').trim()
+                : '',
             image: wpBrand.image?.src || null,
             count: wpBrand.count ?? 0
         }
@@ -158,7 +172,9 @@ class BrandsService {
     }
 
     // Create or update brand in WordPress
-    async createOrUpdateBrand(brand: Omit<Brand, 'id' | 'count'>): Promise<Brand | null> {
+    async createOrUpdateBrand(
+        brand: Omit<Brand, 'id' | 'count'>
+    ): Promise<Brand | null> {
         try {
             const brandData = {
                 title: brand.name,
@@ -167,7 +183,10 @@ class BrandsService {
                 description: brand.description
             }
 
-            const response = await this.wpApi.post<WordPressBrand>('/brands', brandData)
+            const response = await this.wpApi.post<WordPressBrand>(
+                '/brands',
+                brandData
+            )
             return this.convertWordPressBrandToBrand(response.data)
         } catch (error) {
             console.error('Erro ao criar/atualizar marca:', error)

@@ -330,8 +330,83 @@ p {
 .banner-swiper .swiper-button-next::after {
     font-size: 28px;
 }
-.banner-swiper .swiper-button-disabled { opacity: 0.4; }
+.banner-swiper .swiper-button-disabled {
+    opacity: 0.4;
+}
 
 /* Hide overlapping text on non-active slides */
-.banner-swiper .swiper-slide .banner-content { opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity .35s ease, transform .35s ease; }
-.banner-swiper .swiper-slide.swiper-slide-active .banner-content { opacity: 1; visibility: visible; transform: translateY(0); }
+.banner-swiper .swiper-slide .banner-content {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.banner-swiper .swiper-slide.swiper-slide-active .banner-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Custom scrollbar styles for category carousel */
+.category-scroll::-webkit-scrollbar {
+    height: 12px;
+}
+
+.category-scroll::-webkit-scrollbar-track {
+    background: hsl(var(--border) / 0.2);
+    border-radius: 6px;
+    margin: 0 16px;
+}
+
+.category-scroll::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.4);
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    transition: background-color 0.2s ease;
+}
+
+.category-scroll::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.6);
+    background-clip: content-box;
+}
+
+.category-scroll::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Firefox */
+.category-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.4) hsl(var(--border) / 0.2);
+}
+
+/* Force scrollbar to always show */
+.category-scroll {
+    overflow-x: scroll !important;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: hsl(var(--border) / 0.2);
+    border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.3);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+}
+
+/* Firefox */
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.3) hsl(var(--border) / 0.2);
+}

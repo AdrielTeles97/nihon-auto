@@ -1,60 +1,51 @@
-/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import { HeroHeader } from "@/components/layout/Header"
-import { InfiniteSlider } from '@/components/motion-primitives/infinite-slider'
-import { ProgressiveBlur } from '@/components/motion-primitives/progressive-blur'
+import { HeroHeader } from '@/components/layout/Header'
+import { BrandsSlider } from '@/components/sections/BrandsSlider'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function HeroSection() {
     const [currentSlide, setCurrentSlide] = useState(0)
-    
+
     const slides = [
         {
-            src: "/images/nihon-auto-template1.png",
-            alt: "Nihon Autopeças - Peças Automotivas",
-            title: "Nihon autopeças",
-            description: "Distribuindo as melhores marcas na região norte do brasil.",
+            src: '/images/nihon-hero-2.png',
             showButtons: true
         },
         {
-            src: "/images/placeholder-product.jpg",
-            alt: "Nihon Autopeças - Produtos de Qualidade",
-            title: "Produtos de Qualidade",
-            description: "Peças automotivas com garantia e procedência."
+            src: '/images/nihon-hero-4.png',
         },
         {
-            src: "/images/logo-nihon.png",
-            alt: "Nihon Autopeças - Sua Loja de Confiança"
+            src: '/images/nihon-hero-3.jpeg',
             // Este slide não tem texto - apenas imagem
         }
     ]
-    
+
     // Auto-slide functionality
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % slides.length)
+            setCurrentSlide(prev => (prev + 1) % slides.length)
         }, 5000) // Change slide every 5 seconds
-        
+
         return () => clearInterval(timer)
-    }, [])
-    
+    }, [slides.length])
+
     const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length)
+        setCurrentSlide(prev => (prev + 1) % slides.length)
     }
-    
+
     const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
+        setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length)
     }
-    
+
     const goToSlide = (index: number) => {
         setCurrentSlide(index)
     }
-    
+
     return (
         <>
             <HeroHeader />
@@ -66,7 +57,9 @@ export default function HeroSection() {
                             <div
                                 key={index}
                                 className={`absolute inset-0 transition-opacity duration-1000 ${
-                                    index === currentSlide ? 'opacity-100' : 'opacity-0'
+                                    index === currentSlide
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
                                 }`}
                             >
                                 <Image
@@ -81,10 +74,10 @@ export default function HeroSection() {
                             </div>
                         ))}
                     </div>
-                    
+
                     {/* Black Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 z-10"></div>
-                    
+                    {/* {<div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 z-10"></div>} */}
+
                     {/* Navigation Buttons */}
                     <button
                         onClick={prevSlide}
@@ -93,7 +86,7 @@ export default function HeroSection() {
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </button>
-                    
+
                     <button
                         onClick={nextSlide}
                         className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200"
@@ -101,7 +94,7 @@ export default function HeroSection() {
                     >
                         <ChevronRight className="w-6 h-6" />
                     </button>
-                    
+
                     {/* Slide Indicators */}
                     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex space-x-2">
                         {slides.map((_, index) => (
@@ -117,7 +110,7 @@ export default function HeroSection() {
                             />
                         ))}
                     </div>
-                    
+
                     {/* Content */}
                     <div className="relative z-20 pb-24 pt-12 md:pb-32 lg:pb-56 lg:pt-44">
                         <div className="relative mx-auto flex max-w-6xl flex-col px-6 lg:block">
@@ -137,9 +130,12 @@ export default function HeroSection() {
                                             <Button
                                                 asChild
                                                 size="lg"
-                                                className="px-5 text-base">
+                                                className="px-5 text-base"
+                                            >
                                                 <Link href="/produtos">
-                                                    <span className="text-nowrap">Ver todos os produtos</span>
+                                                    <span className="text-nowrap">
+                                                        Ver todos os produtos
+                                                    </span>
                                                 </Link>
                                             </Button>
                                             <Button
@@ -147,9 +143,12 @@ export default function HeroSection() {
                                                 asChild
                                                 size="lg"
                                                 variant="ghost"
-                                                className="px-5 text-base">
+                                                className="px-5 text-base"
+                                            >
                                                 <Link href="#link">
-                                                    <span className="text-nowrap">Entrar em contato</span>
+                                                    <span className="text-nowrap">
+                                                        Entrar em contato
+                                                    </span>
                                                 </Link>
                                             </Button>
                                         </div>
@@ -163,102 +162,16 @@ export default function HeroSection() {
                     <div className="group relative m-auto max-w-6xl px-6">
                         <div className="flex flex-col items-center md:flex-row">
                             <div className="md:max-w-44 md:border-r md:pr-6">
-                                <p className="text-end text-sm">As melhores marcas estão aqui</p>
+                                <p className="text-end text-sm">
+                                    As melhores marcas estão aqui
+                                </p>
                             </div>
-                            <div className="relative py-6 md:w-[calc(100%-11rem)]">
-                                <InfiniteSlider
-                                    speedOnHover={20}
-                                    speed={40}
-                                    gap={112}>
-                                    <div className="flex">
-                                        <img
-                                            className="mx-auto h-5 w-fit dark:invert"
-                                            src="https://html.tailus.io/blocks/customers/nvidia.svg"
-                                            alt="Nvidia Logo"
-                                            height="20"
-                                            width="auto"
-                                        />
-                                    </div>
-
-                                    <div className="flex">
-                                        <img
-                                            className="mx-auto h-4 w-fit dark:invert"
-                                            src="https://html.tailus.io/blocks/customers/column.svg"
-                                            alt="Column Logo"
-                                            height="16"
-                                            width="auto"
-                                        />
-                                    </div>
-                                    <div className="flex">
-                                        <img
-                                            className="mx-auto h-4 w-fit dark:invert"
-                                            src="https://html.tailus.io/blocks/customers/github.svg"
-                                            alt="GitHub Logo"
-                                            height="16"
-                                            width="auto"
-                                        />
-                                    </div>
-                                    <div className="flex">
-                                        <img
-                                            className="mx-auto h-5 w-fit dark:invert"
-                                            src="https://html.tailus.io/blocks/customers/nike.svg"
-                                            alt="Nike Logo"
-                                            height="20"
-                                            width="auto"
-                                        />
-                                    </div>
-                                    <div className="flex">
-                                        <img
-                                            className="mx-auto h-5 w-fit dark:invert"
-                                            src="https://html.tailus.io/blocks/customers/lemonsqueezy.svg"
-                                            alt="Lemon Squeezy Logo"
-                                            height="20"
-                                            width="auto"
-                                        />
-                                    </div>
-                                    <div className="flex">
-                                        <img
-                                            className="mx-auto h-4 w-fit dark:invert"
-                                            src="https://html.tailus.io/blocks/customers/laravel.svg"
-                                            alt="Laravel Logo"
-                                            height="16"
-                                            width="auto"
-                                        />
-                                    </div>
-                                    <div className="flex">
-                                        <img
-                                            className="mx-auto h-7 w-fit dark:invert"
-                                            src="https://html.tailus.io/blocks/customers/lilly.svg"
-                                            alt="Lilly Logo"
-                                            height="28"
-                                            width="auto"
-                                        />
-                                    </div>
-
-                                    <div className="flex">
-                                        <img
-                                            className="mx-auto h-6 w-fit dark:invert"
-                                            src="https://html.tailus.io/blocks/customers/openai.svg"
-                                            alt="OpenAI Logo"
-                                            height="24"
-                                            width="auto"
-                                        />
-                                    </div>
-                                </InfiniteSlider>
-
-                                <div className="bg-linear-to-r from-background absolute inset-y-0 left-0 w-20"></div>
-                                <div className="bg-linear-to-l from-background absolute inset-y-0 right-0 w-20"></div>
-                                <ProgressiveBlur
-                                    className="pointer-events-none absolute left-0 top-0 h-full w-20"
-                                    direction="left"
-                                    blurIntensity={1}
-                                />
-                                <ProgressiveBlur
-                                    className="pointer-events-none absolute right-0 top-0 h-full w-20"
-                                    direction="right"
-                                    blurIntensity={1}
-                                />
-                            </div>
+                            <BrandsSlider
+                                limit={15}
+                                speed={40}
+                                speedOnHover={20}
+                                gap={112}
+                            />
                         </div>
                     </div>
                 </section>
