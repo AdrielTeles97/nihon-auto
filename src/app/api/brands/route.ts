@@ -1,124 +1,111 @@
-import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
+import { NextRequest, NextResponse } from 'next/server'
+import { wpApi, assertWooConfig } from '@/services/wp-api'
+import type { Brand, WCBrand } from '@/types/brands'
+import { cached, cacheHeaders, normalizeCSV } from '@/lib/cache'
 
-const WC_API_BASE_URL = process.env.NEXT_PUBLIC_WOOCOMMERCE_API_URL || '';
-const WC_CONSUMER_KEY = process.env.WOOCOMMERCE_CONSUMER_KEY || '';
-const WC_CONSUMER_SECRET = process.env.WOOCOMMERCE_CONSUMER_SECRET || '';
+assertWooConfig()
 
-if (!WC_API_BASE_URL || !WC_CONSUMER_KEY || !WC_CONSUMER_SECRET) {
-  console.error('WooCommerce API configuration missing');
-}
-
-const wcApi = axios.create({
-  baseURL: WC_API_BASE_URL,
-  timeout: 10000,
-  params: {
-    consumer_key: WC_CONSUMER_KEY,
-    consumer_secret: WC_CONSUMER_SECRET
-  }
-});
-
-// GET /api/brands - Listar todas as marcas
+// GET /api/brands - listar marcas com imagem, descrição e contagem
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    
-    // Parâmetros de filtro
-    const search = searchParams.get('search');
-    
-    // Buscar marcas do WooCommerce
-    const response = await wcApi.get('/products/brands', {
-      params: {
-        hide_empty: false,
-        per_page: 100
-      }
-    });
-    
-    let brands = response.data.map((brand: any) => ({
+    const { searchParams } = new URL(request.url)
+    const search = (searchParams.get('search') || '').trim()
+    const perPage = Number(searchParams.get('per_page') || '100')
+    const page = Number(searchParams.get('page') || '1')
+    const hideEmpty = searchParams.get('hide_empty')
+    const order = searchParams.get('order') || 'asc'
+    const orderby = searchParams.get('orderby') || 'name'
+    const slug = searchParams.get('slug') || undefined
+    const include = searchParams.get('include')
+    const exclude = searchParams.get('exclude')
+    const hasImage = searchParams.get('has_image')
+    const calcCounts = searchParams.get('calc_counts') === 'true' || searchParams.get('recount') === 'true'
+
+    const toNumArray = (val?: string | null) =>
+      (val || '')
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean)
+        .map((v) => Number(v))
+        .filter((n) => !Number.isNaN(n))
+
+    const responseData = await cached(
+      [
+        'wc:brands',
+        page,
+        perPage,
+        hideEmpty === null ? 'n' : hideEmpty,
+        order,
+        orderby,
+        slug || '',
+        normalizeCSV(include).join(','),
+        normalizeCSV(exclude).join(',')
+      ],
+      async () => {
+        const resp = await wpApi.get<WCBrand[]>('/products/brands', {
+          params: {
+            per_page: Math.min(Math.max(perPage, 1), 100),
+            page: Math.max(page, 1),
+            hide_empty: hideEmpty === null ? false : hideEmpty === 'true',
+            order,
+            orderby,
+            ...(slug ? { slug } : {}),
+            ...(include ? { include: toNumArray(include) } : {}),
+            ...(exclude ? { exclude: toNumArray(exclude) } : {})
+          }
+        })
+        return resp.data
+      },
+      { tags: ['wc:brands'], revalidate: 3600 }
+    )
+
+    let brands: Brand[] = responseData.map((brand) => ({
       id: brand.id,
       name: brand.name,
       slug: brand.slug,
-      description: brand.description || '',
-      count: brand.count || 0,
+      description: (brand.description || '').replace(/<[^>]*>/g, '').trim(),
+      count: brand.count ?? 0,
       image: brand.image?.src || null
-    }));
-    
-    // Aplicar filtro de busca se fornecido
+    }))
+
+    if (calcCounts && brands.length) {
+      try {
+        const counted = await Promise.all(
+          brands.map(async (b) => {
+            try {
+              // per_page=1 para obter apenas headers com totais
+              const r = await wpApi.get('/products', { params: { brand: b.id, per_page: 1 } })
+              const headers = r.headers as Record<string, unknown>
+              const total = Number((headers['x-wp-total'] as string) || (headers['X-WP-Total'] as string) || 0)
+              return { ...b, count: Number.isFinite(total) ? total : b.count }
+            } catch {
+              return b
+            }
+          })
+        )
+        brands = counted
+      } catch {}
+    }
+
     if (search) {
-      brands = brands.filter((brand: any) => 
-        brand.name.toLowerCase().includes(search.toLowerCase()) ||
-        brand.description.toLowerCase().includes(search.toLowerCase())
-      );
+      const s = search.toLowerCase()
+      brands = brands.filter(
+        (b) => b.name.toLowerCase().includes(s) || b.description.toLowerCase().includes(s)
+      )
     }
-    
-    return NextResponse.json({
-      success: true,
-      data: brands,
-      total: brands.length,
-      message: 'Marcas recuperadas com sucesso'
-    });
-    
+
+    if (hasImage === 'true') {
+      brands = brands.filter((b) => !!b.image)
+    } else if (hasImage === 'false') {
+      brands = brands.filter((b) => !b.image)
+    }
+
+    return new NextResponse(
+      JSON.stringify({ success: true, data: brands, total: brands.length }),
+      { headers: { 'Content-Type': 'application/json', ...cacheHeaders(3600, 120) } }
+    )
   } catch (error) {
-    console.error('Erro ao buscar marcas:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Erro interno do servidor',
-        message: 'Não foi possível recuperar as marcas'
-      },
-      { status: 500 }
-    );
-  }
-}
-
-// POST /api/brands - Criar nova marca
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    
-    // Validação básica
-    if (!body.name || !body.slug || !body.description) {
-      return NextResponse.json(
-        { success: false, error: 'Campos obrigatórios: name, slug, description' },
-        { status: 400 }
-      );
-    }
-
-    // Verificar se o slug já existe
-    const existingBrand = brands.find(b => b.slug === body.slug);
-    if (existingBrand) {
-      return NextResponse.json(
-        { success: false, error: 'Slug já existe' },
-        { status: 409 }
-      );
-    }
-
-    const newBrand = {
-      id: body.slug,
-      name: body.name,
-      slug: body.slug,
-      logo: body.logo || '/images/brands/default-logo.svg',
-      description: body.description,
-      category: body.category || 'Popular',
-      country: body.country || '',
-      founded: body.founded || new Date().getFullYear(),
-      featured: body.featured || false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    // Em produção, salvar no banco de dados
-    brands.push(newBrand);
-
-    return NextResponse.json({
-      success: true,
-      data: newBrand
-    }, { status: 201 });
-  } catch (error) {
-    console.error('Erro ao criar marca:', error);
-    return NextResponse.json(
-      { success: false, error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error('Erro ao buscar marcas:', error)
+    return NextResponse.json({ success: false, error: 'Erro interno do servidor' }, { status: 500 })
   }
 }

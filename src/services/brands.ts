@@ -1,30 +1,7 @@
-import axios from 'axios'
-
-interface WordPressBrand {
-    id: number
-    name: string
-    slug: string
-    description?: string
-    image?: {
-        id: number
-        source_url: string
-    }
-    meta?: {
-        logo_url?: string
-        website?: string
-        featured?: boolean
-    }
-}
-
-interface Brand {
-    id: number
-    name: string
-    slug: string
-    description?: string
-    logo?: string
-    website?: string
-    featured?: boolean
-}
+import { wpApi } from '@/services/wp-api'
+import type { WCBrand as WordPressBrand, Brand } from '@/types/brands'
+import type { AxiosInstance } from 'axios'
+import type { Product } from '@/types/products'
 
 interface Supplier {
     id: number
@@ -33,29 +10,16 @@ interface Supplier {
     description?: string
     website?: string
     featured?: boolean
-    products?: any[]
+    products?: Product[]
 }
 
 class BrandsService {
     private baseUrl: string
-    private wpApi: any
+    private wpApi: AxiosInstance
 
     constructor() {
-        this.baseUrl =
-            process.env.NEXT_PUBLIC_WOOCOMMERCE_API_URL ||
-            'https://darksalmon-cobra-736244.hostingersite.com/wp-json/wc/v3'
-        this.wpApi = axios.create({
-            baseURL: this.baseUrl,
-            timeout: 10000,
-            params: {
-                consumer_key:
-                    process.env.WOOCOMMERCE_CONSUMER_KEY ||
-                    'ck_cde4987447c3bd8dc0f1c1ec064a135f9e9dafef',
-                consumer_secret:
-                    process.env.WOOCOMMERCE_CONSUMER_SECRET ||
-                    'cs_f9b40b5ecce45dbeb3fd0810a80cb8b90c115966'
-            }
-        })
+        this.wpApi = wpApi
+        this.baseUrl = (wpApi.defaults.baseURL as string) || ''
     }
 
     // Fetch brands from WordPress/WooCommerce API
@@ -65,7 +29,7 @@ class BrandsService {
             console.log('🔗 URL:', `${this.baseUrl}/products/brands`)
 
             // Fazer requisição real para a API do WooCommerce
-            const response = await this.wpApi.get('/products/brands', {
+            const response = await this.wpApi.get<WordPressBrand[]>('/products/brands', {
                 params: {
                     per_page: 100,
                     hide_empty: false // Mudei para false para pegar todas as marcas
@@ -80,31 +44,18 @@ class BrandsService {
             console.log('🔍 Primeira marca raw:', response.data[0])
 
             // Transformar dados do WooCommerce para o formato esperado
-            const transformedBrands = response.data.map((brand: any) => ({
+            const transformedBrands: WordPressBrand[] = response.data.map((brand) => ({
                 id: brand.id,
                 name: brand.name,
                 slug: brand.slug,
                 description: brand.description ? brand.description.replace(/<[^>]*>/g, '').trim() : '',
-                image: brand.image
-                    ? {
-                          id: brand.image.id,
-                          source_url: brand.image.src
-                      }
-                    : undefined,
-                meta: {
-                    logo_url:
-                        brand.image?.src || `/images/brands/${brand.slug}.svg`,
-                    website: brand.meta?.website || '',
-                    featured: brand.meta?.featured || false
-                }
+                image: brand.image ? { id: brand.image.id, src: brand.image.src } : null,
+                count: brand.count ?? 0
             }))
 
             console.log(
                 '🔄 Marcas transformadas:',
-                transformedBrands.map((b: any) => ({
-                    name: b.name,
-                    hasImage: !!b.image
-                }))
+                transformedBrands.map((b) => ({ name: b.name, hasImage: !!b.image }))
             )
             return transformedBrands
         } catch (error) {
@@ -124,9 +75,8 @@ class BrandsService {
             name: wpBrand.name,
             slug: wpBrand.slug,
             description: wpBrand.description ? wpBrand.description.replace(/<[^>]*>/g, '').trim() : '',
-            logo: wpBrand.image?.source_url || wpBrand.meta?.logo_url,
-            website: wpBrand.meta?.website,
-            featured: wpBrand.meta?.featured || false
+            image: wpBrand.image?.src || null,
+            count: wpBrand.count ?? 0
         }
     }
 
@@ -208,20 +158,16 @@ class BrandsService {
     }
 
     // Create or update brand in WordPress
-    async createOrUpdateBrand(brand: Omit<Brand, 'id'>): Promise<Brand | null> {
+    async createOrUpdateBrand(brand: Omit<Brand, 'id' | 'count'>): Promise<Brand | null> {
         try {
             const brandData = {
                 title: brand.name,
                 slug: brand.slug,
                 status: 'publish',
-                meta: {
-                    logo_url: brand.logo,
-                    website: brand.website,
-                    featured: brand.featured
-                }
+                description: brand.description
             }
 
-            const response = await this.wpApi.post('/brands', brandData)
+            const response = await this.wpApi.post<WordPressBrand>('/brands', brandData)
             return this.convertWordPressBrandToBrand(response.data)
         } catch (error) {
             console.error('Erro ao criar/atualizar marca:', error)
