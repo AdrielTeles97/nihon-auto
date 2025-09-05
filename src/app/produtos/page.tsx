@@ -19,7 +19,7 @@ export default function ProdutosPage() {
             <Link href="/" className="text-red-600 hover:underline">
               Início
             </Link>
-            <span className="mx-2">></span>
+            <span className="mx-2">{'>'}</span>
             <span>Produtos</span>
           </nav>
 
@@ -30,4 +30,3 @@ export default function ProdutosPage() {
     </div>
   )
 }
-
