@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ShoppingCart, Eye } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const products = [
     {
@@ -107,14 +108,15 @@ export function ProductsSection() {
                             className="group hover:shadow-lg transition-all duration-300 border-border/50"
                         >
                             <CardHeader className="p-0">
-                                <div className="relative overflow-hidden rounded-t-lg">
-                                    <img
-                                        src={
-                                            product.image || '/images/placeholder-product.svg'
-                                        }
+                                <div className="relative overflow-hidden rounded-t-lg h-48">
+                                    <Image
+                                        src={product.image || '/images/placeholder-product.svg'}
                                         alt={product.name}
-                                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                                    />
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        priority={false}
+                                      />
                                     {product.featured && (
                                         <Badge className="absolute top-3 left-3 bg-accent">
                                             Destaque
