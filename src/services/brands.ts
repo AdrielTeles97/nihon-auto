@@ -100,9 +100,9 @@ class BrandsService {
                 if (matchingBrand) {
                     return {
                         ...supplier,
-                        logo: matchingBrand.logo || supplier.logo,
-                        website: matchingBrand.website || supplier.website,
-                        featured: matchingBrand.featured
+                        logo: matchingBrand.image || supplier.logo,
+                        website: supplier.website,
+                        featured: supplier.featured
                     }
                 }
 
@@ -141,7 +141,7 @@ class BrandsService {
                     const converted = this.convertWordPressBrandToBrand(wpBrand)
                     console.log(
                         `🔄 Convertendo marca: ${wpBrand.name} -> Logo: ${
-                            converted.logo || 'SEM LOGO'
+                            converted.image || 'SEM LOGO'
                         }`
                     )
                     return converted

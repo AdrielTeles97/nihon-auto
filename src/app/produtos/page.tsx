@@ -2,6 +2,15 @@ import Link from 'next/link'
 import { HeroHeader } from '@/components/layout/Header'
 import { ProductsGrid } from '@/components/products-grid'
 import { Footer } from '@/components/layout/Footer'
+import { Suspense } from 'react'
+
+function ProductsGridWrapper() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-8">Carregando produtos...</div>}>
+      <ProductsGrid />
+    </Suspense>
+  )
+}
 
 export default function ProdutosPage() {
   return (
@@ -23,7 +32,7 @@ export default function ProdutosPage() {
             <span>Produtos</span>
           </nav>
 
-          <ProductsGrid />
+          <ProductsGridWrapper />
         </div>
       </main>
       <Footer />

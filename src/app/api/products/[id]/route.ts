@@ -27,10 +27,10 @@ function mapProduct(p: WCProduct): Product {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id
+    const { id } = await context.params
     const data = await cached(
       ['wc:product', id],
       async () => {
