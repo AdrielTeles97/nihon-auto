@@ -18,6 +18,8 @@ import axios from 'axios'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/products'
 import type { Category } from '@/types/categories'
+import { useCart } from '@/contexts/cart-context'
+import type { Product as CartProduct } from '@/types'
 
 interface ProductsApiResponse {
     success: boolean
@@ -37,15 +39,59 @@ interface CategoriesApiResponse {
     totalPages: number
 }
 
+// Função para converter produto da API para o formato do carrinho
+function toCartProduct(product: Product): CartProduct {
+    return {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        short_description: product.shortDescription,
+        price: 0,
+        image: product.image || '/images/placeholder-product.svg',
+        category: product.categories[0]?.name || '',
+        brand: product.brands[0]?.name,
+        inStock: true,
+        slug: product.slug,
+        gallery: product.gallery,
+        specifications: undefined,
+        customFields: { code: product.code ?? null }
+    }
+}
+
 // Componente para o header de um produto no bento grid
 function ProductHeader({ product }: { product: Product }) {
+    const { addItem } = useCart()
+    const [isAdding, setIsAdding] = useState(false)
+
+    const handleAddToCart = async (e: React.MouseEvent) => {
+        e.preventDefault() // Impede a navegação do Link
+        e.stopPropagation() // Impede a propagação do evento
+
+        setIsAdding(true)
+        try {
+            addItem(toCartProduct(product), 1)
+
+            // Feedback visual
+            setTimeout(() => setIsAdding(false), 1000)
+        } catch (error) {
+            console.error('Erro ao adicionar produto ao carrinho:', error)
+            setIsAdding(false)
+        }
+    }
+
+    const handleViewProduct = (e: React.MouseEvent) => {
+        e.preventDefault() // Impede a navegação do Link
+        e.stopPropagation() // Impede a propagação do evento
+        window.open(`/produtos/${product.id}`, '_blank')
+    }
+
     return (
         <div className="relative overflow-hidden rounded-lg h-48">
             <Image
                 src={product.image || '/images/placeholder-product.svg'}
                 alt={product.name}
                 fill
-                className="object-cover transition-transform duration-300 group-hover/bento:scale-105"
+                className="object-contain transition-transform duration-300 group-hover/bento:scale-105"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/bento:opacity-100 transition-opacity duration-300" />
@@ -55,14 +101,39 @@ function ProductHeader({ product }: { product: Product }) {
                         size="sm"
                         variant="secondary"
                         className="h-8 w-8 p-0"
+                        onClick={handleViewProduct}
+                        title="Ver produto"
                     >
                         <Eye className="h-3 w-3" />
                     </Button>
-                    <Button size="sm" className="h-8 w-8 p-0">
-                        <ShoppingCart className="h-3 w-3" />
+                    <Button
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={handleAddToCart}
+                        disabled={isAdding}
+                        title={
+                            isAdding
+                                ? 'Adicionando...'
+                                : 'Adicionar ao carrinho'
+                        }
+                    >
+                        {isAdding ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                            <ShoppingCart className="h-3 w-3" />
+                        )}
                     </Button>
                 </div>
             </div>
+
+            {/* Feedback visual quando produto é adicionado */}
+            {isAdding && (
+                <div className="absolute inset-0 bg-green-600/80 flex items-center justify-center rounded-lg">
+                    <div className="text-white text-sm font-medium">
+                        Adicionado!
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
