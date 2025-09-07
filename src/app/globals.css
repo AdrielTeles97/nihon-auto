@@ -410,3 +410,32 @@ p {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--primary) / 0.3) hsl(var(--border) / 0.2);
 }
+
+/* ===== Product description rich content ===== */
+.product-description img {
+    max-width: 100%;
+    height: auto;
+}
+.product-description table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.product-description table th,
+.product-description table td {
+    border: 1px solid #e5e7eb; /* gray-200 */
+    padding: 0.5rem;
+}
+.product-description .video-responsive {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.product-description .video-responsive iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}

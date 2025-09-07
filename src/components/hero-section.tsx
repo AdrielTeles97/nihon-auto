@@ -14,13 +14,16 @@ export default function HeroSection() {
     const slides = [
         {
             src: '/images/nihon-hero-2.png',
+            alt: 'Nihon Auto Hero Image 2',
             showButtons: true
         },
         {
             src: '/images/nihon-hero-4.png',
+            alt: 'Nihon Auto Hero Image 4'
         },
         {
             src: '/images/nihon-hero-3.jpeg',
+            alt: 'Nihon Auto Hero Image 3'
             // Este slide não tem texto - apenas imagem
         }
     ]
@@ -64,7 +67,7 @@ export default function HeroSection() {
                             >
                                 <Image
                                     src={slide.src}
-                                    alt={slide.alt}
+                                    alt={(slide as any).alt || 'Banner'}
                                     fill
                                     className="object-cover object-center"
                                     priority={index === 0}

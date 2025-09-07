@@ -6,8 +6,10 @@ import { cached, cacheHeaders, normalizeCSV } from '@/lib/cache'
 
 assertWooConfig()
 
-const stripHtml = (html: string | undefined) =>
-  (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+// Mantemos o HTML vindo do WooCommerce e tratamos no frontend com sanitização
+const keepHtml = (html: string | undefined) => (html || '')
+// Para a breve descrição, mantemos apenas texto simples
+const stripToText = (html: string | undefined) => (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
 
 type OrderBy = 'date' | 'id' | 'include' | 'title' | 'slug' | 'price' | 'popularity' | 'rating'
 type Order = 'asc' | 'desc'
@@ -105,13 +107,15 @@ export async function GET(request: NextRequest) {
       id: p.id,
       name: p.name,
       slug: p.slug,
-      description: stripHtml(p.description),
-      shortDescription: stripHtml(p.short_description),
+      description: keepHtml(p.description),
+      shortDescription: stripToText(p.short_description),
       code: extractProductCodeFromWC(p),
       image: p.images?.[0]?.src || null,
       gallery: (p.images || []).map((img) => img.src),
       categories: (p.categories || []).map((c) => ({ id: c.id, name: c.name, slug: c.slug })),
-      brands: (p.brands || []).map((b) => ({ id: b.id, name: b.name, slug: b.slug }))
+      brands: (p.brands || []).map((b) => ({ id: b.id, name: b.name, slug: b.slug })),
+      type: p.type,
+      attributes: (p.attributes || []).map(a => ({ name: a.name, options: a.options || [], variation: !!a.variation }))
     }))
 
     // Slugs pós-processados, caso a API não filtre por slug

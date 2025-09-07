@@ -98,8 +98,8 @@ export default function ANihonPage() {
                 className="order-1 md:order-2"
               >
                 <Image
-                  src="https://images.unsplash.com/photo-1530099486328-e021101a494a?q=80&w=1600&auto=format&fit=crop"
-                  alt="Equipe Nihon em ação"
+                  src="/images/nihon-hero-2.png"
+                  alt="Equipe Nihon em ação 2"
                   width={1200}
                   height={900}
                   className="rounded-[var(--radius)] grayscale object-cover shadow-md"

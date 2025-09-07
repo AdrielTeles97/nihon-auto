@@ -36,9 +36,23 @@ export interface WCProduct {
   description: string
   short_description?: string
   sku?: string
+  type?: string
   images?: WCProductImage[]
   categories?: WCProductCategoryRef[]
   brands?: WCProductBrandRef[]
+  attributes?: {
+    id?: number
+    name: string
+    position?: number
+    visible?: boolean
+    variation?: boolean
+    options?: string[]
+  }[]
+  default_attributes?: {
+    id?: number
+    name: string
+    option: string
+  }[]
   meta_data?: WCProductMetaData[]
 }
 
@@ -53,6 +67,17 @@ export interface Product {
   gallery: string[]
   categories: Pick<Category, 'id' | 'name' | 'slug'>[]
   brands: Pick<Brand, 'id' | 'name' | 'slug'>[]
+  type?: string
+  attributes?: { name: string; options: string[]; variation?: boolean }[]
+  defaultAttributes?: Record<string, string>
+  variations?: Array<{
+    id: number
+    sku?: string
+    image?: string | null
+    inStock?: boolean
+    price?: number | null
+    attributes: Record<string, string>
+  }>
 }
 
 // Utilitário: extrai o código do produto dando preferência ao SKU

@@ -5,10 +5,10 @@ import { CartProvider } from "@/contexts/cart-context";
 
 
 export const metadata: Metadata = {
-  title: "Nihon Auto Center - Catálogo Virtual",
+  title: "Nihon Acessórios automotivos - Catálogo Virtual",
   description:
-    "Catálogo virtual de produtos automotivos da Nihon Auto Center. Encontre as melhores peças e acessórios para seu veículo.",
-  keywords: "nihon auto, produtos automotivos, peças, acessórios, catálogo",
+    "Catálogo virtual de produtos automotivos da Nihon Acessórios Automotivos. Encontre as melhores peças e acessórios para seu veículo.",
+  keywords: "nihon peças e acessórios automotivos, produtos automotivos, peças, acessórios, catálogo",
 };
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });

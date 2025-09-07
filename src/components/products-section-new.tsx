@@ -400,7 +400,7 @@ export function ProductsSection() {
                             priority
                         />
                         {/* Overlay sutil para melhor legibilidade */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+                        {/* <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" /> */}
                     </div>
 
                     {/* Linha decorativa */}
@@ -581,8 +581,6 @@ export function ProductsSection() {
                                 className="object-cover"
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                             />
-                            {/* Overlay sutil para melhor legibilidade */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
                         </div>
 
                         {/* Linha decorativa */}
@@ -607,7 +605,7 @@ export function ProductsSection() {
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                             />
                             {/* Overlay sutil para melhor legibilidade */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+                            {/* <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" /> */}
                         </div>
 
                         {/* Linha decorativa */}
