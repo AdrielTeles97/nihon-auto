@@ -53,7 +53,7 @@ export function CallToActionSection() {
                             size="lg"
                             className="bg-red-600 hover:bg-red-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg"
                         >
-                            Explorar Produtos
+                            <span className="text-white">Explorar Produtos</span>
                             <ArrowRight className="ml-2 w-5 h-5" />
                         </Button>
                     </Link>
@@ -62,10 +62,10 @@ export function CallToActionSection() {
                         <Button
                             size="lg"
                             variant="outline"
-                            className="border-white/30 text-white hover:bg-white hover:text-neutral-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg backdrop-blur-sm"
+                            className="group border-white/50 text-white hover:bg-white hover:border-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg backdrop-blur-sm bg-transparent"
                         >
-                            Fazer Orçamento
-                            <MessageCircle className="ml-2 w-5 h-5" />
+                            <span className="text-white group-hover:text-neutral-900 transition-colors">Fazer Orçamento</span>
+                            <MessageCircle className="ml-2 w-5 h-5 text-white group-hover:text-neutral-900 transition-colors" />
                         </Button>
                     </Link>
                 </div>
@@ -78,10 +78,10 @@ export function CallToActionSection() {
                     <div className="flex items-center justify-center gap-3 p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
                         <Phone className="w-6 h-6 text-red-400" />
                         <div className="text-left">
-                            <div className="text-sm text-neutral-400">
+                            <div className="text-sm text-gray-300">
                                 Ligue agora
                             </div>
-                            <div className="font-semibold">
+                            <div className="font-semibold text-white">
                                 (91) 9 8233-7100
                             </div>
                         </div>
@@ -90,10 +90,10 @@ export function CallToActionSection() {
                     <div className="flex items-center justify-center gap-3 p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
                         <MessageCircle className="w-6 h-6 text-red-400" />
                         <div className="text-left">
-                            <div className="text-sm text-neutral-400">
+                            <div className="text-sm text-gray-300">
                                 WhatsApp
                             </div>
-                            <div className="font-semibold">
+                            <div className="font-semibold text-white">
                                 Atendimento rápido
                             </div>
                         </div>
@@ -102,10 +102,10 @@ export function CallToActionSection() {
                     <div className="flex items-center justify-center gap-3 p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
                         <Mail className="w-6 h-6 text-red-400" />
                         <div className="text-left">
-                            <div className="text-sm text-neutral-400">
+                            <div className="text-sm text-gray-300">
                                 E-mail
                             </div>
-                            <div className="font-semibold">Suporte 24/7</div>
+                            <div className="font-semibold text-white">Suporte 24/7</div>
                         </div>
                     </div>
                 </div>

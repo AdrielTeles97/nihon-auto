@@ -1,7 +1,7 @@
 import React from 'react'
-import { Clock, Truck, Shield, Award, Users, Star } from 'lucide-react'
+import { Truck, Shield, Award } from 'lucide-react'
 import { DividerLines } from '@/components/ui/divider-lines'
-import { NoiseBackground, DecorativeShape } from '@/components/ui/noise-shapes'
+import { NoiseBackground } from '@/components/ui/noise-shapes'
 import { SectionTitle, EmphasisText } from '@/components/ui/emphasis-text'
 
 const differentials = [
@@ -17,160 +17,248 @@ const differentials = [
         description: 'Produtos originais com garantia de fábrica e certificação'
     },
     {
-        icon: Clock,
-        title: 'Atendimento 24/7',
-        description:
-            'Suporte especializado sempre disponível para auxiliar você'
-    },
-    {
         icon: Award,
         title: 'Melhor Preço',
         description:
             'Preços competitivos e condições especiais para grandes volumes'
-    },
-    {
-        icon: Users,
-        title: 'Equipe Especializada',
-        description: 'Profissionais experientes em peças automotivas japonesas'
-    },
-    {
-        icon: Star,
-        title: 'Excelência',
-        description: 'Mais de 10 anos de experiência no mercado automotivo'
     }
 ]
 
 export function WhyChooseSection() {
     return (
-        <section className="relative py-24 overflow-hidden bg-neutral-50">
-            {/* Background com noise */}
-            <NoiseBackground intensity="medium" color="neutral" />
+        <section className="relative py-32 overflow-hidden bg-gradient-to-br from-neutral-900 via-neutral-800 to-red-900/20">
+            {/* Background complexo com múltiplas camadas */}
+            <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-neutral-900/60 to-red-950/40" />
+            <NoiseBackground intensity="strong" color="white" />
 
-            {/* Shapes decorativas */}
-            <DecorativeShape
-                variant="circle"
-                color="red"
-                size="lg"
-                className="top-20 -right-32"
-            />
-            <DecorativeShape
-                variant="rectangle"
-                color="neutral"
-                size="md"
-                className="bottom-10 -left-20"
-            />
-
-            {/* Linhas divisórias */}
+            {/* Linhas divisórias com variações */}
             <DividerLines variant="red" />
 
+            {/* Linhas adicionais mais sutis */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-200/20 to-transparent" />
+                <div className="absolute bottom-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-200/20 to-transparent" />
+                <div className="absolute top-0 left-1/3 w-px h-full bg-gradient-to-b from-transparent via-red-100/10 to-transparent opacity-30" />
+                <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-red-100/10 to-transparent opacity-30" />
+            </div>
+
             <div className="relative container mx-auto px-4">
-                {/* Título da seção */}
-                <div className="text-center mb-16">
-                    <div className="relative bg-background/40 backdrop-blur-sm border border-border/30 rounded-2xl p-6 lg:p-8">
-                        <SectionTitle
-                            title="Por que escolher a"
-                            emphasis="Nihon Auto?"
-                            subtitle="Nossos diferenciais que garantem a melhor experiência para você e seu veículo"
+                {/* Título da seção com mais estilo */}
+                <div className="text-center mb-20">
+                    <div className="relative bg-gradient-to-br from-white/10 via-neutral-900/20 to-white/5 backdrop-blur-sm border border-white/20 rounded-3xl p-8 lg:p-12 shadow-2xl shadow-black/50">
+                        <NoiseBackground
+                            intensity="light"
+                            color="neutral"
+                            className="rounded-3xl"
                         />
+
+                        {/* Glow effect mais sutil */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent rounded-3xl blur-2xl" />
+
+                        {/* Elementos decorativos nos cantos mais sutis */}
+                        <div className="absolute top-4 left-4 w-6 h-6 border-l-2 border-t-2 border-red-400/60 rounded-tl-lg" />
+                        <div className="absolute bottom-4 right-4 w-6 h-6 border-r-2 border-b-2 border-red-400/60 rounded-br-lg" />
+                        <div className="absolute top-4 right-4 w-4 h-4 border-r-1 border-t-1 border-white/30 rounded-tr-md" />
+                        <div className="absolute bottom-4 left-4 w-4 h-4 border-l-1 border-b-1 border-white/30 rounded-bl-md" />
+
+                        <div className="relative z-10">
+                            <SectionTitle
+                                title="Por que escolher a"
+                                emphasis="Nihon Auto?"
+                                subtitle="Nossa experiência e dedicação garantem as melhores soluções em peças automotivas japonesas para seu veículo"
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {/* Grid de diferenciais */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                {/* Espaço para Banner Principal */}
+                {/* Espaço reservado para banner */}
+                <div className="mb-20">
+                    <div className="relative bg-gradient-to-r from-red-600/5 via-transparent to-red-600/5 rounded-2xl p-12 border border-red-500/20">
+                        <div className="text-center">
+                            <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <svg
+                                    className="w-10 h-10 text-red-500/40"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
+                                </svg>
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-4">
+                                <EmphasisText variant="primary">
+                                    Espaço reservado para banner
+                                </EmphasisText>
+                            </h3>
+                            <p className="text-gray-400 max-w-md mx-auto">
+                                Esta área foi preparada para receber o banner
+                                promocional da Nihon Auto
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Grid de diferenciais com layout melhorado */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
                     {differentials.map((item, index) => {
                         const Icon = item.icon
+                        const isHighlighted = index === 0 // Destaque apenas para o primeiro
+
                         return (
                             <div
                                 key={index}
-                                className="group animate-in fade-in slide-in-from-bottom-4"
+                                className={`group relative ${
+                                    isHighlighted ? 'lg:scale-105' : ''
+                                }`}
                                 style={{ animationDelay: `${index * 0.1}s` }}
                             >
-                                <div className="relative bg-background/60 backdrop-blur-sm border border-border/40 rounded-xl p-6 text-center hover:shadow-lg hover:shadow-red-500/5 transition-all duration-300 hover:border-red-500/30 h-full">
-                                    {/* Noise background sutil */}
+                                <div
+                                    className={`relative backdrop-blur-sm border rounded-2xl p-8 text-center transition-all duration-500 hover:scale-105 h-full ${
+                                        isHighlighted
+                                            ? 'bg-gradient-to-br from-red-900/40 to-red-800/20 border-red-400/30 shadow-xl hover:shadow-2xl hover:shadow-red-500/20'
+                                            : 'bg-white/5 border-white/10 hover:bg-white/10 hover:shadow-xl hover:shadow-red-500/10'
+                                    } hover:border-red-400/40`}
+                                >
+                                    {/* Noise background personalizado */}
                                     <NoiseBackground
-                                        intensity="light"
-                                        className="rounded-xl"
+                                        intensity={
+                                            isHighlighted ? 'medium' : 'light'
+                                        }
+                                        color={
+                                            isHighlighted ? 'red' : 'neutral'
+                                        }
+                                        className="rounded-2xl"
                                     />
 
+                                    {/* Indicador de destaque */}
+                                    {isHighlighted && (
+                                        <div className="absolute top-4 right-4 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                                    )}
+
                                     <div className="relative z-10">
-                                        <div className="bg-gradient-to-br from-red-50 to-red-100/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                                            <Icon className="w-8 h-8 text-red-600" />
+                                        <div
+                                            className={`w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 ${
+                                                isHighlighted
+                                                    ? 'bg-gradient-to-br from-red-500 to-red-600 shadow-lg shadow-red-500/25'
+                                                    : 'bg-gradient-to-br from-red-600/80 to-red-500/60'
+                                            }`}
+                                        >
+                                            <Icon className="w-10 h-10 text-white" />
                                         </div>
 
-                                        <h3 className="font-semibold text-lg mb-3">
-                                            <EmphasisText variant="secondary">
+                                        <h3 className="font-bold text-xl mb-4 text-white">
+                                            <EmphasisText
+                                                variant={
+                                                    isHighlighted
+                                                        ? 'accent'
+                                                        : 'secondary'
+                                                }
+                                            >
                                                 {item.title}
                                             </EmphasisText>
                                         </h3>
 
-                                        <p className="text-sm text-muted-foreground leading-relaxed">
+                                        <p className="text-sm text-gray-300 leading-relaxed">
                                             {item.description}
                                         </p>
                                     </div>
+
+                                    {/* Elementos decorativos nos cantos */}
+                                    <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-red-300/30 rounded-tl-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-red-300/30 rounded-br-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
                             </div>
                         )
                     })}
                 </div>
 
-                {/* Estatísticas impressionantes */}
-                <div className="relative bg-gradient-to-r from-red-600/10 via-red-500/5 to-red-400/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-red-200/20">
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-50/50 to-white/30 rounded-2xl" />
-                    <NoiseBackground
-                        intensity="light"
-                        color="red"
-                        className="rounded-2xl"
-                    />
+                {/* Estatísticas impressionantes com design melhorado */}
+                <div className="relative mb-20">
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-red-500/10 to-red-400/20 rounded-3xl blur-xl" />
+                    <div className="relative bg-gradient-to-r from-red-600/10 via-red-500/5 to-red-400/10 backdrop-blur-sm rounded-3xl p-12 md:p-16 border border-red-200/30 shadow-2xl">
+                        <NoiseBackground
+                            intensity="strong"
+                            color="red"
+                            className="rounded-3xl"
+                        />
 
-                    <div className="relative grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                        <div>
-                            <div className="text-3xl md:text-4xl font-bold text-red-600 mb-2">
-                                +10
+                        <div className="relative">
+                            <div className="text-center mb-12">
+                                <h3 className="text-3xl font-bold mb-4">
+                                    Números que{' '}
+                                    <EmphasisText>comprovam</EmphasisText> nossa
+                                    excelência
+                                </h3>
+                                <p className="text-gray-300 max-w-2xl mx-auto">
+                                    Resultados conquistados através de anos de
+                                    dedicação e compromisso com a qualidade
+                                </p>
                             </div>
-                            <div className="text-sm text-muted-foreground">
-                                Anos de experiência
-                            </div>
-                        </div>
-                        <div>
-                            <div className="text-3xl md:text-4xl font-bold text-red-600 mb-2">
-                                5K+
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                Produtos disponíveis
-                            </div>
-                        </div>
-                        <div>
-                            <div className="text-3xl md:text-4xl font-bold text-red-600 mb-2">
-                                98%
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                Satisfação dos clientes
-                            </div>
-                        </div>
-                        <div>
-                            <div className="text-3xl md:text-4xl font-bold text-red-600 mb-2">
-                                24h
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                Suporte disponível
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                                <div className="relative group">
+                                    <div className="absolute inset-0 bg-red-500/10 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative bg-background/60 backdrop-blur-sm border border-red-200/30 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                                        <div className="text-4xl md:text-5xl font-bold text-red-600 mb-3">
+                                            +10
+                                        </div>
+                                        <div className="text-sm font-medium text-gray-300">
+                                            Anos de experiência
+                                        </div>
+                                        <div className="mt-2 text-xs text-red-500/70">
+                                            Desde 2014
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="relative group">
+                                    <div className="absolute inset-0 bg-red-500/10 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative bg-background/60 backdrop-blur-sm border border-red-200/30 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                                        <div className="text-4xl md:text-5xl font-bold text-red-600 mb-3">
+                                            5K+
+                                        </div>
+                                        <div className="text-sm font-medium text-gray-300">
+                                            Produtos disponíveis
+                                        </div>
+                                        <div className="mt-2 text-xs text-red-500/70">
+                                            Sempre em estoque
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="relative group">
+                                    <div className="absolute inset-0 bg-red-500/10 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative bg-background/60 backdrop-blur-sm border border-red-200/30 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                                        <div className="text-4xl md:text-5xl font-bold text-red-600 mb-3">
+                                            98%
+                                        </div>
+                                        <div className="text-sm font-medium text-gray-300">
+                                            Satisfação dos clientes
+                                        </div>
+                                        <div className="mt-2 text-xs text-red-500/70">
+                                            Avaliação média
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="relative group">
+                                    <div className="absolute inset-0 bg-red-500/10 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative bg-background/60 backdrop-blur-sm border border-red-200/30 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                                        <div className="text-4xl md:text-5xl font-bold text-red-600 mb-3">
+                                            24h
+                                        </div>
+                                        <div className="text-sm font-medium text-gray-300">
+                                            Suporte disponível
+                                        </div>
+                                        <div className="mt-2 text-xs text-red-500/70">
+                                            Todos os dias
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            {/* Shape SVG no final */}
-            <div className="absolute bottom-0 left-0 w-full overflow-hidden">
-                <svg
-                    viewBox="0 0 1200 120"
-                    preserveAspectRatio="none"
-                    className="relative block w-full h-16"
-                >
-                    <path
-                        d="M1200,0H0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05C827.58,32.17,886.67,4.24,951.2,4.24Z"
-                        className="fill-background"
-                    />
-                </svg>
             </div>
         </section>
     )
