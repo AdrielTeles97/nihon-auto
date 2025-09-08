@@ -15,19 +15,19 @@ import { EmphasisText } from '@/components/ui/emphasis-text'
 
 // Custom debounce hook
 const useDebounce = (value: string, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = useState(value)
+    const [debouncedValue, setDebouncedValue] = useState(value)
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value)
+        }, delay)
 
-    return () => {
-      clearTimeout(handler)
-    }
-  }, [value, delay])
+        return () => {
+            clearTimeout(handler)
+        }
+    }, [value, delay])
 
-  return debouncedValue
+    return debouncedValue
 }
 
 interface BrandsApiResponse {
@@ -63,7 +63,7 @@ export default function MarcasPage() {
         const fetchBrands = async () => {
             try {
                 setSearchLoading(true)
-                
+
                 console.log('Buscando marcas...')
                 const response = await axios.get<BrandsApiResponse>(
                     '/api/brands',
@@ -140,11 +140,11 @@ export default function MarcasPage() {
     return (
         <div className="min-h-screen bg-background">
             <HeroHeader />
-            
+
             {/* Nova seção Hero moderna */}
             <section className="relative py-32 overflow-hidden bg-gradient-to-br from-zinc-900 via-black to-red-950">
                 {/* Background com noise */}
-                <div 
+                <div
                     className="absolute inset-0 opacity-30"
                     style={{
                         backgroundImage: `url('/noise.svg')`,
@@ -168,21 +168,29 @@ export default function MarcasPage() {
                     <div className="text-center">
                         <div className="inline-flex items-center gap-2 bg-red-600/30 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-red-500/50">
                             <Package className="h-4 w-4 text-red-400" />
-                            <span className="text-red-100 text-sm font-medium">Nossas Marcas Parceiras</span>
+                            <span className="text-red-100 text-sm font-medium">
+                                Nossas Marcas Parceiras
+                            </span>
                         </div>
-                        
+
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
                             <EmphasisText>Marcas</EmphasisText> Parceiras
                         </h1>
-                        
+
                         <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-                            Trabalhamos com as principais marcas do mercado automotivo, oferecendo 
-                            produtos de qualidade e confiança para o seu veículo.
+                            Trabalhamos com as principais marcas do mercado
+                            automotivo, oferecendo produtos de qualidade e
+                            confiança para o seu veículo.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <Badge variant="secondary" className="text-lg px-4 py-2 bg-red-600/30 backdrop-blur-sm text-white border-red-500/50 hover:bg-red-600/30 cursor-default">
-                                {totalBrands > 0 ? `${totalBrands} Marcas Disponíveis` : 'Carregando marcas...'}
+                            <Badge
+                                variant="secondary"
+                                className="text-lg px-4 py-2 bg-red-600/30 backdrop-blur-sm text-white border-red-500/50 hover:bg-red-600/30 cursor-default"
+                            >
+                                {totalBrands > 0
+                                    ? `${totalBrands} Marcas Disponíveis`
+                                    : 'Carregando marcas...'}
                             </Badge>
                         </div>
                     </div>
@@ -223,7 +231,7 @@ export default function MarcasPage() {
                                 onChange={e => handleSearch(e.target.value)}
                                 className="w-full pl-10 pr-12 py-3 bg-background/80 backdrop-blur-sm border border-border/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300"
                             />
-                            
+
                             {/* Botão de limpar busca */}
                             {searchTerm && (
                                 <button
@@ -233,7 +241,7 @@ export default function MarcasPage() {
                                     <X className="h-3 w-3 text-gray-600" />
                                 </button>
                             )}
-                            
+
                             {/* Indicador de loading da busca */}
                             {searchLoading && (
                                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -246,20 +254,28 @@ export default function MarcasPage() {
                         <div className="mt-4 text-center">
                             {searchQuery && (
                                 <div className="mb-2">
-                                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                                        Buscando por: &ldquo;{searchQuery}&rdquo;
+                                    <Badge
+                                        variant="outline"
+                                        className="bg-primary/10 text-primary border-primary/20"
+                                    >
+                                        Buscando por: &ldquo;{searchQuery}
+                                        &rdquo;
                                     </Badge>
                                 </div>
                             )}
-                            
+
                             <Badge
                                 variant="outline"
                                 className="bg-background/50 backdrop-blur-sm"
                             >
                                 {loading || searchLoading
                                     ? 'Carregando...'
-                                    : searchQuery 
-                                    ? `${totalBrands} marca${totalBrands !== 1 ? 's' : ''} encontrada${totalBrands !== 1 ? 's' : ''}`
+                                    : searchQuery
+                                    ? `${totalBrands} marca${
+                                          totalBrands !== 1 ? 's' : ''
+                                      } encontrada${
+                                          totalBrands !== 1 ? 's' : ''
+                                      }`
                                     : `${totalBrands} marcas disponíveis`}
                             </Badge>
                         </div>
@@ -269,7 +285,9 @@ export default function MarcasPage() {
                     {loading ? (
                         <div className="flex justify-center items-center py-12">
                             <Loader2 className="h-8 w-8 animate-spin text-primary mr-3" />
-                            <span className="text-muted-foreground">Carregando marcas...</span>
+                            <span className="text-muted-foreground">
+                                Carregando marcas...
+                            </span>
                         </div>
                     ) : filteredBrands.length === 0 ? (
                         <div className="text-center py-12">
@@ -281,10 +299,12 @@ export default function MarcasPage() {
                                             Nenhuma marca encontrada
                                         </h3>
                                         <p className="text-muted-foreground mb-4">
-                                            Não encontramos nenhuma marca que corresponda à sua busca por &ldquo;{searchQuery}&rdquo;.
+                                            Não encontramos nenhuma marca que
+                                            corresponda à sua busca por &ldquo;
+                                            {searchQuery}&rdquo;.
                                         </p>
-                                        <Button 
-                                            variant="outline" 
+                                        <Button
+                                            variant="outline"
                                             onClick={clearSearch}
                                             className="text-primary border-primary hover:bg-primary/10"
                                         >
@@ -297,7 +317,8 @@ export default function MarcasPage() {
                                             Nenhuma marca disponível
                                         </h3>
                                         <p className="text-muted-foreground">
-                                            Não há marcas com produtos cadastrados no momento.
+                                            Não há marcas com produtos
+                                            cadastrados no momento.
                                         </p>
                                     </>
                                 )}

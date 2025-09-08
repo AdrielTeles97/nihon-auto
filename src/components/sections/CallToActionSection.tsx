@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -19,8 +19,10 @@ Por favor, me envie informações sobre:
 - Prazos de entrega
 
 Obrigado!`
-        
-        const whatsappUrl = `https://wa.me/${nihonNumber}?text=${encodeURIComponent(message)}`
+
+        const whatsappUrl = `https://wa.me/${nihonNumber}?text=${encodeURIComponent(
+            message
+        )}`
         window.open(whatsappUrl, '_blank')
     }
 

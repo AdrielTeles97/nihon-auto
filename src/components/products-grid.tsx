@@ -380,7 +380,9 @@ export function ProductsGrid() {
                                         variant="outline"
                                         size="sm"
                                         className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent mb-4 cursor-pointer"
-                                        onClick={() => handleRequestQuote(product)}
+                                        onClick={() =>
+                                            handleRequestQuote(product)
+                                        }
                                     >
                                         Orçamento
                                     </Button>

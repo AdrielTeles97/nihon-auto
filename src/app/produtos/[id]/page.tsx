@@ -1,4 +1,4 @@
-﻿"use client"
+﻿'use client'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -14,236 +14,344 @@ import type { Product as CartProduct } from '@/types'
 import { getWhatsAppQuoteUrl } from '@/lib/whatsapp'
 
 function toCartProduct(p: APIProduct): CartProduct {
-  return {
-    id: p.id,
-    name: p.name,
-    description: p.description,
-    short_description: p.shortDescription,
-    price: 0,
-    image: p.image || '/images/placeholder-product.svg',
-    category: p.categories[0]?.name || '',
-    brand: p.brands[0]?.name,
-    inStock: true,
-    slug: p.slug,
-    gallery: p.gallery,
-    specifications: undefined,
-    customFields: { code: p.code ?? null }
-  }
+    return {
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        short_description: p.shortDescription,
+        price: 0,
+        image: p.image || '/images/placeholder-product.svg',
+        category: p.categories[0]?.name || '',
+        brand: p.brands[0]?.name,
+        inStock: true,
+        slug: p.slug,
+        gallery: p.gallery,
+        specifications: undefined,
+        customFields: { code: p.code ?? null }
+    }
 }
 
 export default function ProductPage() {
-  const router = useRouter()
-  const params = useParams<{ id: string }>()
-  const { addItem } = useCart()
+    const router = useRouter()
+    const params = useParams<{ id: string }>()
+    const { addItem } = useCart()
 
-  const [product, setProduct] = useState<APIProduct | null>(null)
-  const [notFound, setNotFound] = useState(false)
-  const [activeIdx, setActiveIdx] = useState(0)
-  const [selectedAttrs, setSelectedAttrs] = useState<Record<string, string>>({})
+    const [product, setProduct] = useState<APIProduct | null>(null)
+    const [notFound, setNotFound] = useState(false)
+    const [activeIdx, setActiveIdx] = useState(0)
+    const [selectedAttrs, setSelectedAttrs] = useState<Record<string, string>>(
+        {}
+    )
 
-  useEffect(() => {
-    let ignore = false
-    const load = async () => {
-      try {
-        const res = await fetch(`/api/products/${params.id}`)
-        if (res.status === 404) { if (!ignore) setNotFound(true); return }
-        const json = await res.json()
-        if (!ignore) {
-          const p: APIProduct = json.data
-          setProduct(p)
-          // Inicializa seleção de variações
-          const defaults: Record<string, string> = {}
-          ;(p.attributes || []).filter(a => a.variation && (a.options || []).length).forEach(a => {
-            const key = (a.name || '').toLowerCase()
-            const def = p.defaultAttributes?.[key]
-            defaults[key] = def || (a.options?.[0] || '')
-          })
-          setSelectedAttrs(defaults)
-          setActiveIdx(0)
+    useEffect(() => {
+        let ignore = false
+        const load = async () => {
+            try {
+                const res = await fetch(`/api/products/${params.id}`)
+                if (res.status === 404) {
+                    if (!ignore) setNotFound(true)
+                    return
+                }
+                const json = await res.json()
+                if (!ignore) {
+                    const p: APIProduct = json.data
+                    setProduct(p)
+                    // Inicializa seleção de variações
+                    const defaults: Record<string, string> = {}
+                    ;(p.attributes || [])
+                        .filter(a => a.variation && (a.options || []).length)
+                        .forEach(a => {
+                            const key = (a.name || '').toLowerCase()
+                            const def = p.defaultAttributes?.[key]
+                            defaults[key] = def || a.options?.[0] || ''
+                        })
+                    setSelectedAttrs(defaults)
+                    setActiveIdx(0)
+                }
+            } catch {
+                if (!ignore) setNotFound(true)
+            }
         }
-      } catch { if (!ignore) setNotFound(true) }
+        load()
+        return () => {
+            ignore = true
+        }
+    }, [params.id])
+
+    const currentVariation = useMemo(() => {
+        if (!product?.variations?.length) return null
+        const keys = Object.keys(selectedAttrs)
+        const match = product.variations.find(v =>
+            keys.every(
+                k =>
+                    (v.attributes?.[k] || '').toLowerCase() ===
+                    (selectedAttrs[k] || '').toLowerCase()
+            )
+        )
+        return match || null
+    }, [product, selectedAttrs])
+
+    // Galeria exibida: imagem da variação (se houver) + galeria do produto sem duplicar
+    const displayedGallery = useMemo(() => {
+        const base = product?.gallery || []
+        const varImg = currentVariation?.image || null
+        if (!varImg) return base
+        const dedup = base.filter(g => g !== varImg)
+        return [varImg, ...dedup]
+    }, [product?.gallery, currentVariation?.image])
+
+    // Sempre que a variação muda, reseta o índice para a primeira imagem
+    useEffect(() => {
+        setActiveIdx(0)
+    }, [currentVariation?.id])
+
+    const addToCartAndGo = () => {
+        if (product) {
+            const item = toCartProduct(product)
+            if (currentVariation) {
+                const attrs = Object.entries(currentVariation.attributes)
+                    .map(([k, v]) => `${k}: ${v}`)
+                    .join(', ')
+                item.name = `${item.name} (${attrs})`
+                item.image = currentVariation.image || item.image
+                item.customFields = {
+                    ...(item.customFields || {}),
+                    code:
+                        currentVariation.sku ||
+                        (item.customFields?.code as string) ||
+                        null
+                }
+            }
+            addItem(item, 1)
+            router.push('/carrinho')
+        }
     }
-    load()
-    return () => { ignore = true }
-  }, [params.id])
 
-  const currentVariation = useMemo(() => {
-    if (!product?.variations?.length) return null
-    const keys = Object.keys(selectedAttrs)
-    const match = product.variations.find(v => keys.every(k => (v.attributes?.[k] || '').toLowerCase() === (selectedAttrs[k] || '').toLowerCase()))
-    return match || null
-  }, [product, selectedAttrs])
+    const handleRequestQuote = () => {
+        if (product) {
+            const productCode = String(
+                currentVariation?.sku ||
+                    product.code ||
+                    product.slug ||
+                    product.id
+            )
+            let productName = product.name
 
-  // Galeria exibida: imagem da variação (se houver) + galeria do produto sem duplicar
-  const displayedGallery = useMemo(() => {
-    const base = product?.gallery || []
-    const varImg = currentVariation?.image || null
-    if (!varImg) return base
-    const dedup = base.filter((g) => g !== varImg)
-    return [varImg, ...dedup]
-  }, [product?.gallery, currentVariation?.image])
+            if (currentVariation) {
+                const attrs = Object.entries(currentVariation.attributes)
+                    .map(([k, v]) => `${k}: ${v}`)
+                    .join(', ')
+                productName = `${productName} (${attrs})`
+            }
 
-  // Sempre que a variação muda, reseta o índice para a primeira imagem
-  useEffect(() => {
-    setActiveIdx(0)
-  }, [currentVariation?.id])
-
-  const addToCartAndGo = () => {
-    if (product) {
-      const item = toCartProduct(product)
-      if (currentVariation) {
-        const attrs = Object.entries(currentVariation.attributes)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join(', ')
-        item.name = `${item.name} (${attrs})`
-        item.image = currentVariation.image || item.image
-        item.customFields = { ...(item.customFields || {}), code: currentVariation.sku || (item.customFields?.code as string) || null }
-      }
-      addItem(item, 1)
-      router.push('/carrinho')
+            const whatsappUrl = getWhatsAppQuoteUrl(productName, productCode)
+            window.open(whatsappUrl, '_blank')
+        }
     }
-  }
 
-  const handleRequestQuote = () => {
-    if (product) {
-      const productCode = String((currentVariation?.sku || product.code) || product.slug || product.id)
-      let productName = product.name
-      
-      if (currentVariation) {
-        const attrs = Object.entries(currentVariation.attributes)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join(', ')
-        productName = `${productName} (${attrs})`
-      }
-      
-      const whatsappUrl = getWhatsAppQuoteUrl(productName, productCode)
-      window.open(whatsappUrl, '_blank')
-    }
-  }
-
-  if (notFound) {
-    return (
-      <div className="min-h-screen bg-background">
-        <HeroHeader />
-        <main className="container mx-auto px-4 py-16">
-          <p className="text-center text-muted-foreground">Produto não encontrado.</p>
-          <div className="text-center mt-6">
-            <Link href="/produtos" className="underline">Voltar aos produtos</Link>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
-  if (!product) {
-    return (
-      <div className="min-h-screen bg-background">
-        <HeroHeader />
-        <main className="container mx-auto px-4 py-16">
-          <p className="text-center text-muted-foreground">Carregando produto...</p>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <HeroHeader />
-      <main className="container mx-auto px-4 pt-24 pb-10 flex-1">
-        <div className="grid gap-8 md:grid-cols-2">
-          <div>
-            <div className="aspect-square rounded-lg bg-gray-50 overflow-hidden">
-              <Image
-                src={displayedGallery?.[activeIdx] || product.image || '/images/placeholder-product.svg'}
-                alt={product.name}
-                width={800}
-                height={800}
-                className="h-full w-full object-contain"
-                unoptimized
-              />
-            </div>
-            {displayedGallery && displayedGallery.length > 0 && (
-              <div className="mt-4 grid grid-cols-5 gap-3">
-                {displayedGallery.map((src, i) => (
-                  <button
-                    key={i}
-                    className={`aspect-square rounded-md bg-gray-50 overflow-hidden border ${i === activeIdx ? 'border-red-600' : 'border-transparent'}`}
-                    onClick={() => setActiveIdx(i)}
-                    aria-label={`Imagem ${i + 1}`}
-                  >
-                    <Image src={src} alt={`${product.name}-${i}`} width={200} height={200} className="h-full w-full object-contain" unoptimized />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-4">
-            <h1 className="text-2xl font-semibold leading-tight">{product.name}</h1>
-            <p className="text-sm text-muted-foreground">Código: {(currentVariation?.sku || product.code) || product.slug || product.id}</p>
-            {product.shortDescription && (
-              <p className="text-sm text-muted-foreground">{product.shortDescription}</p>
-            )}
-            {(product.attributes || []).some(a => a.variation && (a.options || []).length) && (
-              <div className="space-y-3 pt-2">
-                {(product.attributes || []).filter(a => a.variation && (a.options || []).length).map((attr) => {
-                  const key = (attr.name || '').toLowerCase()
-                  const value = selectedAttrs[key] || ''
-                  return (
-                    <div key={key} className="flex items-center gap-3">
-                      <label className="text-sm w-20 shrink-0">{attr.name}:</label>
-                      <select
-                        className="border rounded-md px-2 py-1 text-sm"
-                        value={value}
-                        onChange={(e) => setSelectedAttrs(prev => ({ ...prev, [key]: e.target.value }))}
-                      >
-                        {(attr.options || []).map((opt) => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                      </select>
+    if (notFound) {
+        return (
+            <div className="min-h-screen bg-background">
+                <HeroHeader />
+                <main className="container mx-auto px-4 py-16">
+                    <p className="text-center text-muted-foreground">
+                        Produto não encontrado.
+                    </p>
+                    <div className="text-center mt-6">
+                        <Link href="/produtos" className="underline">
+                            Voltar aos produtos
+                        </Link>
                     </div>
-                  )
-                })}
-              </div>
-            )}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <Button 
-                variant="outline" 
-                className="text-red-600 border-red-600 hover:bg-red-50 gap-2" 
-                onClick={handleRequestQuote}
-              >
-                Solicitar Orçamento
-              </Button>
-              <Button className="gap-2" onClick={addToCartAndGo}>
-                Adicionar ao carrinho
-              </Button>
+                </main>
+                <Footer />
             </div>
-            <div className="pt-2">
-              <Link href="/produtos" className="inline-flex items-center text-sm underline">
-                Voltar aos produtos
-              </Link>
+        )
+    }
+
+    if (!product) {
+        return (
+            <div className="min-h-screen bg-background">
+                <HeroHeader />
+                <main className="container mx-auto px-4 py-16">
+                    <p className="text-center text-muted-foreground">
+                        Carregando produto...
+                    </p>
+                </main>
+                <Footer />
             </div>
+        )
+    }
 
-            {product.description && (
-              <div className="product-description prose prose-sm max-w-none dark:prose-invert mt-6" dangerouslySetInnerHTML={prepareDescription(product.description)} />
-            )}
+    return (
+        <div className="min-h-screen bg-background flex flex-col">
+            <HeroHeader />
+            <main className="container mx-auto px-4 pt-24 pb-10 flex-1">
+                <div className="grid gap-8 md:grid-cols-2">
+                    <div>
+                        <div className="aspect-square rounded-lg bg-gray-50 overflow-hidden">
+                            <Image
+                                src={
+                                    displayedGallery?.[activeIdx] ||
+                                    product.image ||
+                                    '/images/placeholder-product.svg'
+                                }
+                                alt={product.name}
+                                width={800}
+                                height={800}
+                                className="h-full w-full object-contain"
+                                unoptimized
+                            />
+                        </div>
+                        {displayedGallery && displayedGallery.length > 0 && (
+                            <div className="mt-4 grid grid-cols-5 gap-3">
+                                {displayedGallery.map((src, i) => (
+                                    <button
+                                        key={i}
+                                        className={`aspect-square rounded-md bg-gray-50 overflow-hidden border ${
+                                            i === activeIdx
+                                                ? 'border-red-600'
+                                                : 'border-transparent'
+                                        }`}
+                                        onClick={() => setActiveIdx(i)}
+                                        aria-label={`Imagem ${i + 1}`}
+                                    >
+                                        <Image
+                                            src={src}
+                                            alt={`${product.name}-${i}`}
+                                            width={200}
+                                            height={200}
+                                            className="h-full w-full object-contain"
+                                            unoptimized
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-            {(product.categories?.length || product.brands?.length) && (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {product.categories?.map((c) => (
-                  <span key={`c-${c.id}`} className="px-2 py-1 rounded-full bg-gray-100 text-xs">{c.name}</span>
-                ))}
-                {product.brands?.map((b) => (
-                  <span key={`b-${b.id}`} className="px-2 py-1 rounded-full bg-gray-100 text-xs">{b.name}</span>
-                ))}
-              </div>
-            )}
-          </div>
+                    <div className="space-y-4">
+                        <h1 className="text-2xl font-semibold leading-tight">
+                            {product.name}
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Código:{' '}
+                            {currentVariation?.sku ||
+                                product.code ||
+                                product.slug ||
+                                product.id}
+                        </p>
+                        {product.shortDescription && (
+                            <p className="text-sm text-muted-foreground">
+                                {product.shortDescription}
+                            </p>
+                        )}
+                        {(product.attributes || []).some(
+                            a => a.variation && (a.options || []).length
+                        ) && (
+                            <div className="space-y-3 pt-2">
+                                {(product.attributes || [])
+                                    .filter(
+                                        a =>
+                                            a.variation &&
+                                            (a.options || []).length
+                                    )
+                                    .map(attr => {
+                                        const key = (
+                                            attr.name || ''
+                                        ).toLowerCase()
+                                        const value = selectedAttrs[key] || ''
+                                        return (
+                                            <div
+                                                key={key}
+                                                className="flex items-center gap-3"
+                                            >
+                                                <label className="text-sm w-20 shrink-0">
+                                                    {attr.name}:
+                                                </label>
+                                                <select
+                                                    className="border rounded-md px-2 py-1 text-sm"
+                                                    value={value}
+                                                    onChange={e =>
+                                                        setSelectedAttrs(
+                                                            prev => ({
+                                                                ...prev,
+                                                                [key]: e.target
+                                                                    .value
+                                                            })
+                                                        )
+                                                    }
+                                                >
+                                                    {(attr.options || []).map(
+                                                        opt => (
+                                                            <option
+                                                                key={opt}
+                                                                value={opt}
+                                                            >
+                                                                {opt}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </div>
+                                        )
+                                    })}
+                            </div>
+                        )}
+                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                            <Button
+                                variant="outline"
+                                className="text-red-600 border-red-600 hover:bg-red-50 gap-2"
+                                onClick={handleRequestQuote}
+                            >
+                                Solicitar Orçamento
+                            </Button>
+                            <Button className="gap-2" onClick={addToCartAndGo}>
+                                Adicionar ao carrinho
+                            </Button>
+                        </div>
+                        <div className="pt-2">
+                            <Link
+                                href="/produtos"
+                                className="inline-flex items-center text-sm underline"
+                            >
+                                Voltar aos produtos
+                            </Link>
+                        </div>
+
+                        {product.description && (
+                            <div
+                                className="product-description prose prose-sm max-w-none dark:prose-invert mt-6"
+                                dangerouslySetInnerHTML={prepareDescription(
+                                    product.description
+                                )}
+                            />
+                        )}
+
+                        {(product.categories?.length ||
+                            product.brands?.length) && (
+                            <div className="mt-6 flex flex-wrap gap-2">
+                                {product.categories?.map(c => (
+                                    <span
+                                        key={`c-${c.id}`}
+                                        className="px-2 py-1 rounded-full bg-gray-100 text-xs"
+                                    >
+                                        {c.name}
+                                    </span>
+                                ))}
+                                {product.brands?.map(b => (
+                                    <span
+                                        key={`b-${b.id}`}
+                                        className="px-2 py-1 rounded-full bg-gray-100 text-xs"
+                                    >
+                                        {b.name}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </main>
+            <Footer />
         </div>
-      </main>
-      <Footer />
-    </div>
-  )
+    )
 }
