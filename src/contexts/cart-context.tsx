@@ -101,12 +101,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                         document: customerData.document?.trim() || '',
                         cart_items: items.map(item => ({
                             product: {
-                                id: typeof item.product.id === 'string'
-                                    ? parseInt(item.product.id)
-                                    : item.product.id,
+                                id:
+                                    typeof item.product.id === 'string'
+                                        ? parseInt(item.product.id)
+                                        : item.product.id,
                                 name: item.product.name,
-                                slug: item.product.slug || String(item.product.id),
-                                image: item.product.image || '/images/placeholder-product.svg',
+                                slug:
+                                    item.product.slug ||
+                                    String(item.product.id),
+                                image:
+                                    item.product.image ||
+                                    '/images/placeholder-product.svg',
                                 category: item.product.category || ''
                             },
                             quantity: item.quantity
@@ -114,10 +119,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     }
 
                     // Adicionar email ou telefone (pelo menos um deve estar presente)
-                    if (customerData.email && customerData.email.trim() !== '') {
+                    if (
+                        customerData.email &&
+                        customerData.email.trim() !== ''
+                    ) {
                         quoteData.email = customerData.email.trim()
                     }
-                    if (customerData.phone && customerData.phone.trim() !== '') {
+                    if (
+                        customerData.phone &&
+                        customerData.phone.trim() !== ''
+                    ) {
                         quoteData.phone = customerData.phone.trim()
                     }
 
