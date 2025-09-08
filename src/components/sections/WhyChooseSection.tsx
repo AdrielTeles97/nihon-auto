@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { Truck, Shield, Award } from 'lucide-react'
 import { DividerLines } from '@/components/ui/divider-lines'
 import { NoiseBackground } from '@/components/ui/noise-shapes'
@@ -71,30 +72,17 @@ export function WhyChooseSection() {
                     </div>
                 </div>
 
-                {/* Espaço para Banner Principal */}
-                {/* Espaço reservado para banner */}
+                {/* Banner Principal da Nihon */}
                 <div className="mb-20">
-                    <div className="relative bg-gradient-to-r from-red-600/5 via-transparent to-red-600/5 rounded-2xl p-12 border border-red-500/20">
-                        <div className="text-center">
-                            <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <svg
-                                    className="w-10 h-10 text-red-500/40"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
-                                </svg>
-                            </div>
-                            <h3 className="text-2xl font-bold text-white mb-4">
-                                <EmphasisText variant="primary">
-                                    Espaço reservado para banner
-                                </EmphasisText>
-                            </h3>
-                            <p className="text-gray-400 max-w-md mx-auto">
-                                Esta área foi preparada para receber o banner
-                                promocional da Nihon Auto
-                            </p>
-                        </div>
+                    <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                        <Image
+                            src="/images/banner-padrao-nihon.png"
+                            alt="Banner Promocional Nihon Auto - Peças e Acessórios Automotivos"
+                            width={1200}
+                            height={400}
+                            className="w-full h-auto object-cover"
+                            priority
+                        />
                     </div>
                 </div>
 
