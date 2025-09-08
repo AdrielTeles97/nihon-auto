@@ -10,9 +10,9 @@ export const metadata: Metadata = {
     keywords:
         'nihon peças e acessórios automotivos, produtos automotivos, peças, acessórios, catálogo',
     icons: {
-        icon: '/app/favicon.ico',
-        shortcut: '/app/favicon.ico',
-        apple: '/app/favicon.ico'
+        icon: '/favicon.ico',
+        shortcut: '/favicon.ico',
+        apple: '/favicon.ico'
     }
 }
 

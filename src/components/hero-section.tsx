@@ -51,9 +51,8 @@ export default function HeroSection() {
 
     return (
         <>
-            <HeroHeader />
             <main className="overflow-x-hidden">
-                <section className="relative overflow-hidden h-[600px] md:h-[700px] lg:h-[800px]">
+                <section className="relative overflow-hidden h-[600px] md:h-[700px] lg:h-[800px] pt-20">
                     {/* Background Images Slider */}
                     <div className="absolute inset-0 z-0">
                         {slides.map((slide, index) => (

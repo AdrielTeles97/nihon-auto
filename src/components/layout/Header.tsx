@@ -79,10 +79,10 @@ export const HeroHeader = () => {
         }
     }
     return (
-        <header>
+        <header className="relative z-[100]">
             <nav
                 data-state={menuState && 'active'}
-                className="bg-background/95 fixed z-50 w-full border-b backdrop-blur-3xl"
+                className="bg-white/95 fixed top-0 left-0 right-0 z-[100] w-full border-b border-gray-200 backdrop-blur-md shadow-sm"
             >
                 <div className="mx-auto max-w-6xl px-6 transition-all duration-300">
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">

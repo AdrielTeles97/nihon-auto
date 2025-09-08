@@ -20,7 +20,7 @@ function ProductsGridWrapper() {
 
 export default function ProdutosPage() {
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background pt-20">
             <HeroHeader />
             <main>
                 <div className="bg-red-600 text-white py-4">
