@@ -1,6 +1,6 @@
 // Configuração da API do WordPress
 export const WORDPRESS_API_BASE =
-    process.env.NEXT_PUBLIC_WORDPRESS_URL || 'http://localhost/wordpress'
+    process.env.WORDPRESS_BASE_URL || 'http://localhost/wordpress'
 
 export const API_ENDPOINTS = {
     // Endpoints do plugin Nihon Auto
@@ -52,7 +52,7 @@ export interface ApiResponse<T = unknown> {
 export async function submitQuote(data: QuoteRequest): Promise<ApiResponse> {
     try {
         console.log('Enviando cotação:', data)
-        
+
         const response = await fetch(API_ENDPOINTS.QUOTE, {
             method: 'POST',
             headers: {
@@ -62,7 +62,7 @@ export async function submitQuote(data: QuoteRequest): Promise<ApiResponse> {
         })
 
         console.log('Response status:', response.status)
-        
+
         if (!response.ok) {
             const errorText = await response.text()
             console.error('Error response:', errorText)
@@ -82,10 +82,12 @@ export async function submitQuote(data: QuoteRequest): Promise<ApiResponse> {
 }
 
 // Função para enviar contato
-export async function submitContact(data: ContactRequest): Promise<ApiResponse> {
+export async function submitContact(
+    data: ContactRequest
+): Promise<ApiResponse> {
     try {
         console.log('Enviando contato:', data)
-        
+
         const response = await fetch(API_ENDPOINTS.CONTACT, {
             method: 'POST',
             headers: {
@@ -95,7 +97,7 @@ export async function submitContact(data: ContactRequest): Promise<ApiResponse> 
         })
 
         console.log('Contact response status:', response.status)
-        
+
         if (!response.ok) {
             const errorText = await response.text()
             console.error('Contact error response:', errorText)
