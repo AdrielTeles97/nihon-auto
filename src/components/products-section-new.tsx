@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid'
 import { Cover } from '@/components/ui/cover'
-import { 
-    ArrowRight, 
-    Clock, 
-    Truck, 
+import {
+    ArrowRight,
+    Clock,
+    Truck,
     Shield,
     ShoppingCart,
     ExternalLink,
@@ -18,14 +18,14 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import type { Product } from '@/types/products'
+import type { Product as APIProduct } from '@/types/products'
+import type { Product as CartProduct } from '@/types'
 import type { Category } from '@/types/categories'
 import { useCart } from '@/contexts/cart-context'
-import type { Product as CartProduct } from '@/types'
 
 interface ProductsApiResponse {
     success: boolean
-    data: Product[]
+    data: APIProduct[]
     page: number
     perPage: number
     total: number
@@ -42,31 +42,38 @@ interface CategoriesApiResponse {
 }
 
 // Função para converter produto da API para o formato do carrinho
-function convertToCartProduct(product: Product): CartProduct {
+function convertToCartProduct(product: APIProduct): CartProduct {
     return {
         id: product.id,
         name: product.name,
-        price: 0, // Products from API don't have price
-        quantity: 1,
+        description: product.description || '',
+        short_description: product.shortDescription,
+        price: 0, // API products don't have price
         image: product.image || '/images/placeholder-product.svg',
         category: product.categories?.[0]?.name || 'Sem categoria',
-        description: product.description || '',
+        brand: product.brands?.[0]?.name,
         inStock: true,
-        slug: product.slug
+        slug: product.slug,
+        gallery: product.gallery,
+        specifications: {},
+        customFields: {}
     }
 }
 
 // Componente para o header de um produto no bento grid
-function ProductHeader({ product, onAddToCart, onViewProduct, isAdding }: {
-    product: Product
-    onAddToCart: (e: React.MouseEvent) => void
-    onViewProduct: (e: React.MouseEvent) => void
+function ProductHeader({
+    product,
+    onAddToCart,
+    isAdding
+}: {
+    product: APIProduct
+    onAddToCart: () => void
     isAdding: boolean
 }) {
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault() // Impede a navegação do Link
         e.stopPropagation() // Impede a propagação do evento
-        onAddToCart(e)
+        onAddToCart()
     }
 
     const handleViewProduct = (e: React.MouseEvent) => {
@@ -132,11 +139,11 @@ function ProductHeader({ product, onAddToCart, onViewProduct, isAdding }: {
 }
 
 // Componente para o footer de um produto no bento grid
-function ProductDescription({ product }: { product: Product }) {
+function ProductDescription({ product }: { product: APIProduct }) {
     return (
         <div className="p-4">
             <div className="flex items-center justify-between">
-                <Link 
+                <Link
                     href={`/produtos/${product.id}`}
                     className="font-medium hover:text-red-600 transition-colors line-clamp-2 text-sm"
                 >
@@ -146,18 +153,16 @@ function ProductDescription({ product }: { product: Product }) {
             <div className="space-y-2">
                 <div className="flex gap-1">
                     {product.categories?.slice(0, 2).map((category, index) => (
-                        <Badge 
-                            key={index} 
-                            variant="secondary" 
+                        <Badge
+                            key={index}
+                            variant="secondary"
                             className="text-xs bg-black text-white hover:bg-black/80"
                         >
                             {category.name}
                         </Badge>
                     ))}
                 </div>
-                <div className="text-lg font-bold text-red-600">
-                    R$ {product.price?.toFixed(2)}
-                </div>
+                <div className="text-sm text-gray-600">Consulte preço</div>
             </div>
         </div>
     )
@@ -172,7 +177,9 @@ function ProductPlaceholder() {
                     <div className="w-12 h-12 rounded-full bg-muted-foreground/10 flex items-center justify-center mx-auto mb-2">
                         <Package className="w-6 h-6 text-muted-foreground/50" />
                     </div>
-                    <p className="text-xs text-muted-foreground">Produto em breve</p>
+                    <p className="text-xs text-muted-foreground">
+                        Produto em breve
+                    </p>
                 </div>
             </div>
         </div>
@@ -217,7 +224,10 @@ function CategoryCarousel() {
                             <div className="p-4 text-center">
                                 <div className="relative h-40 overflow-hidden">
                                     <Image
-                                        src={category.image || '/images/placeholder-product.svg'}
+                                        src={
+                                            category.image ||
+                                            '/images/placeholder-product.svg'
+                                        }
                                         alt={category.name}
                                         fill
                                         className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
@@ -241,17 +251,17 @@ function CategoryCarousel() {
 }
 
 export function ProductsSection() {
-    const [products, setProducts] = useState<Product[]>([])
+    const [products, setProducts] = useState<APIProduct[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [addingToCart, setAddingToCart] = useState<string | null>(null)
-    const { addToCart } = useCart()
+    const { addItem } = useCart()
 
     useEffect(() => {
         async function fetchProducts() {
             try {
                 const response = await fetch('/api/products?limit=6')
                 const data: ProductsApiResponse = await response.json()
-                
+
                 if (data.success) {
                     setProducts(data.data)
                 } else {
@@ -267,45 +277,46 @@ export function ProductsSection() {
         fetchProducts()
     }, [])
 
-    const handleAddToCart = async (product: Product) => {
+    const handleAddToCart = async (product: APIProduct) => {
         setAddingToCart(product.id.toString())
-        
+
         try {
             const cartProduct = convertToCartProduct(product)
-            await addToCart(cartProduct)
-            
+            addItem(cartProduct, 1)
+
             // Feedback visual
             setTimeout(() => {
                 setAddingToCart(null)
             }, 1500)
-            
         } catch (error) {
             console.error('Erro ao adicionar produto ao carrinho:', error)
             setAddingToCart(null)
         }
     }
 
-    const handleViewProduct = (product: Product) => {
-        window.open(`/produtos/${product.id}`, '_blank')
-    }
-
     // Completar com placeholders se necessário
     const displayProducts = [...products]
     while (displayProducts.length < 6) {
         displayProducts.push({
-            id: `placeholder-${displayProducts.length}`,
+            id: displayProducts.length + 1000, // Usar número para evitar conflito
             name: 'Produto em breve',
-            price: 0,
+            slug: `produto-em-breve-${displayProducts.length}`,
+            description: 'Em breve novos produtos',
+            shortDescription: 'Em breve',
             image: '/images/placeholder-product.svg',
-            categories: []
-        } as Product)
+            gallery: [],
+            categories: [],
+            brands: []
+        } as APIProduct)
     }
 
     if (isLoading) {
         return (
             <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
-                <p className="mt-4 text-muted-foreground">Carregando produtos...</p>
+                <p className="mt-4 text-muted-foreground">
+                    Carregando produtos...
+                </p>
             </div>
         )
     }
@@ -314,10 +325,10 @@ export function ProductsSection() {
         <section className="relative min-h-screen bg-background overflow-hidden">
             {/* Linha horizontal superior */}
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            
+
             {/* Linha horizontal inferior */}
             <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            
+
             {/* Linhas verticais decorativas */}
             <div className="absolute top-0 left-16 w-px h-full bg-gradient-to-b from-transparent via-border/50 to-transparent opacity-50" />
             <div className="absolute top-0 right-16 w-px h-full bg-gradient-to-b from-transparent via-border/50 to-transparent opacity-50" />
@@ -328,13 +339,14 @@ export function ProductsSection() {
                     <div className="relative">
                         <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-primary rounded-tl-lg" />
                         <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-primary rounded-br-lg" />
-                        
+
                         <div className="relative bg-background/40 backdrop-blur-sm border border-border/30 rounded-2xl p-6 lg:p-8">
                             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
                                 Nossos <Cover>Produtos</Cover>
                             </h2>
                             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                                Descubra nossa seleção exclusiva de peças automotivas premium com qualidade garantida
+                                Descubra nossa seleção exclusiva de peças
+                                automotivas premium com qualidade garantida
                             </p>
                         </div>
                     </div>
@@ -349,27 +361,34 @@ export function ProductsSection() {
                                 title=""
                                 description=""
                                 header={
-                                    product.id.toString().includes('placeholder') ? (
+                                    product.id
+                                        .toString()
+                                        .includes('placeholder') ? (
                                         <ProductPlaceholder />
                                     ) : (
-                                        <ProductHeader
-                                            product={product}
-                                            onAddToCart={(e) => handleAddToCart(product)}
-                                            onViewProduct={(e) => handleViewProduct(product)}
-                                            isAdding={addingToCart === product.id.toString()}
-                                        />
+                                        <div className="space-y-4">
+                                            <ProductHeader
+                                                product={product}
+                                                onAddToCart={() =>
+                                                    handleAddToCart(product)
+                                                }
+                                                isAdding={
+                                                    addingToCart ===
+                                                    product.id.toString()
+                                                }
+                                            />
+                                            <ProductDescription
+                                                product={product}
+                                            />
+                                        </div>
                                     )
                                 }
                                 className={cn(
-                                    "relative border border-border/40 bg-background/60 backdrop-blur-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:border-primary/30",
-                                    index === 3 && "md:col-span-2",
-                                    index === 4 && "md:col-span-2"
+                                    'relative border border-border/40 bg-background/60 backdrop-blur-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:border-primary/30',
+                                    index === 3 && 'md:col-span-2',
+                                    index === 4 && 'md:col-span-2'
                                 )}
-                            >
-                                {!product.id.toString().includes('placeholder') && (
-                                    <ProductDescription product={product} />
-                                )}
-                            </BentoGridItem>
+                            />
                         ))}
                     </BentoGrid>
                 </div>
@@ -377,8 +396,8 @@ export function ProductsSection() {
                 {/* Call to Action */}
                 <div className="text-center">
                     <Link href="/produtos">
-                        <Button 
-                            size="lg" 
+                        <Button
+                            size="lg"
                             className="bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                         >
                             Ver Todos os Produtos
@@ -403,7 +422,8 @@ export function ProductsSection() {
                                 Por que escolher a <Cover>Nihon Auto</Cover>?
                             </h3>
                             <p className="text-muted-foreground">
-                                Nossos diferenciais que garantem a melhor experiência
+                                Nossos diferenciais que garantem a melhor
+                                experiência
                             </p>
                         </div>
 
@@ -453,13 +473,14 @@ export function ProductsSection() {
                         <div className="relative">
                             <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-primary rounded-tl-lg" />
                             <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-primary rounded-br-lg" />
-                            
+
                             <div className="relative bg-background/40 backdrop-blur-sm border border-border/30 rounded-2xl p-6 lg:p-8">
                                 <h3 className="text-2xl md:text-3xl font-bold mb-4">
                                     Explore nossas <Cover>Categorias</Cover>
                                 </h3>
                                 <p className="text-muted-foreground">
-                                    Encontre exatamente o que precisa para seu veículo
+                                    Encontre exatamente o que precisa para seu
+                                    veículo
                                 </p>
                             </div>
                         </div>

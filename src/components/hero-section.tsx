@@ -4,27 +4,42 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import { HeroHeader } from '@/components/layout/Header'
 import { BrandsSlider } from '@/components/sections/BrandsSlider'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+
+// Definir o tipo do slide
+interface Slide {
+    src: string
+    alt: string
+    title: string
+    description: string
+    showButtons: boolean
+}
 
 export default function HeroSection() {
     const [currentSlide, setCurrentSlide] = useState(0)
 
-    const slides = [
+    const slides: Slide[] = [
         {
             src: '/images/nihon-hero-2.png',
             alt: 'Nihon Auto Hero Image 2',
+            title: '',
+            description: '',
             showButtons: true
         },
         {
             src: '/images/nihon-hero-4.png',
-            alt: 'Nihon Auto Hero Image 4'
+            alt: 'Nihon Auto Hero Image 4',
+            title: '',
+            description: '',
+            showButtons: false
         },
         {
             src: '/images/nihon-hero-3.jpeg',
-            alt: 'Nihon Auto Hero Image 3'
-            // Este slide não tem texto - apenas imagem
+            alt: 'Nihon Auto Hero Image 3',
+            title: '',
+            description: '',
+            showButtons: false
         }
     ]
 
@@ -66,7 +81,7 @@ export default function HeroSection() {
                             >
                                 <Image
                                     src={slide.src}
-                                    alt={(slide as any).alt || 'Banner'}
+                                    alt={slide.alt || 'Banner'}
                                     fill
                                     className="object-cover object-center"
                                     priority={index === 0}

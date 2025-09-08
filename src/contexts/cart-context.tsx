@@ -107,7 +107,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                                 name: item.product.name,
                                 slug: item.product.slug || String(item.product.id),
                                 image: item.product.image || '/images/placeholder-product.svg',
-                                categories: item.product.categories || []
+                                category: item.product.category || ''
                             },
                             quantity: item.quantity
                         }))
