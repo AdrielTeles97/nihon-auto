@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { DividerLines } from '@/components/ui/divider-lines'
-import { NoiseBackground, DecorativeShape } from '@/components/ui/noise-shapes'
+import { NoiseBackground } from '@/components/ui/noise-shapes'
 import { SectionTitle } from '@/components/ui/emphasis-text'
+import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight, Grid3X3 } from 'lucide-react'
 import Image from 'next/image'
 import type { Category } from '@/types/categories'
 
@@ -19,6 +21,8 @@ interface CategoriesApiResponse {
 export function CategoriesSection() {
     const [categories, setCategories] = useState<Category[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [currentPage, setCurrentPage] = useState(0)
+    const [itemsPerPage] = useState(8)
 
     useEffect(() => {
         async function fetchCategories() {
@@ -27,7 +31,7 @@ export function CategoriesSection() {
                 const data: CategoriesApiResponse = await response.json()
 
                 if (data.success) {
-                    setCategories(data.data.slice(0, 8))
+                    setCategories(data.data)
                 }
             } catch (error) {
                 console.error('Erro ao carregar categorias:', error)
@@ -39,6 +43,21 @@ export function CategoriesSection() {
         fetchCategories()
     }, [])
 
+    // Paginação local para evitar rolagem infinita
+    const totalPages = Math.ceil(categories.length / itemsPerPage)
+    const currentCategories = categories.slice(
+        currentPage * itemsPerPage,
+        (currentPage + 1) * itemsPerPage
+    )
+
+    const nextPage = () => {
+        setCurrentPage(prev => (prev + 1) % totalPages)
+    }
+
+    const prevPage = () => {
+        setCurrentPage(prev => (prev - 1 + totalPages) % totalPages)
+    }
+
     if (isLoading) {
         return (
             <div className="text-center py-12">
@@ -48,57 +67,81 @@ export function CategoriesSection() {
     }
 
     return (
-        <section className="relative py-24 overflow-hidden">
+        <section className="relative py-24 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-red-50/30">
             {/* Background com noise */}
-            <NoiseBackground intensity="light" />
-
-            {/* Shapes decorativas */}
-            <DecorativeShape
-                variant="circle"
-                color="red"
-                size="md"
-                className="top-32 -left-16"
-            />
-            <DecorativeShape
-                variant="rectangle"
-                color="neutral"
-                size="lg"
-                className="bottom-0 -right-40"
-            />
+            <NoiseBackground intensity="light" color="neutral" />
 
             {/* Linhas divisórias */}
-            <DividerLines variant="subtle" />
+            <DividerLines variant="red" />
 
             <div className="relative container mx-auto px-4">
                 {/* Título da seção */}
                 <div className="text-center mb-16">
-                    <div className="relative bg-background/40 backdrop-blur-sm border border-border/30 rounded-2xl p-6 lg:p-8">
+                    <div className="relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 lg:p-8 shadow-lg">
                         <SectionTitle
                             title="Explore nossas"
                             emphasis="Categorias"
                             subtitle="Encontre exatamente o que precisa para seu veículo japonês"
+                            theme="light"
                         />
                     </div>
                 </div>
 
-                {/* Grid de categorias */}
+                {/* Controles de navegação */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-2 text-gray-700">
+                            <Grid3X3 className="w-5 h-5" />
+                            <span className="text-sm">
+                                {categories.length} categorias encontradas
+                            </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm text-gray-600">
+                                Página {currentPage + 1} de {totalPages}
+                            </span>
+                            <div className="flex gap-2">
+                                <Button
+                                    onClick={prevPage}
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                                    disabled={totalPages <= 1}
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                    onClick={nextPage}
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                                    disabled={totalPages <= 1}
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}                {/* Grid de categorias */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {categories.map((category, index) => (
+                    {currentCategories.map((category, index) => (
                         <div
                             key={category.id}
                             className="group animate-in fade-in slide-in-from-bottom-4 duration-500"
                             style={{ animationDelay: `${index * 0.1}s` }}
                         >
                             <Link href={`/produtos?categoria=${category.slug}`}>
-                                <div className="relative bg-background/60 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-red-500/5 transition-all duration-300 hover:scale-[1.02] hover:border-red-500/30 h-full">
+                                <div className="relative bg-white/90 backdrop-blur-sm border border-gray-200/60 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 hover:scale-[1.02] hover:border-red-500/40 h-full hover:bg-white">
                                     {/* Noise background sutil */}
                                     <NoiseBackground
                                         intensity="light"
+                                        color="neutral"
                                         className="rounded-xl"
                                     />
 
                                     <div className="relative p-4 text-center">
-                                        <div className="relative h-32 mb-4 overflow-hidden rounded-lg">
+                                        <div className="relative h-40 mb-4 overflow-hidden rounded-lg bg-gray-50/80">
                                             <Image
                                                 src={
                                                     category.image ||
@@ -106,43 +149,44 @@ export function CategoriesSection() {
                                                 }
                                                 alt={category.name}
                                                 fill
-                                                className="object-cover transition-transform duration-300 group-hover:scale-110"
+                                                className="object-contain p-3 transition-transform duration-300 group-hover:scale-110"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                         </div>
 
-                                        <h3 className="font-medium mb-2 group-hover:text-red-600 transition-colors">
+                                        <h3 className="font-medium mb-2 text-gray-900 group-hover:text-red-600 transition-colors">
                                             {category.name}
                                         </h3>
 
                                         {category.description && (
-                                            <p className="text-sm text-muted-foreground line-clamp-2">
+                                            <p className="text-sm text-gray-600 line-clamp-2">
                                                 {category.description}
                                             </p>
                                         )}
 
                                         {/* Indicador de hover */}
-                                        <div className="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                     </div>
                                 </div>
                             </Link>
                         </div>
                     ))}
                 </div>
-            </div>
 
-            {/* Shape SVG decorativa */}
-            <div className="absolute top-0 left-0 w-full overflow-hidden">
-                <svg
-                    viewBox="0 0 1200 120"
-                    preserveAspectRatio="none"
-                    className="relative block w-full h-16 rotate-180"
-                >
-                    <path
-                        d="M1200,0H0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05C827.58,32.17,886.67,4.24,951.2,4.24Z"
-                        className="fill-red-50/20"
-                    />
-                </svg>
+                {/* Botão para ver todas as categorias */}
+                {categories.length > itemsPerPage && (
+                    <div className="text-center mt-12">
+                        <Link href="/produtos">
+                            <Button
+                                size="lg"
+                                className="bg-red-600 hover:bg-red-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-3"
+                            >
+                                Ver Todas as Categorias
+                                <Grid3X3 className="ml-2 w-5 h-5" />
+                            </Button>
+                        </Link>
+                    </div>
+                )}
             </div>
         </section>
     )

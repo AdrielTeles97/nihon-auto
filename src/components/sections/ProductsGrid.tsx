@@ -227,22 +227,22 @@ export function ProductsGrid() {
     }
 
     return (
-        <section className="relative py-24 overflow-hidden">
+        <section className="relative py-24 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-red-50/20">
             {/* Background com noise */}
-            <NoiseBackground intensity="light" />
+            <NoiseBackground intensity="light" color="neutral" />
 
             {/* Shapes decorativas */}
             <DecorativeShape
                 variant="circle"
                 color="red"
                 size="lg"
-                className="top-10 -left-20"
+                className="top-10 -left-20 opacity-40"
             />
             <DecorativeShape
                 variant="rectangle"
                 color="neutral"
                 size="md"
-                className="bottom-20 -right-32"
+                className="bottom-20 -right-32 opacity-30"
             />
 
             {/* Linhas divisórias */}
@@ -251,18 +251,19 @@ export function ProductsGrid() {
             <div className="relative container mx-auto px-4">
                 {/* Título da seção */}
                 <div className="text-center mb-16">
-                    <div className="relative bg-background/40 backdrop-blur-sm border border-border/30 rounded-2xl p-6 lg:p-8">
+                    <div className="relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 lg:p-8 shadow-lg">
                         <SectionTitle
                             title="Nossos"
                             emphasis="Produtos"
                             subtitle="Descubra nossa seleção exclusiva de peças automotivas premium com qualidade garantida"
+                            theme="light"
                         />
                     </div>
                 </div>
 
                 {/* Grid de produtos */}
                 <div className="relative mb-16">
-                    <BentoGrid className="max-w-4xl mx-auto">
+                    <BentoGrid className="max-w-4xl mx-auto gap-6 md:gap-8">
                         {displayProducts.map((product, index) =>
                             product ? (
                                 <ProductCard
