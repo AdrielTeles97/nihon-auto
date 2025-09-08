@@ -216,64 +216,86 @@ export function ProductsGrid() {
         {loading && (
           <div className="text-sm text-muted-foreground mb-3">Carregando produtos...</div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <Card key={product.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-4">
-                <Link href={`/produtos/${product.id}`}>
-                  <div className="aspect-square mb-4 bg-gray-50 rounded-lg overflow-hidden">
-                    <Image
-                      src={product.image || '/images/placeholder-product.svg'}
-                      alt={product.name}
-                      className="w-full h-full object-contain"
-                      width={200}
-                      height={200}
-                      unoptimized
-                    />
-                  </div>
-                </Link>
-                <div className="text-xs text-gray-500 mb-1">Cod: {product.code || product.slug || product.id}</div>
-                <Link href={`/produtos/${product.id}`} className="block">
-                  <h3 className="font-medium text-sm text-gray-800 mb-3 line-clamp-2 hover:underline">
-                    {product.name}
-                  </h3>
-                </Link>
-                <Button variant="outline" size="sm" className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent mb-4 cursor-pointer">
-                  Orçamento
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent cursor-pointer"
-                  onClick={() => {
-                    addItem(toCartProduct(product), 1)
-                    router.push('/carrinho')
-                  }}
-                >
-                  Adicionar ao carinho
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        
+        {/* Quando não há produtos e não está carregando */}
+        {!loading && products.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="text-gray-500 mb-4">
+              <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum produto encontrado</h3>
+            <p className="text-gray-500 text-center max-w-md">
+              Não encontramos produtos que correspondam aos seus critérios de busca. 
+              Tente ajustar os filtros ou usar termos diferentes.
+            </p>
+          </div>
+        )}
 
-        {/* Paginação - sempre visível */}
-        <div className="flex items-center justify-center gap-2 mt-8">
-          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => goToPage(page - 1)}>
-            Anterior
-          </Button>
-          {Array.from({ length: Math.max(1, totalPages) }).slice(0, 7).map((_, i) => {
-            const p = i + 1
-            return (
-              <Button key={p} variant={p === page ? 'default' : 'outline'} size="sm" onClick={() => goToPage(p)}>
-                {p}
-              </Button>
-            )
-          })}
-          <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => goToPage(page + 1)}>
-            Próxima
-          </Button>
-        </div>
+        {/* Grid de produtos - só aparece quando há produtos */}
+        {products.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map((product) => (
+              <Card key={product.id} className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <Link href={`/produtos/${product.id}`}>
+                    <div className="aspect-square mb-4 bg-gray-50 rounded-lg overflow-hidden">
+                      <Image
+                        src={product.image || '/images/placeholder-product.svg'}
+                        alt={product.name}
+                        className="w-full h-full object-contain"
+                        width={200}
+                        height={200}
+                        unoptimized
+                      />
+                    </div>
+                  </Link>
+                  <div className="text-xs text-gray-500 mb-1">Cod: {product.code || product.slug || product.id}</div>
+                  <Link href={`/produtos/${product.id}`} className="block">
+                    <h3 className="font-medium text-sm text-gray-800 mb-3 line-clamp-2 hover:underline">
+                      {product.name}
+                    </h3>
+                  </Link>
+                  <Button variant="outline" size="sm" className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent mb-4 cursor-pointer">
+                    Orçamento
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent cursor-pointer"
+                    onClick={() => {
+                      addItem(toCartProduct(product), 1)
+                      router.push('/carrinho')
+                    }}
+                  >
+                    Adicionar ao carinho
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Paginação - só aparece quando há produtos */}
+        {products.length > 0 && totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-8">
+            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => goToPage(page - 1)}>
+              Anterior
+            </Button>
+            {Array.from({ length: Math.max(1, totalPages) }).slice(0, 7).map((_, i) => {
+              const p = i + 1
+              return (
+                <Button key={p} variant={p === page ? 'default' : 'outline'} size="sm" onClick={() => goToPage(p)}>
+                  {p}
+                </Button>
+              )
+            })}
+            <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => goToPage(page + 1)}>
+              Próxima
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )
