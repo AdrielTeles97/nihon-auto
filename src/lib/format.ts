@@ -2,6 +2,28 @@ export function onlyDigits(v: string) {
   return (v || "").replace(/\D+/g, "")
 }
 
+export function formatPhone(phone: string) {
+  const digits = onlyDigits(phone)
+  
+  if (digits.length === 13) {
+    // Formato internacional: +55 91 98247-5485
+    const countryCode = digits.slice(0, 2)
+    const areaCode = digits.slice(2, 4)
+    const firstPart = digits.slice(4, 9)
+    const secondPart = digits.slice(9, 13)
+    return `+${countryCode} ${areaCode} ${firstPart}-${secondPart}`
+  } else if (digits.length === 11) {
+    // Formato nacional: (91) 98247-5485
+    const areaCode = digits.slice(0, 2)
+    const firstPart = digits.slice(2, 7)
+    const secondPart = digits.slice(7, 11)
+    return `(${areaCode}) ${firstPart}-${secondPart}`
+  }
+  
+  // Retorna o número original se não conseguir formatar
+  return phone
+}
+
 export function maskCpfCnpj(v: string) {
   const digits = onlyDigits(v).slice(0, 14) // CPF 11, CNPJ 14
   if (digits.length <= 11) {

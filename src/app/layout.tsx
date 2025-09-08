@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   description:
     "Catálogo virtual de produtos automotivos da Nihon Acessórios Automotivos. Encontre as melhores peças e acessórios para seu veículo.",
   keywords: "nihon peças e acessórios automotivos, produtos automotivos, peças, acessórios, catálogo",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 };
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
