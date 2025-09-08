@@ -56,21 +56,38 @@ export default function AtendimentoPage() {
         setSubmitStatus('idle')
 
         try {
-            // Aqui você pode implementar o envio do formulário
-            // Para um webhook ou API de contato
-            await new Promise(resolve => setTimeout(resolve, 2000)) // Simulação
-
-            console.log('Formulário enviado:', formData)
-            setSubmitStatus('success')
-
-            // Limpar formulário
-            setFormData({
-                name: '',
-                phone: '',
-                email: '',
-                subject: '',
-                message: ''
+            // Enviar para o WordPress
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    subject: formData.subject,
+                    message: formData.message
+                })
             })
+
+            if (response.ok) {
+                const result = await response.json()
+                if (result.success) {
+                    setSubmitStatus('success')
+                    // Limpar formulário
+                    setFormData({
+                        name: '',
+                        phone: '',
+                        email: '',
+                        subject: '',
+                        message: ''
+                    })
+                } else {
+                    throw new Error(result.message || 'Erro ao enviar mensagem')
+                }
+            } else {
+                throw new Error('Erro na conexão')
+            }
         } catch (error) {
             console.error('Erro ao enviar formulário:', error)
             setSubmitStatus('error')

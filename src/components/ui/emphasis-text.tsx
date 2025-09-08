@@ -50,15 +50,20 @@ export function SectionTitle({
     }
 
     const titleColorClass = theme === 'dark' ? 'text-white' : 'text-gray-900'
-    const subtitleColorClass = theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+    const subtitleColorClass =
+        theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
 
     return (
         <div className={cn(alignClass[align], className)}>
-            <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${titleColorClass}`}>
+            <h2
+                className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${titleColorClass}`}
+            >
                 {title} {emphasis && <EmphasisText>{emphasis}</EmphasisText>}
             </h2>
             {subtitle && (
-                <p className={`text-lg max-w-2xl mx-auto ${subtitleColorClass}`}>
+                <p
+                    className={`text-lg max-w-2xl mx-auto ${subtitleColorClass}`}
+                >
                     {subtitle}
                 </p>
             )}

@@ -86,7 +86,6 @@ export function CategoriesSection() {
                         />
                     </div>
                 </div>
-
                 {/* Controles de navegação */}
                 {totalPages > 1 && (
                     <div className="flex items-center justify-between mb-8">
@@ -96,7 +95,7 @@ export function CategoriesSection() {
                                 {categories.length} categorias encontradas
                             </span>
                         </div>
-                        
+
                         <div className="flex items-center gap-3">
                             <span className="text-sm text-gray-600">
                                 Página {currentPage + 1} de {totalPages}
@@ -123,7 +122,8 @@ export function CategoriesSection() {
                             </div>
                         </div>
                     </div>
-                )}                {/* Grid de categorias */}
+                )}{' '}
+                {/* Grid de categorias */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {currentCategories.map((category, index) => (
                         <div
@@ -172,7 +172,6 @@ export function CategoriesSection() {
                         </div>
                     ))}
                 </div>
-
                 {/* Botão para ver todas as categorias */}
                 {categories.length > itemsPerPage && (
                     <div className="text-center mt-12">
