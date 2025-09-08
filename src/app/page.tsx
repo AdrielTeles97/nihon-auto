@@ -1,5 +1,4 @@
-
-import { ProductsSection } from '@/components/products-section-new'
+import { ProductsSection } from '@/components/products-section-modernized'
 import { Footer } from '@/components/layout/Footer'
 import { HeroHeader } from '@/components/layout/Header'
 import HeroSection from '@/components/hero-section'
