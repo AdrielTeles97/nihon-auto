@@ -7,6 +7,22 @@ import { NoiseBackground, DecorativeShape } from '@/components/ui/noise-shapes'
 import { EmphasisText } from '@/components/ui/emphasis-text'
 
 export function CallToActionSection() {
+    const handleGeneralQuote = () => {
+        // Número fixo da Nihon Auto
+        const nihonNumber = '559182337100'
+        const message = `Olá! Gostaria de solicitar um orçamento geral para produtos automotivos.
+
+Por favor, me envie informações sobre:
+- Preços dos produtos disponíveis
+- Condições de pagamento
+- Prazos de entrega
+
+Obrigado!`
+        
+        const whatsappUrl = `https://wa.me/${nihonNumber}?text=${encodeURIComponent(message)}`
+        window.open(whatsappUrl, '_blank')
+    }
+
     return (
         <section className="relative py-24 overflow-hidden bg-gradient-to-br from-neutral-900 via-neutral-800 to-red-900/20">
             {/* Background com noise */}
@@ -60,18 +76,17 @@ export function CallToActionSection() {
                         </Button>
                     </Link>
 
-                    <Link href="/carrinho">
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            className="group border-white/50 text-white hover:bg-white hover:border-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg backdrop-blur-sm bg-transparent"
-                        >
-                            <span className="text-white group-hover:text-neutral-900 transition-colors">
-                                Fazer Orçamento
-                            </span>
-                            <MessageCircle className="ml-2 w-5 h-5 text-white group-hover:text-neutral-900 transition-colors" />
-                        </Button>
-                    </Link>
+                    <Button
+                        size="lg"
+                        variant="outline"
+                        className="group border-white/50 text-white hover:bg-white hover:border-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg backdrop-blur-sm bg-transparent"
+                        onClick={handleGeneralQuote}
+                    >
+                        <span className="text-white group-hover:text-neutral-900 transition-colors">
+                            Fazer Orçamento
+                        </span>
+                        <MessageCircle className="ml-2 w-5 h-5 text-white group-hover:text-neutral-900 transition-colors" />
+                    </Button>
                 </div>
 
                 {/* Informações de contato */}

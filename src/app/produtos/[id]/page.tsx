@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Product as APIProduct } from '@/types/products'
 import { prepareDescription } from '@/lib/description'
 import type { Product as CartProduct } from '@/types'
+import { getWhatsAppQuoteUrl } from '@/lib/whatsapp'
 
 function toCartProduct(p: APIProduct): CartProduct {
   return {
@@ -96,10 +97,27 @@ export default function ProductPage() {
           .join(', ')
         item.name = `${item.name} (${attrs})`
         item.image = currentVariation.image || item.image
-        item.customFields = { ...(item.customFields || {}), code: currentVariation.sku || (item.customFields?.code as any) || null }
+        item.customFields = { ...(item.customFields || {}), code: currentVariation.sku || (item.customFields?.code as string) || null }
       }
       addItem(item, 1)
       router.push('/carrinho')
+    }
+  }
+
+  const handleRequestQuote = () => {
+    if (product) {
+      const productCode = String((currentVariation?.sku || product.code) || product.slug || product.id)
+      let productName = product.name
+      
+      if (currentVariation) {
+        const attrs = Object.entries(currentVariation.attributes)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(', ')
+        productName = `${productName} (${attrs})`
+      }
+      
+      const whatsappUrl = getWhatsAppQuoteUrl(productName, productCode)
+      window.open(whatsappUrl, '_blank')
     }
   }
 
@@ -190,9 +208,22 @@ export default function ProductPage() {
                 })}
               </div>
             )}
-            <div className="flex gap-3 pt-2">
-              <Button className="gap-2" onClick={addToCartAndGo}>Adicionar ao carinho</Button>
-              <Link href="/produtos" className="inline-flex items-center text-sm underline">Voltar aos produtos</Link>
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Button 
+                variant="outline" 
+                className="text-red-600 border-red-600 hover:bg-red-50 gap-2" 
+                onClick={handleRequestQuote}
+              >
+                Solicitar Orçamento
+              </Button>
+              <Button className="gap-2" onClick={addToCartAndGo}>
+                Adicionar ao carrinho
+              </Button>
+            </div>
+            <div className="pt-2">
+              <Link href="/produtos" className="inline-flex items-center text-sm underline">
+                Voltar aos produtos
+              </Link>
             </div>
 
             {product.description && (

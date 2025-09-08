@@ -8,6 +8,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/contexts/cart-context'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { getWhatsAppQuoteUrl } from '@/lib/whatsapp'
 import type { Category } from '@/types/categories'
 import type { Brand } from '@/types/brands'
 import type { Product as APIProduct } from '@/types/products'
@@ -146,6 +147,12 @@ export function ProductsGrid() {
         const params = new URLSearchParams(searchParams.toString())
         params.set('page', String(Math.max(1, Math.min(totalPages, p))))
         router.push(`${pathname}?${params.toString()}`)
+    }
+
+    const handleRequestQuote = (product: APIProduct) => {
+        const productCode = String(product.code || product.slug || product.id)
+        const whatsappUrl = getWhatsAppQuoteUrl(product.name, productCode)
+        window.open(whatsappUrl, '_blank')
     }
 
     return (
@@ -373,6 +380,7 @@ export function ProductsGrid() {
                                         variant="outline"
                                         size="sm"
                                         className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent mb-4 cursor-pointer"
+                                        onClick={() => handleRequestQuote(product)}
                                     >
                                         Orçamento
                                     </Button>

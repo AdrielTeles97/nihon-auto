@@ -1,46 +1,61 @@
 import { useState, useEffect } from 'react'
 
 export interface CompanySettings {
-  whatsapp: string
-  email: string
-  working_hours: string
-  address: string
-  company_name: string
-  company_description: string
-  social_media: {
-    facebook: string
-    instagram: string
-    linkedin: string
-  }
+    whatsapp: string
+    email: string
+    working_hours: string
+    address: string
+    company_name: string
+    company_description: string
+    social_media: {
+        facebook: string
+        instagram: string
+        linkedin: string
+    }
 }
 
 export function useCompanySettings() {
-  const [settings, setSettings] = useState<CompanySettings | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+    const [settings, setSettings] = useState<CompanySettings | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function fetchSettings() {
-      try {
-        setLoading(true)
-        const response = await fetch('/api/company-settings')
-        
-        if (!response.ok) {
-          throw new Error('Erro ao buscar configurações da empresa')
+    useEffect(() => {
+        async function fetchSettings() {
+            try {
+                setLoading(true)
+                // Adiciona timestamp para evitar cache do browser
+                const timestamp = new Date().getTime()
+                const response = await fetch(
+                    `/api/company-settings?_=${timestamp}`,
+                    {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control':
+                                'no-cache, no-store, must-revalidate',
+                            Pragma: 'no-cache',
+                            Expires: '0'
+                        }
+                    }
+                )
+
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar configurações da empresa')
+                }
+
+                const data = await response.json()
+                setSettings(data)
+            } catch (err) {
+                setError(
+                    err instanceof Error ? err.message : 'Erro desconhecido'
+                )
+                console.error('Erro ao buscar configurações:', err)
+            } finally {
+                setLoading(false)
+            }
         }
-        
-        const data = await response.json()
-        setSettings(data)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro desconhecido')
-        console.error('Erro ao buscar configurações:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
 
-    fetchSettings()
-  }, [])
+        fetchSettings()
+    }, [])
 
-  return { settings, loading, error }
+    return { settings, loading, error }
 }
