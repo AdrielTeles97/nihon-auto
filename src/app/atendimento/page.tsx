@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -14,7 +14,9 @@ import {
     FileText,
     CheckCircle,
     HeadphonesIcon,
-    Users
+    Users,
+    Shield,
+    AlertTriangle
 } from 'lucide-react'
 import { HeroHeader } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -28,6 +30,74 @@ interface ContactForm {
     message: string
 }
 
+// Função para sanitizar entrada do usuário
+const sanitizeInput = (input: string): string => {
+    return input
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove scripts
+        .replace(/<[^>]*>/g, '') // Remove todas as tags HTML
+        .replace(/javascript:/gi, '') // Remove javascript:
+        .replace(/on\w+\s*=/gi, '') // Remove event handlers
+        .slice(0, 1000) // Limita tamanho (sem trim para preservar espaços)
+}
+
+// Função para sanitizar apenas campos específicos (não mensagem)
+const sanitizeBasicInput = (input: string): string => {
+    return input
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<[^>]*>/g, '')
+        .replace(/javascript:/gi, '')
+        .replace(/on\w+\s*=/gi, '')
+        .trim() // Apenas para campos básicos como nome, subject
+        .slice(0, 500)
+}
+
+// Função para detectar spam básico
+const isSpamContent = (text: string): boolean => {
+    const spamKeywords = [
+        'click here',
+        'free money',
+        'make money fast',
+        'viagra',
+        'casino',
+        'lottery',
+        'winner',
+        'congratulations',
+        'urgent',
+        'act now',
+        'limited time',
+        'call now',
+        'http://',
+        'https://',
+        'www.',
+        '.com',
+        '.net',
+        '.org'
+    ]
+
+    const lowerText = text.toLowerCase()
+    const spamCount = spamKeywords.reduce(
+        (count, keyword) => count + (lowerText.includes(keyword) ? 1 : 0),
+        0
+    )
+
+    // Se contém mais de 2 palavras suspeitas, pode ser spam
+    return spamCount >= 2
+}
+
+// Rate limiting simples (client-side)
+const getLastSubmissionTime = (): number => {
+    if (typeof window !== 'undefined') {
+        return parseInt(localStorage.getItem('lastFormSubmission') || '0')
+    }
+    return 0
+}
+
+const setLastSubmissionTime = (time: number): void => {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('lastFormSubmission', time.toString())
+    }
+}
+
 export default function AtendimentoPage() {
     const [formData, setFormData] = useState<ContactForm>({
         name: '',
@@ -38,8 +108,43 @@ export default function AtendimentoPage() {
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState<
-        'idle' | 'success' | 'error'
+        'idle' | 'success' | 'error' | 'spam' | 'rate_limit'
     >('idle')
+    const [captchaAnswer, setCaptchaAnswer] = useState('')
+    const [captchaQuestion, setCaptchaQuestion] = useState('')
+    const [correctAnswer, setCorrectAnswer] = useState(0)
+    const formStartTime = useRef<number>(Date.now())
+
+    // Gerar captcha simples
+    const generateCaptcha = () => {
+        const num1 = Math.floor(Math.random() * 10) + 1
+        const num2 = Math.floor(Math.random() * 10) + 1
+        const operators = ['+', '-']
+        const operator = operators[Math.floor(Math.random() * operators.length)]
+
+        let answer: number
+        let question: string
+
+        if (operator === '+') {
+            answer = num1 + num2
+            question = `${num1} + ${num2} = ?`
+        } else {
+            // Para subtração, garantir resultado positivo
+            const larger = Math.max(num1, num2)
+            const smaller = Math.min(num1, num2)
+            answer = larger - smaller
+            question = `${larger} - ${smaller} = ?`
+        }
+
+        setCaptchaQuestion(question)
+        setCorrectAnswer(answer)
+        setCaptchaAnswer('')
+    }
+
+    // Inicializar captcha quando componente carrega
+    useEffect(() => {
+        generateCaptcha()
+    }, [])
 
     const handleInputChange = (
         e: React.ChangeEvent<
@@ -52,6 +157,12 @@ export default function AtendimentoPage() {
         // Aplicar formatação específica para o campo telefone
         if (name === 'phone') {
             formattedValue = maskPhoneBR(value)
+        } else if (name === 'message') {
+            // Para mensagem, preservar espaços e quebras de linha
+            formattedValue = sanitizeInput(value)
+        } else {
+            // Para outros campos (nome, subject), usar sanitização básica
+            formattedValue = sanitizeBasicInput(value)
         }
 
         setFormData(prev => ({
@@ -66,17 +177,77 @@ export default function AtendimentoPage() {
         setSubmitStatus('idle')
 
         try {
-            // Enviar para o WordPress
+            // 1. Verificar rate limiting (mínimo 30 segundos entre submissões)
+            const now = Date.now()
+            const lastSubmission = getLastSubmissionTime()
+            if (now - lastSubmission < 30000) {
+                setSubmitStatus('rate_limit')
+                setIsSubmitting(false)
+                return
+            }
+
+            // 2. Verificar se o formulário foi preenchido muito rapidamente (bot detection)
+            const timeToFill = now - formStartTime.current
+            if (timeToFill < 5000) {
+                // Menos de 5 segundos para preencher
+                setSubmitStatus('error')
+                setIsSubmitting(false)
+                return
+            }
+
+            // 3. Verificar captcha
+            const userAnswer = parseInt(captchaAnswer)
+            if (isNaN(userAnswer) || userAnswer !== correctAnswer) {
+                setSubmitStatus('error')
+                setIsSubmitting(false)
+                generateCaptcha() // Gerar novo captcha
+                return
+            }
+
+            // 4. Verificar conteúdo suspeito/spam
+            const combinedContent = `${formData.name} ${formData.message} ${formData.subject}`
+            if (isSpamContent(combinedContent)) {
+                setSubmitStatus('spam')
+                setIsSubmitting(false)
+                return
+            }
+
+            // 5. Validações básicas
+            if (
+                !formData.name ||
+                !formData.email ||
+                !formData.message ||
+                !formData.phone
+            ) {
+                setSubmitStatus('error')
+                setIsSubmitting(false)
+                return
+            }
+
+            // 6. Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            if (!emailRegex.test(formData.email)) {
+                setSubmitStatus('error')
+                setIsSubmitting(false)
+                return
+            }
+
+            // 7. Enviar para o WordPress (dados já sanitizados)
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest' // Anti-CSRF básico
                 },
                 body: JSON.stringify({
                     name: formData.name,
                     email: formData.email,
+                    phone: formData.phone,
                     subject: formData.subject,
-                    message: formData.message
+                    message: formData.message,
+                    timestamp: now,
+                    userAgent:
+                        typeof window !== 'undefined' ? navigator.userAgent : ''
                 })
             })
 
@@ -84,6 +255,8 @@ export default function AtendimentoPage() {
                 const result = await response.json()
                 if (result.success) {
                     setSubmitStatus('success')
+                    setLastSubmissionTime(now) // Atualizar timestamp do último envio
+
                     // Limpar formulário
                     setFormData({
                         name: '',
@@ -92,6 +265,9 @@ export default function AtendimentoPage() {
                         subject: '',
                         message: ''
                     })
+
+                    // Gerar novo captcha
+                    generateCaptcha()
                 } else {
                     throw new Error(result.message || 'Erro ao enviar mensagem')
                 }
@@ -338,15 +514,52 @@ export default function AtendimentoPage() {
                             {submitStatus === 'error' && (
                                 <div className="mb-8 p-6 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-300 rounded-xl">
                                     <div className="flex items-center text-red-800">
-                                        <MessageCircle className="h-6 w-6 mr-3 text-red-600" />
+                                        <AlertTriangle className="h-6 w-6 mr-3 text-red-600" />
                                         <div>
                                             <h3 className="font-bold">
-                                                Erro ao enviar mensagem
+                                                Erro na validação
                                             </h3>
                                             <p className="text-sm mt-1">
-                                                Por favor, tente novamente ou
-                                                entre em contato diretamente por
-                                                telefone.
+                                                Verifique o captcha, preencha
+                                                todos os campos obrigatórios e
+                                                tente novamente.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {submitStatus === 'spam' && (
+                                <div className="mb-8 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 border-2 border-orange-300 rounded-xl">
+                                    <div className="flex items-center text-orange-800">
+                                        <Shield className="h-6 w-6 mr-3 text-orange-600" />
+                                        <div>
+                                            <h3 className="font-bold">
+                                                Conteúdo bloqueado
+                                            </h3>
+                                            <p className="text-sm mt-1">
+                                                Sua mensagem foi bloqueada por
+                                                conter conteúdo suspeito. Entre
+                                                em contato por telefone se
+                                                necessário.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {submitStatus === 'rate_limit' && (
+                                <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl">
+                                    <div className="flex items-center text-blue-800">
+                                        <Clock className="h-6 w-6 mr-3 text-blue-600" />
+                                        <div>
+                                            <h3 className="font-bold">
+                                                Aguarde um momento
+                                            </h3>
+                                            <p className="text-sm mt-1">
+                                                Por favor, aguarde pelo menos 30
+                                                segundos entre cada envio para
+                                                evitar spam.
                                             </p>
                                         </div>
                                     </div>
@@ -479,6 +692,44 @@ export default function AtendimentoPage() {
                                         className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all duration-300 resize-none text-black font-medium"
                                         placeholder="Descreva detalhadamente sua solicitação, incluindo informações sobre o veículo se necessário (marca, modelo, ano)..."
                                     />
+                                </div>
+
+                                {/* Captcha de Segurança */}
+                                <div className="bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-xl p-6">
+                                    <div className="flex items-center mb-4">
+                                        <Shield className="h-5 w-5 mr-2 text-red-600" />
+                                        <h3 className="text-sm font-bold text-black">
+                                            Verificação de Segurança *
+                                        </h3>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <p className="text-gray-700 text-sm">
+                                            Para evitar spam, resolva esta
+                                            operação matemática:
+                                        </p>
+                                        <div className="bg-white p-4 rounded-lg border border-gray-300">
+                                            <p className="text-lg font-bold text-center text-black">
+                                                {captchaQuestion}
+                                            </p>
+                                        </div>
+                                        <input
+                                            type="number"
+                                            value={captchaAnswer}
+                                            onChange={e =>
+                                                setCaptchaAnswer(e.target.value)
+                                            }
+                                            required
+                                            className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all duration-300 text-black font-medium text-center"
+                                            placeholder="Digite a resposta"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={generateCaptcha}
+                                            className="text-red-600 hover:text-red-700 text-sm font-medium underline"
+                                        >
+                                            Gerar nova pergunta
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Botão de Envio */}
