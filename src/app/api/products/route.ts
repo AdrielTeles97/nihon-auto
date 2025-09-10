@@ -102,9 +102,36 @@ export async function GET(request: NextRequest) {
 
         const brandTokens = brand ? toList(brand) : []
         const brandIds = brandTokens.filter(isNumeric).map(n => Number(n))
-        if (brandIds.length) params.brand = brandIds.join(',')
         const brandSlugs = brandTokens.filter(t => !isNumeric(t))
-        if (brandSlugs.length) params.brand = brandSlugs.join(',')
+        
+        // Se temos IDs, usamos eles diretamente
+        if (brandIds.length) {
+            params.brand = brandIds.join(',')
+        }
+        // Se temos slugs, precisamos convertê-los para IDs primeiro
+        else if (brandSlugs.length) {
+            try {
+                // Buscar todas as marcas para mapear slug -> ID
+                const brandsResp = await wpApi.get('/products/brands', {
+                    params: { per_page: 100 }
+                })
+                const brandMap = new Map()
+                for (const b of brandsResp.data || []) {
+                    brandMap.set(b.slug.toLowerCase(), b.id)
+                }
+                
+                const mappedIds = brandSlugs
+                    .map(slug => brandMap.get(slug.toLowerCase()))
+                    .filter(id => id !== undefined)
+                
+                if (mappedIds.length) {
+                    params.brand = mappedIds.join(',')
+                }
+            } catch (e) {
+                // Se falhar ao mapear, tenta usar slugs mesmo (pode funcionar dependendo do plugin)
+                params.brand = brandSlugs.join(',')
+            }
+        }
 
         const key = [
             'wc:products',
@@ -118,7 +145,9 @@ export async function GET(request: NextRequest) {
             inStock ?? '',
             minPrice ?? '',
             maxPrice ?? '',
-            sku ?? ''
+            sku ?? '',
+            // Adicionar timestamp para forçar refresh quando necessário
+            Math.floor(Date.now() / (1000 * 60 * 10)) // 10 minutos
         ]
 
         const raw = await cached(

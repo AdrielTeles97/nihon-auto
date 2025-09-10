@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste de Cotação</title>
+</head>
+<body>
+    <h1>Teste de Cotação com Variação</h1>
+    <button onclick="testarCotacao()">Testar Cotação com Variação</button>
+    
+    <script>
+    function testarCotacao() {
+        const cartItems = [
+            {
+                id: 123,
+                product: {
+                    id: 123,
+                    name: "Produto Teste com Variação",
+                    slug: "produto-teste-variacao"
+                },
+                quantity: 2,
+                variation_id: 456,
+                selected_attributes: {
+                    "Cor": "Azul",
+                    "Tamanho": "M"
+                }
+            }
+        ];
+        
+        const data = {
+            name: "Usuário Teste",
+            email: "teste@exemplo.com",
+            phone: "11999999999",
+            message: "Teste de cotação com variação",
+            cart_items: cartItems
+        };
+        
+        fetch('http://localhost:3001/api/quotes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Resultado:', result);
+            alert('Cotação enviada! Verifique o console e o WordPress Admin.');
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao enviar cotação: ' + error.message);
+        });
+    }
+    </script>
+</body>
+</html>

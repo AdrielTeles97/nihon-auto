@@ -626,13 +626,32 @@ class NihonAutoManager {
         
         if (is_array($products) && !empty($products)) {
             echo '<table class="wp-list-table widefat fixed striped">';
-            echo '<thead><tr><th>Produto</th><th>Código</th><th>Qtd</th></tr></thead>';
+            echo '<thead><tr><th>Produto</th><th>Código</th><th>Variação</th><th>Qtd</th></tr></thead>';
             echo '<tbody>';
             
             foreach ($products as $item) {
                 echo '<tr>';
                 echo '<td><strong>' . esc_html($item['product']['name'] ?? 'Produto sem nome') . '</strong></td>';
                 echo '<td><code>' . esc_html($item['product']['slug'] ?? $item['product']['id'] ?? '-') . '</code></td>';
+                
+                // Mostrar variação se existir
+                echo '<td>';
+                if (!empty($item['variation_id']) || !empty($item['selected_attributes'])) {
+                    if (!empty($item['variation_id'])) {
+                        echo '<small>🔗 ID: ' . intval($item['variation_id']) . '</small><br>';
+                    }
+                    if (!empty($item['selected_attributes']) && is_array($item['selected_attributes'])) {
+                        $attrs = [];
+                        foreach ($item['selected_attributes'] as $attr_name => $attr_value) {
+                            $attrs[] = '<strong>' . esc_html($attr_name) . ':</strong> ' . esc_html($attr_value);
+                        }
+                        echo '<div style="font-size: 12px; color: #666;">🎯 ' . implode('<br>🎯 ', $attrs) . '</div>';
+                    }
+                } else {
+                    echo '<span style="color: #999;">-</span>';
+                }
+                echo '</td>';
+                
                 echo '<td><span class="dashicons dashicons-products"></span> <strong>' . intval($item['quantity'] ?? 1) . '</strong></td>';
                 echo '</tr>';
             }
