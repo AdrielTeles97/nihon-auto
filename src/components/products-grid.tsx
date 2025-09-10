@@ -55,6 +55,9 @@ export function ProductsGrid() {
     const [loading, setLoading] = useState(false)
     const [showAllTypes, setShowAllTypes] = useState(false)
     const [showAllManufacturers, setShowAllManufacturers] = useState(false)
+    // Estados para controlar abertura/fechamento dos filtros
+    const [typesExpanded, setTypesExpanded] = useState(true)
+    const [brandsExpanded, setBrandsExpanded] = useState(true)
 
     const selectedCategories = useMemo(
         () =>
@@ -104,13 +107,30 @@ export function ProductsGrid() {
                 searchParams.forEach((v, k) => url.searchParams.set(k, v))
                 if (!url.searchParams.get('per_page'))
                     url.searchParams.set('per_page', '12')
+                
+                // Debug: log da URL sendo chamada
+                console.log('🔍 API URL:', url.toString())
+                console.log('🔍 Parâmetros:', Array.from(url.searchParams.entries()))
+                
                 const res = await fetch(url.toString())
                 const json: ProductsResponse = await res.json()
+                
+                // Debug: log da resposta
+                console.log('📦 Resposta API:', {
+                    success: json.success,
+                    total: json.total,
+                    products: json.data?.length || 0,
+                    page: json.page,
+                    totalPages: json.totalPages
+                })
+                
                 if (!ignore) {
                     setProducts(json.data || [])
                     setPage(json.page || 1)
                     setTotalPages(json.totalPages || 1)
                 }
+            } catch (error) {
+                console.error('❌ Erro ao buscar produtos:', error)
             } finally {
                 if (!ignore) setLoading(false)
             }
@@ -136,11 +156,17 @@ export function ProductsGrid() {
         router.push(`${pathname}?${params.toString()}`)
     }
 
-    const handleCategoryCheck = (slug: string) => {
-        updateQuery('category', toggleToken(selectedCategories, slug))
+    const handleCategoryCheck = (categoryIdOrSlug: string) => {
+        // Encontrar a categoria para pegar o ID
+        const category = categories.find(c => c.slug === categoryIdOrSlug || c.id.toString() === categoryIdOrSlug)
+        const categoryId = category ? category.id.toString() : categoryIdOrSlug
+        updateQuery('category', toggleToken(selectedCategories, categoryId))
     }
-    const handleBrandCheck = (slug: string) => {
-        updateQuery('brand', toggleToken(selectedBrands, slug))
+    const handleBrandCheck = (brandIdOrSlug: string) => {
+        // Encontrar a marca para pegar o ID
+        const brand = brands.find(b => b.slug === brandIdOrSlug || b.id.toString() === brandIdOrSlug)
+        const brandId = brand ? brand.id.toString() : brandIdOrSlug
+        updateQuery('brand', toggleToken(selectedBrands, brandId))
     }
 
     const goToPage = (p: number) => {
@@ -166,10 +192,14 @@ export function ProductsGrid() {
 
                     {/* Tipo de Produto (Categorias) */}
                     <div className="mb-6">
-                        <h4 className="font-medium text-gray-700 mb-3 flex items-center">
+                        <h4 
+                            className="font-medium text-gray-700 mb-3 flex items-center cursor-pointer hover:text-blue-600"
+                            onClick={() => setTypesExpanded(!typesExpanded)}
+                        >
                             TIPO DE PRODUTO
-                            <ChevronDown className="h-4 w-4 ml-auto" />
+                            <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${typesExpanded ? '' : 'rotate-180'}`} />
                         </h4>
+                        {typesExpanded && (
                         <div className="space-y-2">
                             {(() => {
                                 // Computa lista com 'Todas' no topo e sem 'Sem categoria'
@@ -212,6 +242,8 @@ export function ProductsGrid() {
                                                         ? selectedCategories.length ===
                                                           0
                                                         : selectedCategories.includes(
+                                                              cat.id.toString()
+                                                          ) || selectedCategories.includes(
                                                               cat.slug
                                                           )
                                                 }
@@ -247,14 +279,19 @@ export function ProductsGrid() {
                                 </button>
                             )}
                         </div>
+                        )}
                     </div>
 
                     {/* Fabricantes (Marcas) */}
                     <div className="mb-6">
-                        <h4 className="font-medium text-gray-700 mb-3 flex items-center">
+                        <h4 
+                            className="font-medium text-gray-700 mb-3 flex items-center cursor-pointer hover:text-blue-600"
+                            onClick={() => setBrandsExpanded(!brandsExpanded)}
+                        >
                             FABRICANTES
-                            <ChevronDown className="h-4 w-4 ml-auto" />
+                            <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${brandsExpanded ? '' : 'rotate-180'}`} />
                         </h4>
+                        {brandsExpanded && (
                         <div className="space-y-2">
                             {(brands || [])
                                 .slice(
@@ -271,6 +308,8 @@ export function ProductsGrid() {
                                                 type="checkbox"
                                                 className="mr-2"
                                                 checked={selectedBrands.includes(
+                                                    b.id.toString()
+                                                ) || selectedBrands.includes(
                                                     b.slug
                                                 )}
                                                 onChange={() =>
@@ -297,6 +336,7 @@ export function ProductsGrid() {
                                 </button>
                             )}
                         </div>
+                        )}
                     </div>
                 </div>
             </div>
