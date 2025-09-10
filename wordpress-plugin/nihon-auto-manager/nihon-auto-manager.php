@@ -71,7 +71,7 @@ class NihonAutoManager {
             'status' => 'success',
             'message' => 'Plugin Nihon Auto v2.1 funcionando!',
             'version' => '2.1.0',
-            'timestamp' => current_time('mysql'),
+            'timestamp' => current_time('mysql', false), // Horário local
             'database' => array(
                 'quotes_table_exists' => $quotes_exists,
                 'contacts_table_exists' => $contacts_exists,
@@ -140,7 +140,7 @@ class NihonAutoManager {
                 'cart_items' => $cart_items_serialized,
                 'message' => sanitize_textarea_field($data['message'] ?? ''),
                 'status' => 'pending',
-                'created_at' => current_time('mysql')
+                'created_at' => current_time('mysql', false) // false = usar horário local do WordPress
             ),
             array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
         );
@@ -206,7 +206,7 @@ class NihonAutoManager {
                 'subject' => sanitize_text_field($data['subject'] ?? ''),
                 'message' => sanitize_textarea_field($data['message']),
                 'status' => 'unread',
-                'created_at' => current_time('mysql')
+                'created_at' => current_time('mysql', false) // false = usar horário local do WordPress
             ),
             array('%s', '%s', '%s', '%s', '%s', '%s', '%s')
         );

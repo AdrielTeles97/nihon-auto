@@ -4,15 +4,15 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        
+
         // Validação básica
         const { name, email, subject, message } = body
-        
+
         if (!name || !email || !message) {
             return NextResponse.json(
-                { 
-                    success: false, 
-                    message: 'Nome, email e mensagem são obrigatórios' 
+                {
+                    success: false,
+                    message: 'Nome, email e mensagem são obrigatórios'
                 },
                 { status: 400 }
             )
@@ -28,11 +28,10 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json(result)
     } catch (error) {
-        console.error('Erro na API de contato:', error)
         return NextResponse.json(
-            { 
-                success: false, 
-                message: 'Erro interno do servidor' 
+            {
+                success: false,
+                message: 'Erro interno do servidor'
             },
             { status: 500 }
         )

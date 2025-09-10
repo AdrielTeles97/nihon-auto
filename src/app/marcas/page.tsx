@@ -64,7 +64,6 @@ export default function MarcasPage() {
             try {
                 setSearchLoading(true)
 
-                console.log('Buscando marcas...')
                 const response = await axios.get<BrandsApiResponse>(
                     '/api/brands',
                     {
@@ -78,12 +77,10 @@ export default function MarcasPage() {
                     }
                 )
 
-                console.log('Resposta da API marcas:', response.data)
                 setFilteredBrands(response.data.data || [])
                 setTotalPages(response.data.totalPages || 1)
                 setTotalBrands(response.data.total || 0)
             } catch (err) {
-                console.error('Erro ao carregar marcas:', err)
                 setError(
                     err instanceof Error ? err.message : 'Erro desconhecido'
                 )

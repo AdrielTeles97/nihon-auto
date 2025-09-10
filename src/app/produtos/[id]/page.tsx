@@ -108,21 +108,21 @@ export default function ProductPage() {
     const addToCartAndGo = () => {
         if (product) {
             const item = toCartProduct(product)
+
             if (currentVariation) {
-                const attrs = Object.entries(currentVariation.attributes)
-                    .map(([k, v]) => `${k}: ${v}`)
-                    .join(', ')
-                item.name = `${item.name} (${attrs})`
-                item.image = currentVariation.image || item.image
-                item.customFields = {
-                    ...(item.customFields || {}),
-                    code:
-                        currentVariation.sku ||
-                        (item.customFields?.code as string) ||
-                        null
-                }
+                // Para variações, usar o ID da variação e os atributos selecionados
+                addItem(
+                    item,
+                    1,
+                    currentVariation.id,
+                    currentVariation.attributes,
+                    currentVariation.image
+                )
+            } else {
+                // Para produto sem variação
+                addItem(item, 1)
             }
-            addItem(item, 1)
+
             router.push('/carrinho')
         }
     }

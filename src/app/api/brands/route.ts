@@ -148,7 +148,6 @@ export async function GET(request: NextRequest) {
             }
         )
     } catch (error) {
-        console.error('Erro ao buscar marcas:', error)
         return NextResponse.json(
             { success: false, error: 'Erro interno do servidor' },
             { status: 500 }

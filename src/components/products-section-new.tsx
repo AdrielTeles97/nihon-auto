@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid'
@@ -255,6 +256,7 @@ export function ProductsSection() {
     const [isLoading, setIsLoading] = useState(true)
     const [addingToCart, setAddingToCart] = useState<string | null>(null)
     const { addItem } = useCart()
+    const router = useRouter()
 
     useEffect(() => {
         async function fetchProducts() {
@@ -278,6 +280,13 @@ export function ProductsSection() {
     }, [])
 
     const handleAddToCart = async (product: APIProduct) => {
+        // Se o produto tem variações, vai para página do produto
+        if (product.variations && product.variations.length > 0) {
+            router.push(`/produtos/${product.id}`)
+            return
+        }
+
+        // Se não tem variações, adiciona direto ao carrinho
         setAddingToCart(product.id.toString())
 
         try {

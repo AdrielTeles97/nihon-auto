@@ -18,7 +18,7 @@ type SparklesProps = {
 export default function SparklesCore({
     id,
     className,
-    background = 'transparent',
+    background = 'transparent'
 }: SparklesProps) {
     return (
         <div

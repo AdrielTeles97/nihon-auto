@@ -12,9 +12,19 @@ import type { Cart, CartItem, Product } from '@/types'
 
 type CartContextValue = {
     cart: Cart
-    addItem: (product: Product, quantity?: number) => void
-    removeItem: (productId: number | string) => void
-    updateQuantity: (productId: number | string, quantity: number) => void
+    addItem: (
+        product: Product,
+        quantity?: number,
+        variationId?: number,
+        selectedAttributes?: Record<string, string>,
+        variationImage?: string | null
+    ) => void
+    removeItem: (productId: number | string, variationId?: number) => void
+    updateQuantity: (
+        productId: number | string,
+        quantity: number,
+        variationId?: number
+    ) => void
     clearCart: () => void
     submitQuoteRequest: (customerData: {
         name: string
@@ -25,6 +35,16 @@ type CartContextValue = {
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined)
+
+function generateCartItemId(
+    productId: number | string,
+    variationId?: number
+): string {
+    if (variationId) {
+        return `${productId}-${variationId}`
+    }
+    return String(productId)
+}
 
 function calcTotals(items: CartItem[]): { total: number; itemCount: number } {
     const itemCount = items.reduce((acc, it) => acc + it.quantity, 0)
@@ -55,11 +75,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const actions = useMemo(
         () => ({
-            addItem: (product: Product, quantity = 1) => {
+            addItem: (
+                product: Product,
+                quantity = 1,
+                variationId?: number,
+                selectedAttributes?: Record<string, string>,
+                variationImage?: string | null
+            ) => {
                 setItems(prev => {
-                    const idx = prev.findIndex(
-                        ci => String(ci.product.id) === String(product.id)
+                    const cartItemId = generateCartItemId(
+                        product.id,
+                        variationId
                     )
+                    const idx = prev.findIndex(ci => {
+                        const existingId = generateCartItemId(
+                            ci.product.id,
+                            ci.variationId
+                        )
+                        return existingId === cartItemId
+                    })
+
                     if (idx >= 0) {
                         const copy = [...prev]
                         copy[idx] = {
@@ -68,24 +103,54 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                         }
                         return copy
                     }
-                    return [...prev, { product, quantity }]
+
+                    return [
+                        ...prev,
+                        {
+                            product,
+                            quantity,
+                            variationId,
+                            selectedAttributes,
+                            variationImage
+                        }
+                    ]
                 })
             },
-            removeItem: (productId: number | string) => {
-                setItems(prev =>
-                    prev.filter(
-                        ci => String(ci.product.id) !== String(productId)
+            removeItem: (productId: number | string, variationId?: number) => {
+                setItems(prev => {
+                    const cartItemId = generateCartItemId(
+                        productId,
+                        variationId
                     )
-                )
+                    return prev.filter(ci => {
+                        const existingId = generateCartItemId(
+                            ci.product.id,
+                            ci.variationId
+                        )
+                        return existingId !== cartItemId
+                    })
+                })
             },
-            updateQuantity: (productId: number | string, quantity: number) => {
-                setItems(prev =>
-                    prev.map(ci =>
-                        String(ci.product.id) === String(productId)
+            updateQuantity: (
+                productId: number | string,
+                quantity: number,
+                variationId?: number
+            ) => {
+                setItems(prev => {
+                    const cartItemId = generateCartItemId(
+                        productId,
+                        variationId
+                    )
+                    return prev.map(ci => {
+                        const existingId = generateCartItemId(
+                            ci.product.id,
+                            ci.variationId
+                        )
+                        return existingId === cartItemId
                             ? { ...ci, quantity: Math.max(1, quantity) }
                             : ci
-                    )
-                )
+                    })
+                })
             },
             clearCart: () => setItems([]),
             submitQuoteRequest: async (customerData: {
@@ -114,7 +179,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                                     '/images/placeholder-product.svg',
                                 category: item.product.category || ''
                             },
-                            quantity: item.quantity
+                            quantity: item.quantity,
+                            variation_id: item.variationId || null,
+                            selected_attributes: item.selectedAttributes || {}
                         }))
                     }
 

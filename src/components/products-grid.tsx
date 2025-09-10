@@ -391,11 +391,28 @@ export function ProductsGrid() {
                                         size="sm"
                                         className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent cursor-pointer"
                                         onClick={() => {
-                                            addItem(toCartProduct(product), 1)
-                                            router.push('/carrinho')
+                                            // Se o produto tem variações, vai para página do produto
+                                            if (
+                                                product.variations &&
+                                                product.variations.length > 0
+                                            ) {
+                                                router.push(
+                                                    `/produtos/${product.id}`
+                                                )
+                                            } else {
+                                                // Se não tem variações, adiciona direto ao carrinho
+                                                addItem(
+                                                    toCartProduct(product),
+                                                    1
+                                                )
+                                                router.push('/carrinho')
+                                            }
                                         }}
                                     >
-                                        Adicionar ao carinho
+                                        {product.variations &&
+                                        product.variations.length > 0
+                                            ? 'Ver opções'
+                                            : 'Adicionar ao carinho'}
                                     </Button>
                                 </CardContent>
                             </Card>

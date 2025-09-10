@@ -1,6 +1,8 @@
 // Configuração da API do WordPress
 export const WORDPRESS_API_BASE =
-    process.env.WORDPRESS_BASE_URL || 'http://localhost/wordpress'
+    process.env.NEXT_PUBLIC_WORDPRESS_URL ||
+    process.env.WORDPRESS_BASE_URL ||
+    'https://darksalmon-cobra-736244.hostingersite.com'
 
 export const API_ENDPOINTS = {
     // Endpoints do plugin Nihon Auto
@@ -29,6 +31,8 @@ export interface QuoteRequest {
             categories?: any[]
         }
         quantity: number
+        variation_id?: number | null
+        selected_attributes?: Record<string, string>
     }[]
     message?: string
 }
@@ -51,8 +55,6 @@ export interface ApiResponse<T = unknown> {
 // Função para enviar pedido de orçamento
 export async function submitQuote(data: QuoteRequest): Promise<ApiResponse> {
     try {
-        console.log('Enviando cotação:', data)
-
         const response = await fetch(API_ENDPOINTS.QUOTE, {
             method: 'POST',
             headers: {
@@ -61,19 +63,14 @@ export async function submitQuote(data: QuoteRequest): Promise<ApiResponse> {
             body: JSON.stringify(data)
         })
 
-        console.log('Response status:', response.status)
-
         if (!response.ok) {
             const errorText = await response.text()
-            console.error('Error response:', errorText)
             throw new Error(`HTTP error! status: ${response.status}`)
         }
 
         const result = await response.json()
-        console.log('Quote result:', result)
         return result
     } catch (error) {
-        console.error('Erro ao enviar orçamento:', error)
         return {
             success: false,
             message: 'Erro ao enviar pedido de orçamento. Tente novamente.'
@@ -86,8 +83,6 @@ export async function submitContact(
     data: ContactRequest
 ): Promise<ApiResponse> {
     try {
-        console.log('Enviando contato:', data)
-
         const response = await fetch(API_ENDPOINTS.CONTACT, {
             method: 'POST',
             headers: {
@@ -96,19 +91,14 @@ export async function submitContact(
             body: JSON.stringify(data)
         })
 
-        console.log('Contact response status:', response.status)
-
         if (!response.ok) {
             const errorText = await response.text()
-            console.error('Contact error response:', errorText)
             throw new Error(`HTTP error! status: ${response.status}`)
         }
 
         const result = await response.json()
-        console.log('Contact result:', result)
         return result
     } catch (error) {
-        console.error('Erro ao enviar contato:', error)
         return {
             success: false,
             message: 'Erro ao enviar contato. Tente novamente.'

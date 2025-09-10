@@ -39,9 +39,7 @@ export default function CarrinhoPage() {
             const result = await submitQuoteRequest({
                 name: name.trim(),
                 document: doc.trim(),
-                email: isEmailContact
-                    ? contact.trim()
-                    : '', // deixar vazio se for telefone
+                email: isEmailContact ? contact.trim() : '', // deixar vazio se for telefone
                 phone: isEmailContact ? '' : contact.trim() // deixar vazio se for email
             })
 
@@ -116,73 +114,121 @@ export default function CarrinhoPage() {
                 ) : (
                     <div className="grid gap-8 md:grid-cols-3">
                         <div className="md:col-span-2 space-y-6">
-                            {cart.items.map(({ product, quantity }) => (
-                                <div
-                                    key={product.id}
-                                    className="flex gap-4 items-center border rounded-lg p-4"
-                                >
-                                    <div className="h-20 w-20 rounded bg-gray-50 overflow-hidden">
-                                        <Image
-                                            src={
-                                                product.image ||
-                                                '/images/placeholder-product.svg'
-                                            }
-                                            alt={product.name}
-                                            width={80}
-                                            height={80}
-                                            className="h-full w-full object-contain"
-                                            unoptimized
-                                        />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="font-medium leading-tight">
-                                            {product.name}
+                            {cart.items.map(
+                                ({
+                                    product,
+                                    quantity,
+                                    variationId,
+                                    selectedAttributes,
+                                    variationImage
+                                }) => {
+                                    const cartItemKey = variationId
+                                        ? `${product.id}-${variationId}`
+                                        : String(product.id)
+                                    const displayImage =
+                                        variationImage ||
+                                        product.image ||
+                                        '/images/placeholder-product.svg'
+                                    return (
+                                        <div
+                                            key={cartItemKey}
+                                            className="flex gap-4 items-center border rounded-lg p-4"
+                                        >
+                                            <div className="h-20 w-20 rounded bg-gray-50 overflow-hidden">
+                                                <Image
+                                                    src={displayImage}
+                                                    alt={product.name}
+                                                    width={80}
+                                                    height={80}
+                                                    className="h-full w-full object-contain"
+                                                    unoptimized
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="font-medium leading-tight">
+                                                    {product.name}
+                                                </div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    Código:{' '}
+                                                    {product.slug ?? product.id}
+                                                </div>
+                                                {selectedAttributes &&
+                                                    Object.keys(
+                                                        selectedAttributes
+                                                    ).length > 0 && (
+                                                        <div className="text-xs text-muted-foreground mt-1">
+                                                            {Object.entries(
+                                                                selectedAttributes
+                                                            ).map(
+                                                                ([
+                                                                    key,
+                                                                    value
+                                                                ]) => (
+                                                                    <span
+                                                                        key={
+                                                                            key
+                                                                        }
+                                                                        className="mr-2"
+                                                                    >
+                                                                        {key}:{' '}
+                                                                        {value}
+                                                                    </span>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    )}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Button
+                                                    size="icon"
+                                                    variant="outline"
+                                                    onClick={() =>
+                                                        updateQuantity(
+                                                            product.id,
+                                                            Math.max(
+                                                                1,
+                                                                quantity - 1
+                                                            ),
+                                                            variationId
+                                                        )
+                                                    }
+                                                >
+                                                    <Minus className="h-4 w-4" />
+                                                </Button>
+                                                <span className="w-6 text-center">
+                                                    {quantity}
+                                                </span>
+                                                <Button
+                                                    size="icon"
+                                                    variant="outline"
+                                                    onClick={() =>
+                                                        updateQuantity(
+                                                            product.id,
+                                                            quantity + 1,
+                                                            variationId
+                                                        )
+                                                    }
+                                                >
+                                                    <Plus className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                    onClick={() =>
+                                                        removeItem(
+                                                            product.id,
+                                                            variationId
+                                                        )
+                                                    }
+                                                    aria-label="Remover"
+                                                >
+                                                    <Trash className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </div>
-                                        <div className="text-xs text-muted-foreground">
-                                            Código: {product.slug ?? product.id}
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            size="icon"
-                                            variant="outline"
-                                            onClick={() =>
-                                                updateQuantity(
-                                                    product.id,
-                                                    Math.max(1, quantity - 1)
-                                                )
-                                            }
-                                        >
-                                            <Minus className="h-4 w-4" />
-                                        </Button>
-                                        <span className="w-6 text-center">
-                                            {quantity}
-                                        </span>
-                                        <Button
-                                            size="icon"
-                                            variant="outline"
-                                            onClick={() =>
-                                                updateQuantity(
-                                                    product.id,
-                                                    quantity + 1
-                                                )
-                                            }
-                                        >
-                                            <Plus className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            onClick={() =>
-                                                removeItem(product.id)
-                                            }
-                                            aria-label="Remover"
-                                        >
-                                            <Trash className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
+                                    )
+                                }
+                            )}
 
                             <div className="flex items-center gap-3">
                                 <Button variant="secondary" asChild>

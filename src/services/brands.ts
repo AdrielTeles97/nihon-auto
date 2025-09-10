@@ -25,9 +25,6 @@ class BrandsService {
     // Fetch brands from WordPress/WooCommerce API
     async fetchWordPressBrands(): Promise<WordPressBrand[]> {
         try {
-            console.log('🌐 Fazendo requisição para WooCommerce brands...')
-            console.log('🔗 URL:', `${this.baseUrl}/products/brands`)
-
             // Fazer requisição real para a API do WooCommerce
             const response = await this.wpApi.get<WordPressBrand[]>(
                 '/products/brands',
@@ -38,13 +35,6 @@ class BrandsService {
                     }
                 }
             )
-
-            console.log(
-                `📥 Response status: ${response.status}, dados:`,
-                response.data.length,
-                'itens'
-            )
-            console.log('🔍 Primeira marca raw:', response.data[0])
 
             // Transformar dados do WooCommerce para o formato esperado
             const transformedBrands: WordPressBrand[] = response.data.map(
@@ -62,19 +52,8 @@ class BrandsService {
                 })
             )
 
-            console.log(
-                '🔄 Marcas transformadas:',
-                transformedBrands.map(b => ({
-                    name: b.name,
-                    hasImage: !!b.image
-                }))
-            )
             return transformedBrands
         } catch (error) {
-            console.error(
-                'Erro ao buscar marcas do WordPress/WooCommerce:',
-                error
-            )
             // Retornar array vazio em caso de erro - não usar dados mockados
             return []
         }
@@ -123,7 +102,6 @@ class BrandsService {
                 return supplier
             })
         } catch (error) {
-            console.error('Erro ao sincronizar fornecedores com marcas:', error)
             return suppliers
         }
     }
@@ -143,30 +121,18 @@ class BrandsService {
     // Get brands for LogoCloud component
     async getBrandsForLogoCloud(limit = 8): Promise<Brand[]> {
         try {
-            console.log('🔍 Buscando marcas do WordPress...')
             const wpBrands = await this.fetchWordPressBrands()
-            console.log(
-                `📊 Encontradas ${wpBrands.length} marcas do WordPress:`,
-                wpBrands.map(b => b.name)
-            )
 
             const brands = wpBrands
                 .map(wpBrand => {
                     const converted = this.convertWordPressBrandToBrand(wpBrand)
-                    console.log(
-                        `🔄 Convertendo marca: ${wpBrand.name} -> Logo: ${
-                            converted.image || 'SEM LOGO'
-                        }`
-                    )
                     return converted
                 })
                 // Não filtrar por logo - aceitar todas as marcas
                 .slice(0, limit)
 
-            console.log(`✅ Retornando ${brands.length} marcas para LogoCloud`)
             return brands
         } catch (error) {
-            console.error('❌ Erro ao buscar marcas para LogoCloud:', error)
             return []
         }
     }
@@ -189,7 +155,6 @@ class BrandsService {
             )
             return this.convertWordPressBrandToBrand(response.data)
         } catch (error) {
-            console.error('Erro ao criar/atualizar marca:', error)
             return null
         }
     }
@@ -202,7 +167,6 @@ class BrandsService {
                 this.convertWordPressBrandToBrand(wpBrand)
             )
         } catch (error) {
-            console.error('Erro ao buscar todas as marcas:', error)
             return []
         }
     }
