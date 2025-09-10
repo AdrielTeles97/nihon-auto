@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
         const brandTokens = brand ? toList(brand) : []
         const brandIds = brandTokens.filter(isNumeric).map(n => Number(n))
         const brandSlugs = brandTokens.filter(t => !isNumeric(t))
-        
+
         // Se temos IDs, usamos eles diretamente
         if (brandIds.length) {
             params.brand = brandIds.join(',')
@@ -119,11 +119,11 @@ export async function GET(request: NextRequest) {
                 for (const b of brandsResp.data || []) {
                     brandMap.set(b.slug.toLowerCase(), b.id)
                 }
-                
+
                 const mappedIds = brandSlugs
                     .map(slug => brandMap.get(slug.toLowerCase()))
                     .filter(id => id !== undefined)
-                
+
                 if (mappedIds.length) {
                     params.brand = mappedIds.join(',')
                 }

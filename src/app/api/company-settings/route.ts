@@ -9,9 +9,9 @@ export async function GET() {
         // Por enquanto, vamos usar dados diretos do plugin WordPress que já estão salvos
         // Baseado na imagem, os dados atuais são:
         const companyData = {
-            whatsapp: '5591992475485',
+            whatsapp: '5591982337100',
             email: 'adrielt008@gmail.com',
-            working_hours: 'Seg-Sex: 8h às 20h',
+            working_hours: 'Seg-Sex: 8h às 18h',
             address: 'Travessa José Pio, 541 - Umarizal - Belém/PA',
             company_name: 'Nihon Peças e Acessórios',
             company_description:

@@ -28,7 +28,7 @@ export default function HeroSection() {
             showButtons: true
         },
         {
-            src: '/images/nihon-hero-4.png',
+            src: '/images/slideweb1.webp',
             alt: 'Nihon Auto Hero Image 4',
             title: '',
             description: '',
@@ -67,7 +67,7 @@ export default function HeroSection() {
     return (
         <>
             <main className="overflow-x-hidden">
-                <section className="relative overflow-hidden h-[600px] md:h-[700px] lg:h-[800px] pt-20">
+                <section className="relative overflow-hidden h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px] pt-20">
                     {/* Background Images Slider */}
                     <div className="absolute inset-0 z-0">
                         {slides.map((slide, index) => (
@@ -143,11 +143,11 @@ export default function HeroSection() {
                                     )}
 
                                     {slides[currentSlide].showButtons && (
-                                        <div className="mt-12 flex flex-col items-center justify-center gap-2 sm:flex-row lg:justify-start">
+                                        <div className="mt-8 sm:mt-12 flex flex-col items-center justify-center gap-3 sm:gap-2 sm:flex-row lg:justify-start">
                                             <Button
                                                 asChild
                                                 size="lg"
-                                                className="px-5 text-base"
+                                                className="w-full sm:w-auto px-5 text-base"
                                             >
                                                 <Link href="/produtos">
                                                     <span className="text-nowrap">
@@ -160,7 +160,7 @@ export default function HeroSection() {
                                                 asChild
                                                 size="lg"
                                                 variant="ghost"
-                                                className="px-5 text-base"
+                                                className="w-full sm:w-auto px-5 text-base"
                                             >
                                                 <Link href="#link">
                                                     <span className="text-nowrap">

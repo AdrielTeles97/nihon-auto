@@ -51,11 +51,11 @@ Obrigado!`
             <div className="relative container mx-auto px-4 text-center text-white">
                 {/* Título principal */}
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 px-2">
                         Pronto para encontrar a{' '}
                         <EmphasisText>peça perfeita</EmphasisText>?
                     </h2>
-                    <p className="text-xl text-neutral-300 max-w-3xl mx-auto mb-12 leading-relaxed">
+                    <p className="text-lg sm:text-xl text-neutral-300 max-w-3xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4">
                         Nossa equipe especializada está pronta para ajudar você
                         a encontrar exatamente o que precisa para seu veículo
                         japonês.
@@ -67,10 +67,10 @@ Obrigado!`
                     className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700"
                     style={{ animationDelay: '0.2s' }}
                 >
-                    <Link href="/produtos">
+                    <Link href="/produtos" className="w-full sm:w-auto">
                         <Button
                             size="lg"
-                            className="bg-red-600 hover:bg-red-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg"
+                            className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg"
                         >
                             <span className="text-white">
                                 Explorar Produtos
@@ -82,7 +82,7 @@ Obrigado!`
                     <Button
                         size="lg"
                         variant="outline"
-                        className="group border-white/50 text-white hover:bg-white hover:border-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg backdrop-blur-sm bg-transparent"
+                        className="w-full sm:w-auto group border-white/50 text-white hover:bg-white hover:border-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg backdrop-blur-sm bg-transparent"
                         onClick={handleGeneralQuote}
                     >
                         <span className="text-white group-hover:text-neutral-900 transition-colors">
@@ -94,38 +94,38 @@ Obrigado!`
 
                 {/* Informações de contato */}
                 <div
-                    className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700"
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 px-4"
                     style={{ animationDelay: '0.4s' }}
                 >
-                    <div className="flex items-center justify-center gap-3 p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                        <Phone className="w-6 h-6 text-red-400" />
+                    <div className="flex items-center justify-center gap-3 p-4 sm:p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+                        <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-red-400 flex-shrink-0" />
                         <div className="text-left">
-                            <div className="text-sm text-gray-300">
+                            <div className="text-xs sm:text-sm text-gray-300">
                                 Ligue agora
                             </div>
-                            <div className="font-semibold text-white">
+                            <div className="font-semibold text-white text-sm sm:text-base">
                                 (91) 9 8233-7100
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-center gap-3 p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                        <MessageCircle className="w-6 h-6 text-red-400" />
+                    <div className="flex items-center justify-center gap-3 p-4 sm:p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+                        <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-400 flex-shrink-0" />
                         <div className="text-left">
-                            <div className="text-sm text-gray-300">
+                            <div className="text-xs sm:text-sm text-gray-300">
                                 WhatsApp
                             </div>
-                            <div className="font-semibold text-white">
+                            <div className="font-semibold text-white text-sm sm:text-base">
                                 Atendimento rápido
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-center gap-3 p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
-                        <Mail className="w-6 h-6 text-red-400" />
+                    <div className="flex items-center justify-center gap-3 p-4 sm:p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 sm:col-span-2 lg:col-span-1">
+                        <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-red-400 flex-shrink-0" />
                         <div className="text-left">
-                            <div className="text-sm text-gray-300">E-mail</div>
-                            <div className="font-semibold text-white">
+                            <div className="text-xs sm:text-sm text-gray-300">E-mail</div>
+                            <div className="font-semibold text-white text-sm sm:text-base">
                                 Suporte 24/7
                             </div>
                         </div>
