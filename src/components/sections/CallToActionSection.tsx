@@ -124,7 +124,9 @@ Obrigado!`
                     <div className="flex items-center justify-center gap-3 p-4 sm:p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 sm:col-span-2 lg:col-span-1">
                         <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-red-400 flex-shrink-0" />
                         <div className="text-left">
-                            <div className="text-xs sm:text-sm text-gray-300">E-mail</div>
+                            <div className="text-xs sm:text-sm text-gray-300">
+                                E-mail
+                            </div>
                             <div className="font-semibold text-white text-sm sm:text-base">
                                 Suporte 24/7
                             </div>
