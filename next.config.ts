@@ -1,8 +1,6 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-    // Reduz bundle do client para libs suportadas
-    optimizePackageImports: ['lucide-react'],
     eslint: {
         // Evita que warnings de lint quebrem o build (ex.: Vercel)
         ignoreDuringBuilds: true

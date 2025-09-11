@@ -14,7 +14,7 @@ type BrandsApiResponse = {
 export default async function MarcasPage() {
   try {
     const res = await fetch('/api/brands?per_page=24&page=1&orderby=name&order=asc', {
-      next: { revalidate: 3600 }
+      cache: 'no-store'
     })
     if (!res.ok) throw new Error('brands api error')
     const json = (await res.json()) as BrandsApiResponse
@@ -43,3 +43,5 @@ export default async function MarcasPage() {
     )
   }
 }
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
