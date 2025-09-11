@@ -23,6 +23,7 @@ function mapProduct(p: WCProduct): Product {
         slug: p.slug,
         description: keepHtml(p.description),
         shortDescription: stripToText(p.short_description),
+        sku: p.sku,
         code: extractProductCodeFromWC(p),
         image: p.images?.[0]?.src || null,
         gallery: (p.images || []).map(img => img.src),

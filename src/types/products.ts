@@ -62,6 +62,7 @@ export interface Product {
   slug: string
   description: string
   shortDescription?: string
+  sku?: string
   code?: string // preferir SKU; fallback para GTIN
   image: string | null
   gallery: string[]
