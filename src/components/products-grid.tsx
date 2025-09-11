@@ -107,11 +107,26 @@ export function ProductsGrid() {
                 searchParams.forEach((v, k) => url.searchParams.set(k, v))
                 if (!url.searchParams.get('per_page'))
                     url.searchParams.set('per_page', '12')
-                
+
+                // Debug: log da URL sendo chamada
+                console.log('🔍 API URL:', url.toString())
+                console.log(
+                    '🔍 Parâmetros:',
+                    Array.from(url.searchParams.entries())
+                )
+
                 const res = await fetch(url.toString())
                 const json: ProductsResponse = await res.json()
-                
-                
+
+                // Debug: log da resposta
+                console.log('📦 Resposta API:', {
+                    success: json.success,
+                    total: json.total,
+                    products: json.data?.length || 0,
+                    page: json.page,
+                    totalPages: json.totalPages
+                })
+
                 if (!ignore) {
                     setProducts(json.data || [])
                     setPage(json.page || 1)
@@ -144,17 +159,11 @@ export function ProductsGrid() {
         router.push(`${pathname}?${params.toString()}`)
     }
 
-    const handleCategoryCheck = (categoryIdOrSlug: string) => {
-        // Encontrar a categoria para pegar o ID
-        const category = categories.find(c => c.slug === categoryIdOrSlug || c.id.toString() === categoryIdOrSlug)
-        const categoryId = category ? category.id.toString() : categoryIdOrSlug
-        updateQuery('category', toggleToken(selectedCategories, categoryId))
+    const handleCategoryCheck = (slug: string) => {
+        updateQuery('category', toggleToken(selectedCategories, slug))
     }
-    const handleBrandCheck = (brandIdOrSlug: string) => {
-        // Encontrar a marca para pegar o ID
-        const brand = brands.find(b => b.slug === brandIdOrSlug || b.id.toString() === brandIdOrSlug)
-        const brandId = brand ? brand.id.toString() : brandIdOrSlug
-        updateQuery('brand', toggleToken(selectedBrands, brandId))
+    const handleBrandCheck = (slug: string) => {
+        updateQuery('brand', toggleToken(selectedBrands, slug))
     }
 
     const goToPage = (p: number) => {
@@ -180,150 +189,154 @@ export function ProductsGrid() {
 
                     {/* Tipo de Produto (Categorias) */}
                     <div className="mb-6">
-                        <h4 
+                        <h4
                             className="font-medium text-gray-700 mb-3 flex items-center cursor-pointer hover:text-blue-600"
                             onClick={() => setTypesExpanded(!typesExpanded)}
                         >
                             TIPO DE PRODUTO
-                            <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${typesExpanded ? '' : 'rotate-180'}`} />
+                            <ChevronDown
+                                className={`h-4 w-4 ml-auto transition-transform ${
+                                    typesExpanded ? '' : 'rotate-180'
+                                }`}
+                            />
                         </h4>
                         {typesExpanded && (
-                        <div className="space-y-2">
-                            {(() => {
-                                // Computa lista com 'Todas' no topo e sem 'Sem categoria'
-                                const allCount = (categories || []).reduce(
-                                    (acc, c) => acc + (c.count ?? 0),
-                                    0
-                                )
-                                const cleaned = (categories || []).filter(
-                                    c =>
-                                        c.slug !== 'sem-categoria' &&
-                                        c.slug !== 'uncategorized'
-                                )
-                                const listed = [
-                                    {
-                                        id: 0,
-                                        slug: '__all__',
-                                        name: 'Todas',
-                                        count: allCount,
-                                        description: '',
-                                        image: null,
-                                        parentId: null
-                                    },
-                                    ...cleaned
-                                ]
-                                const slice = listed.slice(
-                                    0,
-                                    showAllTypes ? listed.length : 5
-                                )
-                                return slice.map(cat => (
-                                    <div
-                                        key={cat.slug}
-                                        className="flex items-center justify-between text-sm"
-                                    >
-                                        <label className="flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="mr-2"
-                                                checked={
-                                                    cat.slug === '__all__'
-                                                        ? selectedCategories.length ===
-                                                          0
-                                                        : selectedCategories.includes(
-                                                              cat.id.toString()
-                                                          ) || selectedCategories.includes(
-                                                              cat.slug
-                                                          )
-                                                }
-                                                onChange={() =>
-                                                    cat.slug === '__all__'
-                                                        ? updateQuery(
-                                                              'category',
-                                                              []
-                                                          )
-                                                        : handleCategoryCheck(
-                                                              cat.slug
-                                                          )
-                                                }
-                                            />
-                                            <span className="text-blue-600 hover:underline">
-                                                {cat.slug === '__all__'
-                                                    ? 'Todas'
-                                                    : cat.name}
+                            <div className="space-y-2">
+                                {(() => {
+                                    // Computa lista com 'Todas' no topo e sem 'Sem categoria'
+                                    const allCount = (categories || []).reduce(
+                                        (acc, c) => acc + (c.count ?? 0),
+                                        0
+                                    )
+                                    const cleaned = (categories || []).filter(
+                                        c =>
+                                            c.slug !== 'sem-categoria' &&
+                                            c.slug !== 'uncategorized'
+                                    )
+                                    const listed = [
+                                        {
+                                            id: 0,
+                                            slug: '__all__',
+                                            name: 'Todas',
+                                            count: allCount,
+                                            description: '',
+                                            image: null,
+                                            parentId: null
+                                        },
+                                        ...cleaned
+                                    ]
+                                    const slice = listed.slice(
+                                        0,
+                                        showAllTypes ? listed.length : 5
+                                    )
+                                    return slice.map(cat => (
+                                        <div
+                                            key={cat.slug}
+                                            className="flex items-center justify-between text-sm"
+                                        >
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="mr-2"
+                                                    checked={
+                                                        cat.slug === '__all__'
+                                                            ? selectedCategories.length ===
+                                                              0
+                                                            : selectedCategories.includes(
+                                                                  cat.slug
+                                                              )
+                                                    }
+                                                    onChange={() =>
+                                                        cat.slug === '__all__'
+                                                            ? updateQuery(
+                                                                  'category',
+                                                                  []
+                                                              )
+                                                            : handleCategoryCheck(
+                                                                  cat.slug
+                                                              )
+                                                    }
+                                                />
+                                                <span className="text-blue-600 hover:underline">
+                                                    {cat.slug === '__all__'
+                                                        ? 'Todas'
+                                                        : cat.name}
+                                                </span>
+                                            </label>
+                                            <span className="text-gray-500">
+                                                ({cat.count ?? 0})
                                             </span>
-                                        </label>
-                                        <span className="text-gray-500">
-                                            ({cat.count ?? 0})
-                                        </span>
-                                    </div>
-                                ))
-                            })()}
-                            {!showAllTypes && categories.length > 5 && (
-                                <button
-                                    onClick={() => setShowAllTypes(true)}
-                                    className="text-blue-600 text-sm hover:underline"
-                                >
-                                    Ver mais...
-                                </button>
-                            )}
-                        </div>
+                                        </div>
+                                    ))
+                                })()}
+                                {!showAllTypes && categories.length > 5 && (
+                                    <button
+                                        onClick={() => setShowAllTypes(true)}
+                                        className="text-blue-600 text-sm hover:underline"
+                                    >
+                                        Ver mais...
+                                    </button>
+                                )}
+                            </div>
                         )}
                     </div>
 
                     {/* Fabricantes (Marcas) */}
                     <div className="mb-6">
-                        <h4 
+                        <h4
                             className="font-medium text-gray-700 mb-3 flex items-center cursor-pointer hover:text-blue-600"
                             onClick={() => setBrandsExpanded(!brandsExpanded)}
                         >
                             FABRICANTES
-                            <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${brandsExpanded ? '' : 'rotate-180'}`} />
+                            <ChevronDown
+                                className={`h-4 w-4 ml-auto transition-transform ${
+                                    brandsExpanded ? '' : 'rotate-180'
+                                }`}
+                            />
                         </h4>
                         {brandsExpanded && (
-                        <div className="space-y-2">
-                            {(brands || [])
-                                .slice(
-                                    0,
-                                    showAllManufacturers ? brands.length : 5
-                                )
-                                .map(b => (
-                                    <div
-                                        key={b.slug}
-                                        className="flex items-center justify-between text-sm"
-                                    >
-                                        <label className="flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="mr-2"
-                                                checked={selectedBrands.includes(
-                                                    b.id.toString()
-                                                ) || selectedBrands.includes(
-                                                    b.slug
-                                                )}
-                                                onChange={() =>
-                                                    handleBrandCheck(b.slug)
-                                                }
-                                            />
-                                            <span className="text-blue-600 hover:underline">
-                                                {b.name}
+                            <div className="space-y-2">
+                                {(brands || [])
+                                    .slice(
+                                        0,
+                                        showAllManufacturers ? brands.length : 5
+                                    )
+                                    .map(b => (
+                                        <div
+                                            key={b.slug}
+                                            className="flex items-center justify-between text-sm"
+                                        >
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="mr-2"
+                                                    checked={selectedBrands.includes(
+                                                        b.slug
+                                                    )}
+                                                    onChange={() =>
+                                                        handleBrandCheck(b.slug)
+                                                    }
+                                                />
+                                                <span className="text-blue-600 hover:underline">
+                                                    {b.name}
+                                                </span>
+                                            </label>
+                                            <span className="text-gray-500">
+                                                ({b.count ?? 0})
                                             </span>
-                                        </label>
-                                        <span className="text-gray-500">
-                                            ({b.count ?? 0})
-                                        </span>
-                                    </div>
-                                ))}
-                            {!showAllManufacturers && brands.length > 5 && (
-                                <button
-                                    onClick={() =>
-                                        setShowAllManufacturers(true)
-                                    }
-                                    className="text-blue-600 text-sm hover:underline"
-                                >
-                                    Ver mais...
-                                </button>
-                            )}
-                        </div>
+                                        </div>
+                                    ))}
+                                {!showAllManufacturers && brands.length > 5 && (
+                                    <button
+                                        onClick={() =>
+                                            setShowAllManufacturers(true)
+                                        }
+                                        className="text-blue-600 text-sm hover:underline"
+                                    >
+                                        Ver mais...
+                                    </button>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>
