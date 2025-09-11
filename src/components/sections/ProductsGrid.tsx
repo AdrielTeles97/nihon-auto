@@ -92,6 +92,7 @@ function ProductCard({
                                 alt={product.name}
                                 fill
                                 className="object-cover transition-all duration-500 group-hover:scale-110"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -178,32 +179,29 @@ function ProductPlaceholder({ index }: { index: number }) {
     )
 }
 
-export function ProductsGrid() {
-    const [products, setProducts] = useState<Product[]>([])
-    const [isLoading, setIsLoading] = useState(true)
+export function ProductsGrid({ initialProducts = [] }: { initialProducts?: Product[] }) {
+    const [products, setProducts] = useState<Product[]>(initialProducts)
+    const [isLoading, setIsLoading] = useState(initialProducts.length === 0)
     const [addingToCart, setAddingToCart] = useState<string | null>(null)
     const [addedToCart, setAddedToCart] = useState<string | null>(null)
     const { addItem } = useCart()
     const router = useRouter()
 
     useEffect(() => {
+        if (initialProducts.length > 0) return
         async function fetchProducts() {
             try {
-                const response = await fetch('/api/products?limit=6')
+                const response = await fetch('/api/products?per_page=6&page=1&order=desc')
                 const data: ProductsApiResponse = await response.json()
-
-                if (data.success) {
-                    setProducts(data.data.slice(0, 6))
-                }
+                if (data.success) setProducts(data.data)
             } catch (error) {
                 console.error('Erro ao carregar produtos:', error)
             } finally {
                 setIsLoading(false)
             }
         }
-
         fetchProducts()
-    }, [])
+    }, [initialProducts.length])
 
     const handleAddToCart = async (product: Product) => {
         // Se o produto tem variações, vai para página do produto

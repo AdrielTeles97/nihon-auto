@@ -141,7 +141,7 @@ export default function CarrinhoPage() {
                                                     width={80}
                                                     height={80}
                                                     className="h-full w-full object-contain"
-                                                    unoptimized
+                                                    sizes="80px"
                                                 />
                                             </div>
                                             <div className="flex-1">

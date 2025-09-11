@@ -20,6 +20,15 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="pt-BR" className={`${manrope.variable}`}>
+            <head>
+                {/* Preconnect/DNS Prefetch para hosts externos usados com frequência */}
+                <link rel="preconnect" href="https://darksalmon-cobra-736244.hostingersite.com" crossOrigin="anonymous" />
+                <link rel="dns-prefetch" href="//darksalmon-cobra-736244.hostingersite.com" />
+                <link rel="preconnect" href="https://ik.imagekit.io" crossOrigin="anonymous" />
+                <link rel="dns-prefetch" href="//ik.imagekit.io" />
+                <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
+                <link rel="dns-prefetch" href="//images.unsplash.com" />
+            </head>
             <body className={`${manrope.className} antialiased`}>
                 <CartProvider>{children}</CartProvider>
             </body>

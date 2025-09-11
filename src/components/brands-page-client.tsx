@@ -1,0 +1,280 @@
+"use client"
+
+import { useState, useEffect } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Loader2, Package, Search, X } from 'lucide-react'
+import Link from 'next/link'
+import Image from 'next/image'
+import type { Brand } from '@/types/brands'
+import { DecorativeShape } from '@/components/ui/noise-shapes'
+import { EmphasisText } from '@/components/ui/emphasis-text'
+
+// Debounce simples
+function useDebounce(value: string, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(handler)
+  }, [value, delay])
+  return debouncedValue
+}
+
+type BrandsApiResponse = {
+  success: boolean
+  data: Brand[]
+  page: number
+  perPage: number
+  total: number
+  totalPages: number
+}
+
+export default function BrandsPageClient({
+  initialBrands,
+  initialPage,
+  initialTotal,
+  initialTotalPages,
+  itemsPerPage = 24
+}: {
+  initialBrands: Brand[]
+  initialPage: number
+  initialTotal: number
+  initialTotalPages: number
+  itemsPerPage?: number
+}) {
+  const [loading, setLoading] = useState(false)
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const debouncedSearchQuery = useDebounce(searchTerm, 800)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filteredBrands, setFilteredBrands] = useState<Brand[]>(initialBrands)
+  const [currentPage, setCurrentPage] = useState(initialPage)
+  const [totalPages, setTotalPages] = useState(initialTotalPages)
+  const [totalBrands, setTotalBrands] = useState(initialTotal)
+
+  useEffect(() => {
+    setSearchQuery(debouncedSearchQuery)
+    setCurrentPage(1)
+  }, [debouncedSearchQuery])
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        setSearchLoading(true)
+        const params = new URLSearchParams()
+        params.set('per_page', String(itemsPerPage))
+        params.set('page', String(currentPage))
+        params.set('orderby', 'name')
+        params.set('order', 'asc')
+        if (searchQuery) params.set('search', searchQuery)
+
+        const response = await fetch(`/api/brands?${params.toString()}`)
+        const data = (await response.json()) as BrandsApiResponse
+
+        setFilteredBrands(data.data || [])
+        setTotalPages(data.totalPages || 1)
+        setTotalBrands(data.total || 0)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro desconhecido')
+      } finally {
+        setLoading(false)
+        setSearchLoading(false)
+      }
+    }
+
+    // Se temos dados SSR válidos para o estado inicial, não refaz a busca.
+    const hasInitial = initialBrands.length > 0 || initialTotal > 0
+    const isInitialState = searchQuery === '' && currentPage === initialPage
+    if (!(hasInitial && isInitialState)) {
+      fetchBrands()
+    }
+  }, [currentPage, searchQuery, itemsPerPage])
+
+  const handleSearch = (term: string) => setSearchTerm(term)
+  const clearSearch = () => {
+    setSearchTerm('')
+    setCurrentPage(1)
+  }
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="relative py-32 overflow-hidden bg-gradient-to-br from-zinc-900 via-black to-red-950">
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{ backgroundImage: `url('/noise.svg')`, backgroundRepeat: 'repeat', backgroundSize: '400px 400px' }}
+        />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute -top-20 -right-20 w-40 h-40 opacity-20">
+          <DecorativeShape variant="circle" />
+        </div>
+        <div className="absolute top-1/2 -left-16 w-32 h-32 opacity-15">
+          <DecorativeShape variant="rectangle" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 bg-red-600/30 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-red-500/50">
+              <Package className="h-4 w-4 text-red-400" />
+              <span className="text-red-100 text-sm font-medium">Nossas Marcas Parceiras</span>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              <EmphasisText>Marcas</EmphasisText> Parceiras
+            </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+              Trabalhamos com as principais marcas do mercado automotivo.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Badge variant="secondary" className="text-lg px-4 py-2 bg-red-600/30 backdrop-blur-sm text-white border-red-500/50 hover:bg-red-600/30 cursor-default">
+                {totalBrands > 0 ? `${totalBrands} Marcas Disponíveis` : 'Carregando marcas...'}
+              </Badge>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent" />
+      </section>
+
+      {/* Lista */}
+      <section className="py-20 bg-background relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <div className="w-full h-full bg-repeat" style={{ backgroundImage: `url('/noise.svg')`, backgroundSize: '200px 200px' }} />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/60 to-background/80" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          {/* Busca */}
+          <div className="mb-12 max-w-lg mx-auto">
+            <p className="text-center text-gray-600 mb-4">Busque a sua marca favorita</p>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Digite o nome da marca..."
+                value={searchTerm}
+                onChange={e => handleSearch(e.target.value)}
+                className="w-full pl-10 pr-12 py-3 bg-background/80 backdrop-blur-sm border border-border/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300"
+              />
+              {searchTerm && (
+                <button onClick={clearSearch} className="absolute right-3 top-1/2 transform -translate-y-1/2 h-6 w-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors">
+                  <X className="h-3 w-3 text-gray-600" />
+                </button>
+              )}
+              {searchLoading && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                </div>
+              )}
+            </div>
+            <div className="mt-4 text-center">
+              {searchQuery && (
+                <div className="mb-2">
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                    Buscando por: “{searchQuery}”
+                  </Badge>
+                </div>
+              )}
+              <Badge variant="outline" className="bg-background/50 backdrop-blur-sm">
+                {loading || searchLoading
+                  ? 'Carregando...'
+                  : searchQuery
+                  ? `${totalBrands} marca${totalBrands !== 1 ? 's' : ''} encontrada${totalBrands !== 1 ? 's' : ''}`
+                  : `${totalBrands} marcas disponíveis`}
+              </Badge>
+            </div>
+          </div>
+
+          {/* Grid */}
+          {filteredBrands.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="bg-background/80 backdrop-blur-sm border border-border/50 rounded-xl p-8 max-w-md mx-auto">
+                <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                {searchQuery ? (
+                  <>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma marca encontrada</h3>
+                    <p className="text-muted-foreground mb-4">Não encontramos nenhuma marca que corresponda à sua busca por “{searchQuery}”.</p>
+                    <Button variant="outline" onClick={clearSearch} className="text-primary border-primary hover:bg-primary/10">
+                      Limpar busca
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma marca disponível</h3>
+                    <p className="text-muted-foreground">Não há marcas com produtos cadastrados no momento.</p>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {filteredBrands.map((brand, idx) => (
+                <Link
+                  key={brand.id ?? idx}
+                  href={`/produtos?brand=${encodeURIComponent(brand.slug || String(brand.id ?? ''))}`}
+                  className="group"
+                >
+                  <div className="border rounded-xl p-4 bg-background/80 hover:shadow-md transition">
+                    <div className="aspect-video bg-muted/20 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
+                      {brand.image ? (
+                        <Image
+                          src={brand.image}
+                          alt={brand.name}
+                          width={320}
+                          height={180}
+                          className="object-contain w-full h-full"
+                          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
+                        />
+                      ) : (
+                        <div className="text-xs text-muted-foreground">Sem imagem</div>
+                      )}
+                    </div>
+                    <div className="text-sm font-medium group-hover:text-red-600 transition-colors line-clamp-2">{brand.name}</div>
+                    {brand.count ? (
+                      <div className="text-xs text-muted-foreground">{brand.count} produto(s)</div>
+                    ) : null}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Paginação */}
+          {totalPages > 1 && (
+            <div className="mt-12 flex justify-center items-center gap-4">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 bg-background/80 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/10 transition-colors"
+              >
+                Anterior
+              </button>
+              <div className="flex items-center gap-2">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i
+                  if (pageNum > totalPages) return null
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-10 h-10 rounded-lg font-medium transition-colors ${
+                        currentPage === pageNum ? 'bg-primary text-primary-foreground' : 'bg-background/80 border border-border hover:bg-primary/10'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  )
+                })}
+              </div>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 bg-background/80 border border-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/10 transition-colors"
+              >
+                Próxima
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+    </>
+  )
+}
