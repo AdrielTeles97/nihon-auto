@@ -32,7 +32,7 @@ export default function ANihonPage() {
                     <div className="absolute inset-0">
                         <Image
                             src="/images/a-nihon-background.webp"
-                            alt="Nihon Auto Background"
+                            alt="Nihon acessórios Background"
                             fill
                             className="object-cover"
                             priority
@@ -64,9 +64,9 @@ export default function ANihonPage() {
                                 className="mb-8"
                             >
                                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6">
-                                    A{' '}
+                                    Sobre a{' '}
                                     <EmphasisText className="text-red-500">
-                                        NIHON
+                                        Nihon
                                     </EmphasisText>
                                 </h1>
                                 <h2 className="text-2xl md:text-4xl font-light text-neutral-300 mb-8">
@@ -79,82 +79,6 @@ export default function ANihonPage() {
                                     necessidades.
                                 </p>
                             </motion.div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Por que escolher a Nihon Auto Section */}
-                <section className="relative py-20 bg-gradient-to-br from-neutral-900/50 to-transparent">
-                    <DividerLines variant="red" />
-
-                    <div className="relative mx-auto max-w-7xl px-6">
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8 }}
-                            className="text-center mb-16"
-                        >
-                            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                                Por que escolher a{' '}
-                                <EmphasisText>Nihon Auto</EmphasisText>?
-                            </h2>
-                            <p className="text-xl text-neutral-300 max-w-3xl mx-auto">
-                                Nossa experiência e dedicação garantem as
-                                melhores soluções em peças automotivas japonesas
-                                para seu veículo
-                            </p>
-                        </motion.div>
-
-                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {[
-                                {
-                                    icon: Award,
-                                    title: 'Qualidade Premium',
-                                    description:
-                                        'Produtos de alta qualidade, testados e aprovados pelos melhores fabricantes do mercado automotivo japonês.'
-                                },
-                                {
-                                    icon: Users,
-                                    title: 'Atendimento Especializado',
-                                    description:
-                                        'Nossa equipe especializada está sempre pronta para ajudar você a encontrar a peça perfeita.'
-                                },
-                                {
-                                    icon: Target,
-                                    title: 'Foco em Resultados',
-                                    description:
-                                        'Comprometidos em entregar exatamente o que você precisa com eficiência e qualidade.'
-                                },
-                                {
-                                    icon: Heart,
-                                    title: 'Paixão Automotiva',
-                                    description:
-                                        'Movidos pela paixão por carros e pela experiência única de dirigir um veículo japonês.'
-                                }
-                            ].map((item, index) => (
-                                <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{
-                                        duration: 0.8,
-                                        delay: index * 0.1
-                                    }}
-                                    className="text-center p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 group"
-                                >
-                                    <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center group-hover:bg-red-500/30 transition-colors duration-300">
-                                        <item.icon className="h-8 w-8 text-red-400" />
-                                    </div>
-                                    <h3 className="text-xl font-semibold text-white mb-4">
-                                        {item.title}
-                                    </h3>
-                                    <p className="text-neutral-300 leading-relaxed">
-                                        {item.description}
-                                    </p>
-                                </motion.div>
-                            ))}
                         </div>
                     </div>
                 </section>
@@ -174,12 +98,12 @@ export default function ANihonPage() {
                                 </h2>
                                 <div className="space-y-6 text-neutral-300">
                                     <p className="text-lg leading-relaxed">
-                                        Na Nihon, somos apaixonados por carros
-                                        japoneses e pela experiência única de
-                                        dirigir. Com uma vasta gama de
-                                        acessórios de alta qualidade, estamos
-                                        aqui para transformar seu veículo em uma
-                                        extensão perfeita de seu estilo.
+                                        Na Nihon, somos apaixonados por carros e
+                                        pela experiência única de dirigir. Com
+                                        uma vasta gama de acessórios de alta
+                                        qualidade, estamos aqui para transformar
+                                        seu veículo em uma extensão perfeita de
+                                        seu estilo.
                                     </p>
                                     <p className="text-lg leading-relaxed">
                                         Desde itens de conforto e conveniência
@@ -193,7 +117,7 @@ export default function ANihonPage() {
                                 <div className="grid grid-cols-2 gap-6 mt-12">
                                     {[
                                         {
-                                            value: '15+',
+                                            value: '5+',
                                             label: 'Anos de Experiência'
                                         },
                                         {
@@ -231,10 +155,10 @@ export default function ANihonPage() {
                                     </h3>
                                     <p className="text-neutral-300 leading-relaxed mb-8">
                                         Proporcionar experiências únicas no
-                                        mundo automotivo japonês, oferecendo
-                                        produtos de qualidade superior que
-                                        elevam o padrão do seu veículo e sua
-                                        satisfação ao dirigir.
+                                        mundo automotivo, oferecendo produtos de
+                                        qualidade superior que elevam o padrão
+                                        do seu veículo e sua satisfação ao
+                                        dirigir.
                                     </p>
 
                                     <div className="space-y-4">
@@ -280,7 +204,7 @@ export default function ANihonPage() {
                             </h2>
                             <p className="text-xl text-neutral-300 max-w-3xl mx-auto">
                                 Atendimento especializado e produtos de
-                                qualidade para seu veículo japonês
+                                qualidade para seu veículo
                             </p>
                         </motion.div>
 
@@ -335,7 +259,9 @@ export default function ANihonPage() {
                                             Atendimento
                                         </p>
                                         <p className="text-white font-semibold">
-                                            24/7 Online
+                                            Seg a sexta: <br />
+                                            8h às 12h <br />
+                                            14h às 18h
                                         </p>
                                     </div>
                                 </div>
@@ -354,7 +280,7 @@ export default function ANihonPage() {
                                     </h3>
                                     <p className="text-red-100 leading-relaxed mb-8">
                                         Venha conhecer nossa linha completa de
-                                        produtos japoneses e descubra como
+                                        produtos e descubra como
                                         podemos transformar seu veículo em algo
                                         realmente especial.
                                     </p>
@@ -369,8 +295,7 @@ export default function ANihonPage() {
                                                     Atendimento Personalizado
                                                 </h4>
                                                 <p className="text-red-200 text-sm">
-                                                    Especialistas em acessórios
-                                                    japoneses
+                                                    Especialistas em  peças e acessórios   
                                                 </p>
                                             </div>
                                         </div>

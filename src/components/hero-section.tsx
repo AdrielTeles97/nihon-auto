@@ -22,21 +22,21 @@ export default function HeroSection() {
     const slides: Slide[] = [
         {
             src: '/images/nihon-hero-2.png',
-            alt: 'Nihon Auto Hero Image 2',
+            alt: 'Nihon acessórios Hero Image 2',
             title: '',
             description: '',
             showButtons: true
         },
         {
             src: '/images/slideweb1.webp',
-            alt: 'Nihon Auto Hero Image 4',
+            alt: 'Nihon acessórios Hero Image 4',
             title: '',
             description: '',
             showButtons: false
         },
         {
             src: '/images/nihon-hero-3.jpeg',
-            alt: 'Nihon Auto Hero Image 3',
+            alt: 'Nihon acessórios Hero Image 3',
             title: '',
             description: '',
             showButtons: false

@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Nihon Auto Manager
+ * Plugin Name: Nihon acessórios Manager
  * Description: Sistema completo de cotações e contatos - Versão Final
  * Version: 2.1.0
- * Author: Nihon Auto
+ * Author: Nihon acessórios
  */
 
 if (!defined('ABSPATH')) {
@@ -69,7 +69,7 @@ class NihonAutoManager {
         
         return new WP_REST_Response(array(
             'status' => 'success',
-            'message' => 'Plugin Nihon Auto v2.1 funcionando!',
+            'message' => 'Plugin Nihon acessórios v2.1 funcionando!',
             'version' => '2.1.0',
             'timestamp' => current_time('mysql', false), // Horário local
             'database' => array(
@@ -85,13 +85,13 @@ class NihonAutoManager {
         global $wpdb;
         
         // Log da requisição para debug
-        error_log('Nihon Auto - Quote request received: ' . json_encode($request->get_json_params()));
+        error_log('Nihon acessórios - Quote request received: ' . json_encode($request->get_json_params()));
         
         $data = $request->get_json_params();
         
         // Validar se pelo menos nome e um contato (email ou telefone) foi fornecido
         if (empty($data['name'])) {
-            error_log('Nihon Auto - Nome é obrigatório');
+            error_log('Nihon acessórios - Nome é obrigatório');
             return new WP_REST_Response(array(
                 'success' => false,
                 'message' => 'Nome é obrigatório'
@@ -99,7 +99,7 @@ class NihonAutoManager {
         }
         
         if (empty($data['email']) && empty($data['phone'])) {
-            error_log('Nihon Auto - Email ou telefone é obrigatório');
+            error_log('Nihon acessórios - Email ou telefone é obrigatório');
             return new WP_REST_Response(array(
                 'success' => false,
                 'message' => 'E-mail ou telefone é obrigatório'
@@ -115,7 +115,7 @@ class NihonAutoManager {
         // Verificar se a tabela foi criada
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
         if (!$table_exists) {
-            error_log('Nihon Auto - Table does not exist: ' . $table_name);
+            error_log('Nihon acessórios - Table does not exist: ' . $table_name);
             return new WP_REST_Response(array(
                 'success' => false,
                 'message' => 'Erro de configuração do banco de dados'
@@ -123,7 +123,7 @@ class NihonAutoManager {
         }
         
         $cart_items_serialized = maybe_serialize($data['cart_items'] ?? array());
-        error_log('Nihon Auto - Cart items serialized: ' . $cart_items_serialized);
+        error_log('Nihon acessórios - Cart items serialized: ' . $cart_items_serialized);
         
         // Limpar campos vazios
         $email = !empty($data['email']) ? sanitize_email($data['email']) : '';
@@ -147,20 +147,20 @@ class NihonAutoManager {
         
         if ($result === false) {
             $error = $wpdb->last_error;
-            error_log('Nihon Auto - Database insert error: ' . $error);
+            error_log('Nihon acessórios - Database insert error: ' . $error);
             return new WP_REST_Response(array(
                 'success' => false,
                 'message' => 'Erro ao salvar cotação: ' . $error
             ), 500);
         }
         
-        error_log('Nihon Auto - Quote saved successfully with ID: ' . $wpdb->insert_id);
+        error_log('Nihon acessórios - Quote saved successfully with ID: ' . $wpdb->insert_id);
         
         // Enviar notificação
         try {
             $this->send_quote_notification($data);
         } catch (Exception $e) {
-            error_log('Nihon Auto - Error sending notification: ' . $e->getMessage());
+            error_log('Nihon acessórios - Error sending notification: ' . $e->getMessage());
         }
         
         return new WP_REST_Response(array(
@@ -271,7 +271,7 @@ class NihonAutoManager {
         $result1 = dbDelta($quotes_sql);
         $result2 = dbDelta($contacts_sql);
         
-        error_log('Nihon Auto - Table creation results: ' . json_encode([
+        error_log('Nihon acessórios - Table creation results: ' . json_encode([
             'quotes' => $result1,
             'contacts' => $result2
         ]));
@@ -280,13 +280,13 @@ class NihonAutoManager {
         $quotes_exists = $wpdb->get_var("SHOW TABLES LIKE '$quotes_table'") == $quotes_table;
         $contacts_exists = $wpdb->get_var("SHOW TABLES LIKE '$contacts_table'") == $contacts_table;
         
-        error_log('Nihon Auto - Tables exist check: quotes=' . ($quotes_exists ? 'yes' : 'no') . ', contacts=' . ($contacts_exists ? 'yes' : 'no'));
+        error_log('Nihon acessórios - Tables exist check: quotes=' . ($quotes_exists ? 'yes' : 'no') . ', contacts=' . ($contacts_exists ? 'yes' : 'no'));
     }
     
     public function add_admin_menus() {
         add_menu_page(
-            'Nihon Auto',
-            'Nihon Auto',
+            'Nihon acessórios',
+            'Nihon acessórios',
             'manage_options',
             'nihon-auto',
             array($this, 'admin_dashboard'),
@@ -331,7 +331,7 @@ class NihonAutoManager {
         $unread_contacts = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}nihon_contacts WHERE status = 'unread'");
         
         echo '<div class="wrap">';
-        echo '<h1 class="wp-heading-inline">🚗 Nihon Auto - Dashboard</h1>';
+        echo '<h1 class="wp-heading-inline">🚗 Nihon acessórios - Dashboard</h1>';
         echo '<div class="notice notice-success" style="margin: 20px 0;"><p><strong>✅ Plugin v2.1 Ativo</strong> - Sistema funcionando perfeitamente!</p></div>';
         
         // Cards de estatísticas
@@ -554,7 +554,7 @@ class NihonAutoManager {
         $address = get_option('nihon_address', '');
         
         echo '<div class="wrap">';
-        echo '<h1>⚙️ Configurações Nihon Auto</h1>';
+        echo '<h1>⚙️ Configurações Nihon acessórios</h1>';
         
         echo '<form method="post">';
         echo '<table class="form-table">';
@@ -1021,7 +1021,7 @@ class NihonAutoManager {
     
     private function send_quote_notification($data) {
         $to = get_option('nihon_contact_email', get_option('admin_email'));
-        $subject = '🚗 Nova Cotação - Nihon Auto';
+        $subject = '🚗 Nova Cotação - Nihon acessórios';
         $message = "Nova cotação recebida:\n\n";
         $message .= "Nome: " . $data['name'] . "\n";
         $message .= "Email: " . ($data['email'] ?? '-') . "\n";

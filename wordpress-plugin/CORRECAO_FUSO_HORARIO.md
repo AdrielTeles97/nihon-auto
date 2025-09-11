@@ -1,4 +1,4 @@
-# 🕒 Correção de Fuso Horário - Plugin Nihon Auto
+# 🕒 Correção de Fuso Horário - Plugin Nihon acessórios
 
 ## Problema Identificado
 
@@ -29,7 +29,7 @@ Para:
 
 1. Acesse: https://darksalmon-cobra-736244.hostingersite.com/wp-admin
 2. Vá em **Plugins > Editor de Plugins**
-3. Selecione **Nihon Auto Manager**
+3. Selecione **Nihon acessórios Manager**
 4. Substitua o conteúdo pelo arquivo corrigido
 5. Clique em **Atualizar arquivo**
 

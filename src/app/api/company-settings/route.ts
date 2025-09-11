@@ -10,12 +10,12 @@ export async function GET() {
         // Baseado na imagem, os dados atuais são:
         const companyData = {
             whatsapp: '5591982337100',
-            email: 'adrielt008@gmail.com',
+            email: 'vendas01@nihonauto.com.br',
             working_hours: 'Seg-Sex: 8h às 18h',
             address: 'Travessa José Pio, 541 - Umarizal - Belém/PA',
             company_name: 'Nihon Peças e Acessórios',
             company_description:
-                'Especialistas em peças e acessórios automotivos com mais de 15 anos de experiência no mercado brasileiro.',
+                'Especialistas em peças e acessórios automotivos com mais de 5 anos de experiência no mercado brasileiro.',
             social_media: {
                 facebook: '',
                 instagram: '',
@@ -38,7 +38,7 @@ export async function GET() {
         // Retornar dados padrão em caso de erro
         const fallbackData = {
             whatsapp: '5591992475485',
-            email: 'adrielt008@gmail.com',
+            email: 'vendas01@nihonauto.com.br',
             working_hours: 'Seg-Sex: 8h às 20h',
             address: 'Travessa José Pio, 541 - Umarizal - Belém/PA',
             company_name: 'Nihon Peças e Acessórios',

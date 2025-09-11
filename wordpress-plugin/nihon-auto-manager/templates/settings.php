@@ -21,7 +21,7 @@ $notification_email = isset($settings['notification_email']) ? $settings['notifi
 ?>
 
 <div class="wrap">
-    <h1>Configurações - Nihon Auto</h1>
+    <h1>Configurações - Nihon acessórios</h1>
     
     <form method="post" action="">
         <?php wp_nonce_field('nihon_settings_nonce'); ?>
@@ -196,7 +196,7 @@ function testWhatsApp() {
         return;
     }
     
-    const testMessage = 'Teste de configuração do WhatsApp - Nihon Auto';
+    const testMessage = 'Teste de configuração do WhatsApp - Nihon acessórios';
     const url = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(testMessage)}`;
     
     window.open(url, '_blank');

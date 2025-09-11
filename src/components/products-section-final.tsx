@@ -418,7 +418,7 @@ export function ProductsSection() {
                     <div className="relative container mx-auto px-4 py-24">
                         <div className="text-center mb-16">
                             <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                                Por que escolher a <Cover>Nihon Auto</Cover>?
+                                Por que escolher a <Cover>Nihon acessórios</Cover>?
                             </h3>
                             <p className="text-muted-foreground">
                                 Nossos diferenciais que garantem a melhor

@@ -6,7 +6,7 @@ export function getWhatsAppUrl(message: string) {
 }
 
 export function getWhatsAppQuoteUrl(productName: string, productCode: string) {
-    // Número fixo da Nihon Auto
+    // Número fixo da Nihon acessórios
     const nihonNumber = '559182337100'
     const base = 'https://wa.me'
 

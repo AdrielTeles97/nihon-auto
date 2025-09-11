@@ -294,7 +294,7 @@ function replyContact(email, name, originalSubject) {
     const subject = `Re: ${originalSubject}`;
     const body = `Olá ${name},
 
-Obrigado por entrar em contato conosco através do site da Nihon Auto.
+Obrigado por entrar em contato conosco através do site da Nihon acessórios.
 
 Recebemos sua mensagem sobre "${originalSubject}" e estamos prontos para te ajudar!
 
@@ -303,11 +303,11 @@ Recebemos sua mensagem sobre "${originalSubject}" e estamos prontos para te ajud
 Caso tenha mais alguma dúvida, não hesite em nos contatar.
 
 Atenciosamente,
-Equipe Nihon Auto
+Equipe Nihon acessórios
 Especialistas em peças japonesas
 
 --
-Nihon Auto
+Nihon acessórios
 Email: contato@nihon-auto.com
 WhatsApp: (11) 99999-9999`;
 
@@ -323,13 +323,13 @@ function sendWhatsApp(phone, name) {
     
     const message = `Olá ${name}! 👋
 
-Tudo bem? Vi que você entrou em contato conosco através do site da Nihon Auto.
+Tudo bem? Vi que você entrou em contato conosco através do site da Nihon acessórios.
 
 Estou aqui para te ajudar com qualquer dúvida ou informação que você precise sobre nossos produtos.
 
 Como posso te ajudar? 🚗
 
-*Nihon Auto - Especialistas em peças japonesas*`;
+*Nihon acessórios - Especialistas em peças japonesas*`;
 
     const cleanPhone = phone.replace(/\D/g, '');
     const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;

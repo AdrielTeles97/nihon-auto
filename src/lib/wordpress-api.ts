@@ -5,7 +5,7 @@ export const WORDPRESS_API_BASE =
     'https://darksalmon-cobra-736244.hostingersite.com'
 
 export const API_ENDPOINTS = {
-    // Endpoints do plugin Nihon Auto
+    // Endpoints do plugin Nihon acessórios
     QUOTE: `${WORDPRESS_API_BASE}/wp-json/nihon-auto/v1/quote`,
     CONTACT: `${WORDPRESS_API_BASE}/wp-json/nihon-auto/v1/contact`,
     SETTINGS: `${WORDPRESS_API_BASE}/wp-json/nihon-auto/v1/settings`,

@@ -23,7 +23,7 @@ $latest_contacts = $wpdb->get_results("SELECT * FROM $contacts_table ORDER BY cr
 ?>
 
 <div class="wrap">
-    <h1>Dashboard - Nihon Auto</h1>
+    <h1>Dashboard - Nihon acessórios</h1>
     
     <div class="nihon-dashboard">
         <!-- Cards de Estatísticas -->

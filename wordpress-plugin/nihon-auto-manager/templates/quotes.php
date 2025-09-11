@@ -230,7 +230,7 @@ function sendWhatsApp(phone, name) {
         return;
     }
     
-    const message = `Olá ${name}, tudo bem? Vi que você solicitou um orçamento no site da Nihon Auto. Vou te ajudar com os detalhes!`;
+    const message = `Olá ${name}, tudo bem? Vi que você solicitou um orçamento no site da Nihon acessórios. Vou te ajudar com os detalhes!`;
     const url = `https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
 }

@@ -31,7 +31,7 @@
 ### **Opção 2 - Reativar plugin no WordPress:**
 
 1. WordPress Admin → Plugins
-2. Desativar "Nihon Auto Manager"
+2. Desativar "Nihon acessórios Manager"
 3. Ativar novamente
 4. Verificar se versão mostra 2.1.0
 
@@ -41,7 +41,7 @@
 
 ### **1. Teste de Variações no Admin:**
 
--   Vá para WordPress Admin → Nihon Auto → Cotações
+-   Vá para WordPress Admin → Nihon acessórios → Cotações
 -   Abra qualquer cotação com produtos variáveis
 -   Verificar se aparece a coluna "Variação" com:
     -   🔗 ID: [número da variação]
@@ -68,4 +68,4 @@ Este plugin contém correções importantes para o funcionamento do sistema de c
 
 ---
 
-**🛠️ Desenvolvido por:** GitHub Copilot para Nihon Auto
+**🛠️ Desenvolvido por:** GitHub Copilot para Nihon acessórios

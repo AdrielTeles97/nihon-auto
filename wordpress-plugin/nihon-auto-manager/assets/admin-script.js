@@ -175,13 +175,13 @@ jQuery(document).ready(function ($) {
 
         const message = `Olá ${name}! 👋
 
-Tudo bem? Vi que você solicitou um orçamento (ID: #${quoteId}) no site da Nihon Auto.
+Tudo bem? Vi que você solicitou um orçamento (ID: #${quoteId}) no site da Nihon acessórios.
 
 Estou entrando em contato para te ajudar com os detalhes dos produtos que você tem interesse.
 
 Posso te ajudar com mais informações? 🚗
 
-*Nihon Auto - Especialistas em peças japonesas*`
+*Nihon acessórios - Especialistas em peças japonesas*`
 
         const cleanPhone = phone.replace(/\D/g, '')
         const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
@@ -192,7 +192,7 @@ Posso te ajudar com mais informações? 🚗
 
     // Função para enviar email do orçamento
     window.sendQuoteEmail = function (email, name, quoteId) {
-        const subject = `Nihon Auto - Orçamento #${quoteId}`
+        const subject = `Nihon acessórios - Orçamento #${quoteId}`
         const body = `Olá ${name},
 
 Agradecemos seu interesse em nossos produtos!
@@ -204,7 +204,7 @@ Em breve entraremos em contato com você com todas as informações detalhadas s
 Caso tenha alguma dúvida ou queira adicionar mais itens ao orçamento, não hesite em nos contatar.
 
 Atenciosamente,
-Equipe Nihon Auto
+Equipe Nihon acessórios
 Especialistas em peças japonesas`
 
         const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(
@@ -381,5 +381,5 @@ Especialistas em peças japonesas`
         }
     })
 
-    console.log('Nihon Auto Manager JS carregado com sucesso!')
+    console.log('Nihon acessórios Manager JS carregado com sucesso!')
 })

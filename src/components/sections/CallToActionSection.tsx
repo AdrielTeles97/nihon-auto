@@ -9,7 +9,7 @@ import { EmphasisText } from '@/components/ui/emphasis-text'
 
 export function CallToActionSection() {
     const handleGeneralQuote = () => {
-        // Número fixo da Nihon Auto
+        // Número fixo da Nihon acessórios
         const nihonNumber = '559182337100'
         const message = `Olá! Gostaria de solicitar um orçamento geral para produtos automotivos.
 

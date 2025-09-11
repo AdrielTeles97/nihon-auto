@@ -21,13 +21,13 @@ export function Footer() {
 
     // Dados padrão enquanto carrega ou em caso de erro
     const companyData = settings || {
-        whatsapp: '5591982475485',
-        email: 'adrielt008@gmail.com',
+        whatsapp: '5591982337100',
+        email: 'vendas01@nihonauto.com.br',
         working_hours: 'Seg-Sex: 8h às 18h',
         address: 'Travessa José Pio, 541 - Umarizal - Belém/PA',
         company_name: 'Nihon Peças e Acessórios',
         company_description:
-            'Especialistas em peças e acessórios automotivos com mais de 15 anos de experiência no mercado brasileiro.',
+            'Especialistas em peças e acessórios automotivos com mais de 5 anos de experiência no mercado brasileiro.',
         social_media: {
             facebook: '',
             instagram: '',
@@ -45,7 +45,7 @@ export function Footer() {
                             <div className="relative h-12 w-12">
                                 <Image
                                     src="/images/logo-nihon.png"
-                                    alt="Nihon Auto Logo"
+                                    alt="Nihon acessórios Logo"
                                     fill
                                     className="object-contain"
                                     sizes="48px"
@@ -58,7 +58,7 @@ export function Footer() {
                                         : companyData.company_name}
                                 </span>
                                 <span className="text-sm text-primary-foreground/80">
-                                    Peças e Acessórios Automotivos
+                                    Sua especialista na região norte
                                 </span>
                             </div>
                         </div>

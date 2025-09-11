@@ -17,7 +17,7 @@ const benefits = [
         icon: Truck,
         title: 'Entrega Rápida',
         description:
-            'Entrega expressa para todo o Brasil com rastreamento em tempo real',
+            'Entrega expressa para todo o Brasil',
         color: 'from-blue-500 to-blue-600'
     },
     {
@@ -44,20 +44,20 @@ const benefits = [
     {
         icon: Users,
         title: 'Equipe Especializada',
-        description: 'Profissionais experientes em peças automotivas japonesas',
+        description: 'Profissionais experientes em peças automotivas',
         color: 'from-pink-500 to-pink-600'
     },
     {
         icon: Star,
         title: 'Excelência',
-        description: 'Mais de 10 anos de experiência no mercado automotivo',
+        description: 'Mais de 5 anos de experiência no mercado automotivo',
         color: 'from-indigo-500 to-indigo-600'
     }
 ]
 
 const stats = [
-    { value: '+10', label: 'Anos de experiência', icon: Award, change: '+15%' },
-    { value: '5K+', label: 'Produtos disponíveis', icon: Star, change: '+23%' },
+    { value: '+5', label: 'Anos de experiência', icon: Award, change: '+15%' },
+    { value: '1K+', label: 'Produtos disponíveis', icon: Star, change: '+23%' },
     {
         value: '98%',
         label: 'Satisfação dos clientes',
@@ -68,10 +68,10 @@ const stats = [
 ]
 
 const highlights = [
-    'Especialistas em peças japonesas',
+    'Especialistas em peças e acessórios automotivos',
     'Garantia em todos os produtos',
     'Entrega expressa nacionalmente',
-    'Suporte técnico especializado'
+    'Suporte de equipe especializada'
 ]
 
 export function WhyChooseSection() {
@@ -88,17 +88,17 @@ export function WhyChooseSection() {
                 <div className="text-center mb-16">
                     <div className="inline-flex items-center gap-2 bg-red-600/20 text-red-400 px-6 py-2 rounded-full text-sm font-semibold mb-6 backdrop-blur-sm border border-red-600/30">
                         <Star className="w-4 h-4" />
-                        Líderes em Peças Automotivas Japonesas
+                        Líderes em Peças Automotivas e acessórios
                     </div>
 
                     <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-white to-red-400 bg-clip-text text-transparent leading-tight">
                         Por que escolher a{' '}
-                        <span className="text-red-500">Nihon Auto</span>?
+                        <span className="text-red-500">Nihon acessórios</span>?
                     </h2>
 
                     <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8 px-2">
-                        Mais de uma década de experiência oferecendo as melhores
-                        peças automotivas japonesas com qualidade garantida e
+                        Mais de 5 anos de experiência oferecendo as melhores
+                        peças automotivas, com qualidade garantida e
                         atendimento excepcional.
                     </p>
                 </div>

@@ -315,7 +315,7 @@ export default function AtendimentoPage() {
 
                         <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
                             Nossa equipe está pronta para atender suas
-                            necessidades em peças automotivas japonesas. Entre
+                            necessidades em peças automotivas. Entre
                             em contato conosco através dos canais abaixo ou
                             preencha nosso formulário.
                         </p>
@@ -450,10 +450,6 @@ export default function AtendimentoPage() {
                                             14:00 - 18:00
                                         </p>
                                     </div>
-                                    <div className="text-xs text-gray-500 mt-3 space-y-1">
-                                        <p>Sábados: 08:00 - 12:00</p>
-                                        <p>Domingos: Fechado</p>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -583,6 +579,7 @@ export default function AtendimentoPage() {
                                             name="name"
                                             value={formData.name}
                                             onChange={handleInputChange}
+                                            maxLength={40}
                                             required
                                             className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all duration-300 text-black font-medium"
                                             placeholder="Digite seu nome completo"
@@ -626,6 +623,7 @@ export default function AtendimentoPage() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleInputChange}
+                                        maxLength={35}
                                         required
                                         className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all duration-300 text-black font-medium"
                                         placeholder="seu@email.com"
@@ -689,6 +687,7 @@ export default function AtendimentoPage() {
                                         onChange={handleInputChange}
                                         required
                                         rows={6}
+                                        maxLength={600}
                                         className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all duration-300 resize-none text-black font-medium"
                                         placeholder="Descreva detalhadamente sua solicitação, incluindo informações sobre o veículo se necessário (marca, modelo, ano)..."
                                     />
@@ -754,8 +753,7 @@ export default function AtendimentoPage() {
                                     </Button>
 
                                     <p className="text-sm text-gray-600 mt-4 font-medium">
-                                        Responderemos sua mensagem em até 24
-                                        horas úteis
+                                        Responderemos sua mensagem o mais breve possível.
                                     </p>
                                 </div>
                             </form>
