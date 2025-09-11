@@ -55,6 +55,7 @@ function convertToCartProduct(product: APIProduct): CartProduct {
         brand: product.brands?.[0]?.name,
         inStock: true,
         slug: product.slug,
+        sku: product.sku,
         code: product.code,
         gallery: product.gallery,
         specifications: {},

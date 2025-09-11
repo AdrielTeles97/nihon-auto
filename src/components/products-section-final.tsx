@@ -282,6 +282,7 @@ export function ProductsSection() {
                 category: product.categories?.[0]?.name || 'Sem categoria',
                 inStock: true,
                 slug: product.slug,
+                sku: product.sku,
                 code: product.code,
                 gallery: product.gallery
             }

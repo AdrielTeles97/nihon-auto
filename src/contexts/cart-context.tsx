@@ -164,25 +164,33 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     const quoteData: QuoteRequest = {
                         name: customerData.name.trim(),
                         document: customerData.document?.trim() || '',
-                        cart_items: items.map(item => ({
-                            product: {
-                                id:
-                                    typeof item.product.id === 'string'
-                                        ? parseInt(item.product.id)
-                                        : item.product.id,
-                                name: item.product.name,
-                                slug:
-                                    item.product.slug ||
-                                    String(item.product.id),
-                                image:
-                                    item.product.image ||
-                                    '/images/placeholder-product.svg',
-                                category: item.product.category || ''
-                            },
-                            quantity: item.quantity,
-                            variation_id: item.variationId || null,
-                            selected_attributes: item.selectedAttributes || {}
-                        }))
+                        cart_items: items.map(item => {
+                            // Determinar o código correto: priorizar SKU/code, depois slug
+                            const productCode =
+                                item.product.sku ||
+                                item.product.code ||
+                                item.product.slug ||
+                                String(item.product.id)
+
+                            return {
+                                product: {
+                                    id:
+                                        typeof item.product.id === 'string'
+                                            ? parseInt(item.product.id)
+                                            : item.product.id,
+                                    name: item.product.name,
+                                    slug: productCode, // Usar o código correto aqui
+                                    image:
+                                        item.product.image ||
+                                        '/images/placeholder-product.svg',
+                                    category: item.product.category || ''
+                                },
+                                quantity: item.quantity,
+                                variation_id: item.variationId || null,
+                                selected_attributes:
+                                    item.selectedAttributes || {}
+                            }
+                        })
                     }
 
                     // Adicionar email ou telefone (pelo menos um deve estar presente)
