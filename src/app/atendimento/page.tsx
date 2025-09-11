@@ -315,9 +315,9 @@ export default function AtendimentoPage() {
 
                         <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
                             Nossa equipe está pronta para atender suas
-                            necessidades em peças automotivas. Entre
-                            em contato conosco através dos canais abaixo ou
-                            preencha nosso formulário.
+                            necessidades em peças automotivas. Entre em contato
+                            conosco através dos canais abaixo ou preencha nosso
+                            formulário.
                         </p>
 
                         <div className="flex flex-wrap justify-center gap-4">
@@ -338,7 +338,7 @@ export default function AtendimentoPage() {
                                 size="lg"
                                 className="bg-white/90 text-black border-2 border-white hover:bg-white hover:scale-105 px-8 py-3 text-base w-full sm:w-auto font-semibold transition-all duration-300 shadow-lg"
                             >
-                                <a href="mailto:vendas01@nihonauto.com.br">
+                                <a href="mailto:adrielt008@gmail.com">
                                     <Mail className="h-5 w-5 mr-2" />
                                     Enviar E-mail
                                 </a>
@@ -405,10 +405,10 @@ export default function AtendimentoPage() {
                                     Envie sua solicitação por e-mail
                                 </p>
                                 <a
-                                    href="mailto:vendas01@nihonauto.com.br"
+                                    href="mailto:adrielt008@gmail.com"
                                     className="text-black font-semibold hover:text-red-600 transition-colors text-sm break-words"
                                 >
-                                    vendas01@nihonauto.com.br
+                                    adrielt008@gmail.com
                                 </a>
                             </div>
 
@@ -753,7 +753,8 @@ export default function AtendimentoPage() {
                                     </Button>
 
                                     <p className="text-sm text-gray-600 mt-4 font-medium">
-                                        Responderemos sua mensagem o mais breve possível.
+                                        Responderemos sua mensagem o mais breve
+                                        possível.
                                     </p>
                                 </div>
                             </form>

@@ -131,7 +131,7 @@ export function CategoriesSection() {
                             className="group animate-in fade-in slide-in-from-bottom-4 duration-500"
                             style={{ animationDelay: `${index * 0.1}s` }}
                         >
-                            <Link href={`/produtos?categoria=${category.slug}`}>
+                            <Link href={`/produtos?category=${category.slug}`}>
                                 <div className="relative bg-white/90 backdrop-blur-sm border border-gray-200/60 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 hover:scale-[1.02] hover:border-red-500/40 h-full hover:bg-white">
                                     {/* Noise background sutil */}
                                     <NoiseBackground

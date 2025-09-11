@@ -202,7 +202,7 @@ function CategoryCarousel() {
                     transition={{ delay: index * 0.1 }}
                     className="group"
                 >
-                    <Link href={`/produtos?categoria=${category.slug}`}>
+                    <Link href={`/produtos?category=${category.slug}`}>
                         <div className="relative bg-background/60 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 hover:scale-[1.02] hover:border-primary/30 h-full">
                             <div className="p-4 text-center">
                                 <div className="relative h-40 overflow-hidden">

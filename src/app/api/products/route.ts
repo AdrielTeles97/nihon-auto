@@ -51,8 +51,10 @@ export async function GET(request: NextRequest) {
             Math.max(Number(searchParams.get('per_page') || '24'), 1),
             100
         )
-        const category = searchParams.get('category') || ''
-        const brand = searchParams.get('brand') || ''
+        const category =
+            searchParams.get('categoria') || searchParams.get('category') || ''
+        const brand =
+            searchParams.get('marca') || searchParams.get('brand') || ''
         const inStock = searchParams.get('in_stock')
         const minPrice = searchParams.get('min_price')
         const maxPrice = searchParams.get('max_price')

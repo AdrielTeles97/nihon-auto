@@ -10,7 +10,7 @@ export async function GET() {
         // Baseado na imagem, os dados atuais são:
         const companyData = {
             whatsapp: '5591982337100',
-            email: 'vendas01@nihonauto.com.br',
+            email: 'adrielt008@gmail.com',
             working_hours: 'Seg-Sex: 8h às 18h',
             address: 'Travessa José Pio, 541 - Umarizal - Belém/PA',
             company_name: 'Nihon Peças e Acessórios',
@@ -38,7 +38,7 @@ export async function GET() {
         // Retornar dados padrão em caso de erro
         const fallbackData = {
             whatsapp: '5591992475485',
-            email: 'vendas01@nihonauto.com.br',
+            email: 'adrielt008@gmail.com',
             working_hours: 'Seg-Sex: 8h às 20h',
             address: 'Travessa José Pio, 541 - Umarizal - Belém/PA',
             company_name: 'Nihon Peças e Acessórios',
