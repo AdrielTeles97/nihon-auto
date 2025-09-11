@@ -98,7 +98,36 @@ export async function GET(request: NextRequest) {
         // Categoria e marca: aceitam id ou slug dependendo do plugin; passamos como CSV
         const catTokens = category ? toList(category) : []
         const categoryIds = catTokens.filter(isNumeric).map(n => Number(n))
-        if (categoryIds.length) params.category = categoryIds.join(',')
+        const categorySlugs = catTokens.filter(t => !isNumeric(t))
+
+        // Se temos IDs, usamos eles diretamente
+        if (categoryIds.length) {
+            params.category = categoryIds.join(',')
+        }
+        // Se temos slugs, precisamos convertê-los para IDs primeiro
+        else if (categorySlugs.length) {
+            try {
+                // Buscar todas as categorias para mapear slug -> ID
+                const categoriesResp = await wpApi.get('/products/categories', {
+                    params: { per_page: 100 }
+                })
+                const categoryMap = new Map()
+                for (const c of categoriesResp.data || []) {
+                    categoryMap.set(c.slug.toLowerCase(), c.id)
+                }
+
+                const mappedIds = categorySlugs
+                    .map(slug => categoryMap.get(slug.toLowerCase()))
+                    .filter(id => id !== undefined)
+
+                if (mappedIds.length) {
+                    params.category = mappedIds.join(',')
+                }
+            } catch (e) {
+                // Se falhar ao mapear, tenta usar slugs mesmo (pode funcionar dependendo do plugin)
+                params.category = categorySlugs.join(',')
+            }
+        }
 
         const brandTokens = brand ? toList(brand) : []
         const brandIds = brandTokens.filter(isNumeric).map(n => Number(n))

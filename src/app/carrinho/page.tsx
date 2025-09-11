@@ -150,7 +150,10 @@ export default function CarrinhoPage() {
                                                 </div>
                                                 <div className="text-xs text-muted-foreground">
                                                     Código:{' '}
-                                                    {product.slug ?? product.id}
+                                                    {product.sku ||
+                                                        product.code ||
+                                                        product.slug ||
+                                                        product.id}
                                                 </div>
                                                 {selectedAttributes &&
                                                     Object.keys(

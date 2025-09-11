@@ -33,8 +33,7 @@ const nextConfig: NextConfig = {
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
         formats: ['image/webp'],
         dangerouslyAllowSVG: true,
-        contentDispositionType: 'attachment',
-        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
+        contentDispositionType: 'attachment'
     }
 }
 

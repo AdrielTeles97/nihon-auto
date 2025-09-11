@@ -8,7 +8,7 @@ import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid'
 import { DividerLines } from '@/components/ui/divider-lines'
 import { NoiseBackground, DecorativeShape } from '@/components/ui/noise-shapes'
 import { SectionTitle } from '@/components/ui/emphasis-text'
-import { ArrowRight, ShoppingCart, Package } from 'lucide-react'
+import { ArrowRight, ShoppingCart, Package, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import type { Product } from '@/types/products'
@@ -28,12 +28,14 @@ function ProductCard({
     product,
     index,
     onAddToCart,
-    isAdding
+    isAdding,
+    isAdded
 }: {
     product: Product
     index: number
     onAddToCart: (product: Product) => void
     isAdding: boolean
+    isAdded: boolean
 }) {
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault()
@@ -93,18 +95,36 @@ function ProductCard({
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                            {/* Botão de adicionar ao carrinho */}
-                            <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            {/* Botão de adicionar ao carrinho com feedback */}
+                            <div
+                                className={cn(
+                                    'absolute bottom-2 right-2 transition-all duration-300',
+                                    isAdded
+                                        ? 'opacity-100'
+                                        : 'opacity-0 group-hover:opacity-100'
+                                )}
+                            >
                                 <Button
                                     size="sm"
-                                    className="h-8 w-8 p-0 bg-red-600 hover:bg-red-700 text-white border-none shadow-lg"
+                                    className={cn(
+                                        'h-8 px-3 text-white border-none shadow-lg transition-all duration-300',
+                                        isAdding &&
+                                            'bg-yellow-500 hover:bg-yellow-600',
+                                        isAdded &&
+                                            'bg-green-500 hover:bg-green-600 scale-110',
+                                        !isAdding &&
+                                            !isAdded &&
+                                            'bg-red-600 hover:bg-red-700'
+                                    )}
                                     onClick={handleAddToCart}
-                                    disabled={isAdding}
+                                    disabled={isAdding || isAdded}
                                 >
                                     {isAdding ? (
-                                        <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : isAdded ? (
+                                        <Check className="w-4 h-4" />
                                     ) : (
-                                        <ShoppingCart className="w-3 h-3" />
+                                        <ShoppingCart className="w-4 h-4" />
                                     )}
                                 </Button>
                             </div>
@@ -162,6 +182,7 @@ export function ProductsGrid() {
     const [products, setProducts] = useState<Product[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [addingToCart, setAddingToCart] = useState<string | null>(null)
+    const [addedToCart, setAddedToCart] = useState<string | null>(null)
     const { addItem } = useCart()
     const router = useRouter()
 
@@ -204,14 +225,19 @@ export function ProductsGrid() {
                 category: product.categories?.[0]?.name || 'Sem categoria',
                 inStock: true,
                 slug: product.slug,
+                code: product.code,
                 gallery: product.gallery
             }
 
             addItem(cartProduct, 1)
 
+            // Mostrar feedback de sucesso
+            setAddingToCart(null)
+            setAddedToCart(product.id.toString())
+
             setTimeout(() => {
-                setAddingToCart(null)
-            }, 1500)
+                setAddedToCart(null)
+            }, 2000)
         } catch (error) {
             console.error('Erro ao adicionar produto ao carrinho:', error)
             setAddingToCart(null)
@@ -282,6 +308,9 @@ export function ProductsGrid() {
                                     onAddToCart={handleAddToCart}
                                     isAdding={
                                         addingToCart === product.id.toString()
+                                    }
+                                    isAdded={
+                                        addedToCart === product.id.toString()
                                     }
                                 />
                             ) : (

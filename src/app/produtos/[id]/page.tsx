@@ -25,9 +25,11 @@ function toCartProduct(p: APIProduct): CartProduct {
         brand: p.brands[0]?.name,
         inStock: true,
         slug: p.slug,
+        sku: p.sku,
+        code: p.code,
         gallery: p.gallery,
         specifications: undefined,
-        customFields: { code: p.code ?? null }
+        customFields: undefined
     }
 }
 
@@ -102,7 +104,7 @@ export default function ProductPage() {
 
     // Sempre que a variação muda, reseta o índice para a primeira imagem
     useEffect(() => {
-        setActiveIdx(0)
+        setActiveIdx(prev => (prev === 0 ? prev : 0))
     }, [currentVariation?.id])
 
     const addToCartAndGo = () => {
@@ -151,14 +153,17 @@ export default function ProductPage() {
 
     if (notFound) {
         return (
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background flex flex-col">
                 <HeroHeader />
-                <main className="container mx-auto px-4 py-16">
-                    <p className="text-center text-muted-foreground">
-                        Produto não encontrado.
-                    </p>
-                    <div className="text-center mt-6">
-                        <Link href="/produtos" className="underline">
+                <main className="container mx-auto px-4 py-16 flex-1 flex items-center justify-center">
+                    <div className="text-center">
+                        <p className="text-muted-foreground mb-6">
+                            Produto não encontrado.
+                        </p>
+                        <Link
+                            href="/produtos"
+                            className="underline text-red-600 hover:text-red-700"
+                        >
                             Voltar aos produtos
                         </Link>
                     </div>
@@ -170,9 +175,9 @@ export default function ProductPage() {
 
     if (!product) {
         return (
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background flex flex-col">
                 <HeroHeader />
-                <main className="container mx-auto px-4 py-16">
+                <main className="container mx-auto px-4 py-16 flex-1 flex items-center justify-center">
                     <p className="text-center text-muted-foreground">
                         Carregando produto...
                     </p>
@@ -190,6 +195,11 @@ export default function ProductPage() {
                     <div>
                         <div className="aspect-square rounded-lg bg-gray-50 overflow-hidden">
                             <Image
+                                key={`main-${
+                                    displayedGallery?.[activeIdx] ||
+                                    product.image ||
+                                    'placeholder'
+                                }`}
                                 src={
                                     displayedGallery?.[activeIdx] ||
                                     product.image ||
@@ -206,7 +216,7 @@ export default function ProductPage() {
                             <div className="mt-4 grid grid-cols-5 gap-3">
                                 {displayedGallery.map((src, i) => (
                                     <button
-                                        key={i}
+                                        key={`${src}-${i}`}
                                         className={`aspect-square rounded-md bg-gray-50 overflow-hidden border ${
                                             i === activeIdx
                                                 ? 'border-red-600'

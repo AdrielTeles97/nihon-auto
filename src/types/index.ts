@@ -10,6 +10,8 @@ export interface Product {
     brand?: string
     inStock: boolean
     slug: string
+    sku?: string
+    code?: string
     gallery?: string[]
     specifications?: Record<string, string>
     customFields?: Record<string, string | number | boolean | null>
