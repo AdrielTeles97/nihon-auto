@@ -108,21 +108,9 @@ export function ProductsGrid() {
                 if (!url.searchParams.get('per_page'))
                     url.searchParams.set('per_page', '12')
                 
-                // Debug: log da URL sendo chamada
-                console.log('🔍 API URL:', url.toString())
-                console.log('🔍 Parâmetros:', Array.from(url.searchParams.entries()))
-                
                 const res = await fetch(url.toString())
                 const json: ProductsResponse = await res.json()
                 
-                // Debug: log da resposta
-                console.log('📦 Resposta API:', {
-                    success: json.success,
-                    total: json.total,
-                    products: json.data?.length || 0,
-                    page: json.page,
-                    totalPages: json.totalPages
-                })
                 
                 if (!ignore) {
                     setProducts(json.data || [])
