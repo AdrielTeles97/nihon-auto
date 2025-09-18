@@ -385,6 +385,7 @@ export function ProductsGrid() {
                                                 className="w-full h-full object-contain"
                                                 width={200}
                                                 height={200}
+                                                sizes="200px"
                                                 unoptimized
                                             />
                                         </div>

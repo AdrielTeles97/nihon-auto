@@ -97,6 +97,9 @@ export const HeroHeader = () => {
                                     alt="logo nihon"
                                     width={40}
                                     height={40}
+                                    className="object-contain"
+                                    sizes="40px"
+                                    priority
                                 />
                             </Link>
 

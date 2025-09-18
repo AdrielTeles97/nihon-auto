@@ -11,117 +11,132 @@ assertWooConfig()
 const keepHtml = (html: string | undefined) => html || ''
 // Para a breve descrição, usamos somente texto simples
 const stripToText = (html: string | undefined) =>
-  (html || '')
-    .replace(/<[^>]*>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .trim()
+    (html || '')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .trim()
 
 function mapProduct(p: WCProduct): Product {
-  return {
-    id: p.id,
-    name: p.name,
-    slug: p.slug,
-    description: keepHtml(p.description),
-    shortDescription: stripToText(p.short_description),
-    sku: p.sku,
-    code: extractProductCodeFromWC(p),
-    image: p.images?.[0]?.src || null,
-    gallery: (p.images || []).map(img => img.src),
-    categories: (p.categories || []).map(c => ({
-      id: c.id,
-      name: c.name,
-      slug: c.slug
-    })),
-    brands: (p.brands || []).map(b => ({
-      id: b.id,
-      name: b.name,
-      slug: b.slug
-    })),
-    type: p.type,
-    attributes: (p.attributes || []).map(a => ({
-      name: a.name,
-      options: a.options || [],
-      variation: !!a.variation
-    })),
-    defaultAttributes: Object.fromEntries(
-      (p.default_attributes || []).map(da => [
-        da.name?.toLowerCase() || '',
-        da.option
-      ])
-    )
-  }
+    return {
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        description: keepHtml(p.description),
+        shortDescription: stripToText(p.short_description),
+        sku: p.sku,
+        code: extractProductCodeFromWC(p),
+        image: p.images?.[0]?.src || null,
+        gallery: (p.images || []).map(img => img.src),
+        categories: (p.categories || []).map(c => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug
+        })),
+        brands: (p.brands || []).map(b => ({
+            id: b.id,
+            name: b.name,
+            slug: b.slug
+        })),
+        type: p.type,
+        attributes: (p.attributes || []).map(a => ({
+            name: a.name,
+            options: a.options || [],
+            variation: !!a.variation
+        })),
+        defaultAttributes: Object.fromEntries(
+            (p.default_attributes || []).map(da => [
+                da.name?.toLowerCase() || '',
+                da.option
+            ])
+        )
+    }
 }
 
 export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const { id } = await context.params
-    const url = new URL(request.url)
-    const bypass = (url.searchParams.get('fresh') || url.searchParams.get('no_cache')) === '1'
+    const resolvedParams = await params
+    const productId = resolvedParams.id
 
-    const data: WCProduct = bypass
-      ? (await wpApi.get<WCProduct>(`/products/${id}`)).data
-      : await cached(
-          ['wc:product', id],
-          async () => {
-            const resp = await wpApi.get<WCProduct>(`/products/${id}`)
-            return resp.data
-          },
-          { tags: [`wc:product:${id}`], revalidate: 86400 }
+    try {
+        const fresh = req.nextUrl.searchParams.get('fresh') === '1'
+
+        // Se fresh=1, não usar cache
+        if (fresh) {
+            const result = await fetchProductFromAPI(productId)
+            return NextResponse.json(result, { headers: cacheHeaders(3600) })
+        }
+
+        // Tentar buscar do cache primeiro
+        const cachedProduct = await cached(
+            ['product', productId],
+            () => fetchProductFromAPI(productId),
+            {
+                tags: ['products'],
+                revalidate: 3600
+            }
         )
-    const product = mapProduct(data)
+        return NextResponse.json(cachedProduct, { headers: cacheHeaders(3600) })
+    } catch (error) {
+        console.error('Error in product API:', error)
+        if ((error as AxiosError)?.response?.status === 404) {
+            return NextResponse.json(
+                { success: false, error: 'Product not found' },
+                { status: 404 }
+            )
+        }
+        return NextResponse.json(
+            { success: false, error: 'Internal server error' },
+            { status: 500 }
+        )
+    }
+}
+
+async function fetchProductFromAPI(productId: string) {
+    // Buscar produto base
+    const productResponse = await wpApi.get<WCProduct>(`/products/${productId}`)
+    const product = mapProduct(productResponse.data)
 
     // Se for produto variável, buscar variações
-    if ((data.type || '').toLowerCase() === 'variable') {
-      try {
-        const vResp = await wpApi.get<any[]>(
-          `/products/${id}/variations`,
-          { params: { per_page: 100 } }
-        )
-        const variations = (vResp.data || []).map(v => ({
-          id: v.id,
-          sku: (v.sku || '').trim() || undefined,
-          image: v.image?.src || null,
-          inStock: (v.stock_status || '').toLowerCase() !== 'outofstock',
-          price: v.price
-            ? Number(v.price)
-            : v.regular_price
-            ? Number(v.regular_price)
-            : null,
-          attributes: Object.fromEntries(
-            (v.attributes || []).map((a: any) => [
-              (a.name || '').toLowerCase(),
-              a.option
-            ])
-          )
-        }))
-        product.variations = variations
-      } catch (e) {
-        // ignore variations errors
-      }
+    if ((product.type || '').toLowerCase() === 'variable') {
+        try {
+            interface VariationAttribute {
+                name?: string
+                option: string
+            }
+
+            interface WCVariation {
+                id: number
+                attributes: VariationAttribute[]
+                stock_status: string
+                price: string
+            }
+
+            const variationsResponse = await wpApi.get<WCVariation[]>(
+                `/products/${productId}/variations`
+            )
+            product.variations = variationsResponse.data.map(
+                (v: WCVariation) => ({
+                    id: v.id,
+                    attributes: Object.fromEntries(
+                        (v.attributes || []).map((attr: VariationAttribute) => [
+                            attr.name?.toLowerCase() || '',
+                            attr.option
+                        ])
+                    ),
+                    inStock: v.stock_status === 'instock',
+                    price: v.price ? parseFloat(v.price) : null
+                })
+            )
+        } catch (e) {
+            console.warn(
+                `Failed to fetch variations for product ${productId}:`,
+                e
+            )
+            product.variations = []
+        }
     }
 
-    return new NextResponse(
-      JSON.stringify({ success: true, data: product }),
-      {
-        headers: bypass
-          ? { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
-          : { 'Content-Type': 'application/json', ...cacheHeaders(86400, 600) }
-      }
-    )
-  } catch (error: unknown) {
-    const status = (error as AxiosError)?.response?.status
-    if (status === 404) {
-      return NextResponse.json(
-        { success: false, error: 'Produto não encontrado' },
-        { status: 404 }
-      )
-    }
-    return NextResponse.json(
-      { success: false, error: 'Erro interno do servidor' },
-      { status: 500 }
-    )
-  }
+    return { success: true, data: product }
 }

@@ -42,13 +42,14 @@ export function Footer() {
                     {/* Company Info */}
                     <div className="space-y-4">
                         <div className="flex items-center space-x-3">
-                            <div className="relative h-12 w-12">
+                            <div className="relative w-32 h-10">
                                 <Image
                                     src="/images/logo-nihon.png"
-                                    alt="Nihon acessórios Logo"
-                                    fill
+                                    alt="Nihon Auto"
+                                    width={128}
+                                    height={20}
                                     className="object-contain"
-                                    sizes="48px"
+                                    sizes="128px"
                                 />
                             </div>
                             <div>
@@ -58,15 +59,14 @@ export function Footer() {
                                         : companyData.company_name}
                                 </span>
                                 <span className="text-sm text-primary-foreground/80">
-                                    Sua especialista na região norte
+                                    Sua especialista na região norte    
                                 </span>
+                                
                             </div>
+                            
                         </div>
-                        <p className="text-sm text-primary-foreground/80 text-pretty">
-                            {loading
-                                ? 'Carregando informações...'
-                                : companyData.company_description}
-                        </p>
+                        
+                        
                         <div className="flex space-x-3">
                             {companyData.social_media.facebook && (
                                 <Button
@@ -92,9 +92,7 @@ export function Footer() {
                                     asChild
                                 >
                                     <a
-                                        href={
-                                            companyData.social_media.instagram
-                                        }
+                                        href={companyData.social_media.instagram}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
@@ -121,7 +119,7 @@ export function Footer() {
                         </div>
                     </div>
 
-                    {/* Products */}
+                    {/* Navigation */}
                     <div className="space-y-4">
                         <h3 className="font-semibold text-lg">Navegação</h3>
                         <ul className="space-y-2 text-sm text-primary-foreground/80">
@@ -175,7 +173,7 @@ export function Footer() {
                         <h3 className="font-semibold text-lg">Contato</h3>
                         <div className="space-y-3 text-sm text-primary-foreground/80">
                             <div className="flex items-center space-x-2">
-                                <Phone className="h-4 w-4" />
+                                <Phone className="h-4 w-4 flex-shrink-0" />
                                 <a
                                     href={`https://wa.me/${companyData.whatsapp}`}
                                     target="_blank"
@@ -188,10 +186,10 @@ export function Footer() {
                                 </a>
                             </div>
                             <div className="flex items-center space-x-2">
-                                <Mail className="h-4 w-4" />
+                                <Mail className="h-4 w-4 flex-shrink-0" />
                                 <a
                                     href={`mailto:${companyData.email}`}
-                                    className="hover:text-primary-foreground transition-colors"
+                                    className="hover:text-primary-foreground transition-colors break-all"
                                 >
                                     {loading
                                         ? 'Carregando...'
@@ -199,7 +197,7 @@ export function Footer() {
                                 </a>
                             </div>
                             <div className="flex items-center space-x-2">
-                                <Clock className="h-4 w-4" />
+                                <Clock className="h-4 w-4 flex-shrink-0" />
                                 <span>
                                     {loading
                                         ? 'Carregando...'
@@ -207,8 +205,8 @@ export function Footer() {
                                 </span>
                             </div>
                             <div className="flex items-start space-x-2">
-                                <MapPin className="h-4 w-4 mt-0.5" />
-                                <span>
+                                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                <span className="text-pretty">
                                     {loading
                                         ? 'Carregando endereço...'
                                         : companyData.address}
@@ -227,12 +225,12 @@ export function Footer() {
                         . Todos os direitos reservados.
                     </p>
                     <p>
-                        Developer by:{' '}
+                        Desenvolvido por:{' '}
                         <a
                             href="https://github.com/AdrielTeles97"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="underline underline-offset-4 hover:text-primary-foreground"
+                            className="underline underline-offset-4 hover:text-primary-foreground transition-colors"
                         >
                             Adriel Teles
                         </a>
