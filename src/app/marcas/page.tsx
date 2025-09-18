@@ -1,6 +1,7 @@
 import { HeroHeader } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import BrandsPageClient from '@/components/brands-page-client'
+import { headers } from 'next/headers'
 
 type BrandsApiResponse = {
   success: boolean
@@ -13,7 +14,12 @@ type BrandsApiResponse = {
 
 export default async function MarcasPage() {
   try {
-    const res = await fetch('/api/brands?per_page=24&page=1&orderby=name&order=asc', {
+    const hdrs = headers()
+    const host = hdrs.get('host') ?? 'localhost:3000'
+    const protocol = host.includes('localhost') || host.startsWith('127.0.0.1') ? 'http' : 'https'
+    const url = `${protocol}://${host}/api/brands?per_page=24&page=1&orderby=name&order=asc`
+
+    const res = await fetch(url, {
       cache: 'no-store'
     })
     if (!res.ok) throw new Error('brands api error')

@@ -10,7 +10,10 @@ export async function cached<T>(
   const key = keyParts
     .map(p => (p === undefined || p === null ? '' : String(p)))
     .join(':')
-  const fn = unstable_cache(fetcher, [key], { tags: opts.tags, revalidate: opts.revalidate })
+  const fn = unstable_cache(fetcher, [key], {
+    tags: opts.tags,
+    revalidate: opts.revalidate
+  })
   return fn()
 }
 
@@ -29,4 +32,3 @@ export function normalizeCSV(value: string | null | undefined): string[] {
 }
 
 export { revalidateTag }
-

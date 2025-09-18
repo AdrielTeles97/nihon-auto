@@ -101,6 +101,7 @@ export default function ProductDetailClient({ product }: { product: APIProduct }
   return (
     <main className="container mx-auto px-4 pt-24 pb-10 flex-1">
       <div className="grid gap-8 md:grid-cols-2">
+        {/* Galeria */}
         <div>
           <div className="aspect-square rounded-lg bg-gray-50 overflow-hidden">
             <Image
@@ -138,6 +139,7 @@ export default function ProductDetailClient({ product }: { product: APIProduct }
           )}
         </div>
 
+        {/* Lateral (dados + variações) */}
         <div className="space-y-4">
           <h1 className="text-2xl font-semibold leading-tight">{product.name}</h1>
           <p className="text-sm text-muted-foreground">
@@ -190,13 +192,6 @@ export default function ProductDetailClient({ product }: { product: APIProduct }
             </Link>
           </div>
 
-          {product.description && (
-            <div
-              className="product-description prose prose-sm max-w-none dark:prose-invert mt-6"
-              dangerouslySetInnerHTML={prepareDescription(product.description)}
-            />
-          )}
-
           {(product.categories?.length || product.brands?.length) && (
             <div className="mt-6 flex flex-wrap gap-2">
               {product.categories?.map(c => (
@@ -213,6 +208,16 @@ export default function ProductDetailClient({ product }: { product: APIProduct }
           )}
         </div>
       </div>
+
+      {product.description && (
+        <section className="max-w-3xl mx-auto mt-10">
+          <h2 className="text-lg font-semibold text-center">Descrição do produto</h2>
+          <div
+            className="product-description prose prose-sm max-w-none dark:prose-invert mt-4 mx-auto"
+            dangerouslySetInnerHTML={prepareDescription(product.description)}
+          />
+        </section>
+      )}
     </main>
   )
 }
