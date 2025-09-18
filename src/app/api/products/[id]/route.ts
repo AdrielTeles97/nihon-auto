@@ -111,6 +111,8 @@ async function fetchProductFromAPI(productId: string) {
                 attributes: VariationAttribute[]
                 stock_status: string
                 price: string
+                sku?: string
+                image?: { id: number; src: string }
             }
 
             const variationsResponse = await wpApi.get<WCVariation[]>(
@@ -119,6 +121,8 @@ async function fetchProductFromAPI(productId: string) {
             product.variations = variationsResponse.data.map(
                 (v: WCVariation) => ({
                     id: v.id,
+                    sku: v.sku,
+                    image: v.image?.src || null,
                     attributes: Object.fromEntries(
                         (v.attributes || []).map((attr: VariationAttribute) => [
                             attr.name?.toLowerCase() || '',
