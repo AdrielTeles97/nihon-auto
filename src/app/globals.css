@@ -439,3 +439,37 @@ p {
     width: 100%;
     height: 100%;
 }
+
+/* Mobile-specific fixes to prevent horizontal overflow from WP content */
+@media (max-width: 640px) {
+    .product-description {
+        overflow-x: hidden;
+        word-break: break-word;
+    }
+    /* Constrain common WP wrappers and images */
+    .product-description img,
+    .product-description figure,
+    .product-description .wp-caption,
+    .product-description .wp-block-image,
+    .product-description .alignwide,
+    .product-description .alignfull {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .product-description img {
+        height: auto !important;
+        display: block;
+    }
+    /* Ensure iframes not wrapped by .video-responsive don't overflow */
+    .product-description iframe {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    /* Make wide tables scroll within the container instead of the page */
+    .product-description table {
+        display: block;
+        width: 100% !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}

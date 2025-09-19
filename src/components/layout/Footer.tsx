@@ -41,15 +41,15 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {/* Company Info */}
                     <div className="space-y-4">
-                        <div className="flex items-center space-x-3">
-                            <div className="relative w-32 h-10">
+                        <div className="flex items-center space-x-4">
+                            <div className="relative h-14 w-36 sm:h-14 sm:w-44 md:h-16 md:w-56 lg:h-20 lg:w-64 shrink-0">
                                 <Image
                                     src="/images/logo-nihon.png"
                                     alt="Nihon Auto"
-                                    width={128}
-                                    height={20}
+                                    fill
                                     className="object-contain"
-                                    sizes="128px"
+                                    sizes="(max-width: 640px) 160px, (max-width: 768px) 176px, (max-width: 1024px) 224px, 256px"
+                                    priority={false}
                                 />
                             </div>
                             <div>
