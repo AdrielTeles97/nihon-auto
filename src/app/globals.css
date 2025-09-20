@@ -412,8 +412,20 @@ p {
 }
 
 /* ===== Product description rich content ===== */
+/* Force left alignment for all WP content injected into the description */
+.product-description,
+.product-description * {
+    text-align: left !important;
+}
+
+/* Override deprecated <center> elements that may come from WP */
+.product-description center {
+    text-align: left !important;
+    display: block;
+}
+
+/* Do not scale images on desktop; keep natural/original size */
 .product-description img {
-    max-width: 100%;
     height: auto;
 }
 .product-description table {
@@ -446,6 +458,11 @@ p {
         overflow-x: hidden;
         word-break: break-word;
     }
+    /* Left align explicitly on mobile as well */
+    .product-description,
+    .product-description * {
+        text-align: left !important;
+    }
     /* Constrain common WP wrappers and images */
     .product-description img,
     .product-description figure,
@@ -472,4 +489,34 @@ p {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
+}
+
+/* Desktop: limit images/figures to container width (no overflow) */
+@media (min-width: 641px) {
+    .product-description img,
+    .product-description figure,
+    .product-description .wp-caption,
+    .product-description .wp-block-image {
+        max-width: 100% !important; /* scale down if larger than container */
+        width: auto !important;
+        height: auto !important;
+    }
+    /* Prevent WP wide/full blocks from exceeding container */
+    .product-description .alignwide,
+    .product-description .alignfull {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
+/* Undo center alignment from common WP classes on desktop */
+.product-description .aligncenter,
+.product-description img.aligncenter,
+.product-description figure.aligncenter,
+.product-description .wp-caption.aligncenter {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    text-align: left !important;
 }

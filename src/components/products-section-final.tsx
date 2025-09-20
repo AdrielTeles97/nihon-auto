@@ -64,12 +64,12 @@ function ProductHeader({
     }
 
     return (
-        <div className="relative overflow-hidden rounded-lg h-48">
+        <div className="relative overflow-hidden rounded-lg h-48 bg-white">
             <Image
                 src={product.image || '/images/placeholder-product.svg'}
                 alt={product.name}
                 fill
-                className="object-cover transition-all duration-500 group-hover/bento:scale-110"
+                className="object-contain transition-all duration-500 group-hover/bento:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/bento:opacity-100 transition-opacity duration-300" />
             <div className="absolute bottom-2 right-2 opacity-0 group-hover/bento:opacity-100 transition-opacity duration-300">
@@ -213,7 +213,7 @@ function CategoryCarousel() {
                                         }
                                         alt={category.name}
                                         fill
-                                        className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
+                                            className="object-contain rounded-lg transition-transform duration-300 group-hover:scale-105 bg-white"
                                     />
                                 </div>
                                 <h3 className="font-medium mt-3 group-hover:text-primary transition-colors">

@@ -273,12 +273,12 @@ export default function ProductDetailClient({
             </div>
 
             {product.description && (
-                <section className="max-w-3xl mx-auto mt-10">
-                    <h2 className="text-lg font-semibold text-center">
+                <section className="mt-10 w-full">
+                    <h2 className="text-lg font-semibold text-left">
                         Descrição do produto
                     </h2>
                     <div
-                        className="product-description prose prose-sm max-w-none dark:prose-invert mt-4 mx-auto"
+                        className="product-description prose prose-sm max-w-none dark:prose-invert mt-4"
                         dangerouslySetInnerHTML={prepareDescription(
                             product.description
                         )}
