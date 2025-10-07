@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'https://nihonacessoriosautomotivos.com.br/',
+                hostname: 'api.nihonacessoriosautomotivos.com.br',
                 port: '',
                 pathname: '/**'
             },
