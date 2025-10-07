@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'darksalmon-cobra-736244.hostingersite.com',
+                hostname: 'https://nihonacessoriosautomotivos.com.br/',
                 port: '',
                 pathname: '/**'
             },

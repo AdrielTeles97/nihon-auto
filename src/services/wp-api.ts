@@ -10,7 +10,7 @@ function resolveBaseUrl(): string {
 
     if (!site) {
         // Sensible fallback to avoid breaking in dev
-        return 'https://darksalmon-cobra-736244.hostingersite.com/wp-json/wc/v3'
+        return 'https://https://nihonacessoriosautomotivos.com.br//wp-json/wc/v3'
     }
 
     // If caller already provided the full wc api path, just normalize trailing slash
