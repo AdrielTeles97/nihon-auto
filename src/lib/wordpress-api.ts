@@ -2,7 +2,7 @@
 export const WORDPRESS_API_BASE =
     process.env.NEXT_PUBLIC_WORDPRESS_URL ||
     process.env.WORDPRESS_BASE_URL ||
-    'https://https://nihonacessoriosautomotivos.com.br/'
+    'https://api.nihonacessoriosautomotivos.com.br/'
 
 export const API_ENDPOINTS = {
     // Endpoints do plugin Nihon acessórios
