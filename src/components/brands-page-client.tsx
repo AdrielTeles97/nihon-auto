@@ -100,17 +100,13 @@ export default function BrandsPageClient({
   return (
     <>
       {/* Hero */}
-      <section className="relative py-32 overflow-hidden bg-gradient-to-br from-zinc-900 via-black to-red-950">
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{ backgroundImage: `url('/noise.svg')`, backgroundRepeat: 'repeat', backgroundSize: '400px 400px' }}
-        />
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute -top-20 -right-20 w-40 h-40 opacity-20">
-          <DecorativeShape variant="circle" />
-        </div>
-        <div className="absolute top-1/2 -left-16 w-32 h-32 opacity-15">
-          <DecorativeShape variant="rectangle" />
+      <section className="relative py-24 overflow-hidden bg-black">
+        {/* Linhas decorativas modernas - mais sutis */}
+        <div className="absolute inset-0 opacity-[0.08] pointer-events-none">
+          <div className="absolute top-0 left-1/3 w-[1px] h-full bg-gradient-to-b from-transparent via-white/40 to-transparent" />
+          <div className="absolute top-0 right-1/3 w-[1px] h-full bg-gradient-to-b from-transparent via-white/40 to-transparent" />
+          <div className="absolute top-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          <div className="absolute bottom-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center">
@@ -131,15 +127,19 @@ export default function BrandsPageClient({
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent" />
+        {/* Linha divisória fina */}
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
       </section>
 
       {/* Lista */}
       <section className="py-20 bg-background relative overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
-          <div className="w-full h-full bg-repeat" style={{ backgroundImage: `url('/noise.svg')`, backgroundSize: '200px 200px' }} />
+        {/* Linhas decorativas modernas - mais sutis */}
+        <div className="absolute inset-0 opacity-[0.06] pointer-events-none">
+          <div className="absolute top-0 left-1/3 w-[1px] h-full bg-gradient-to-b from-transparent via-gray-800 to-transparent" />
+          <div className="absolute top-0 right-1/3 w-[1px] h-full bg-gradient-to-b from-transparent via-gray-800 to-transparent" />
+          <div className="absolute top-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+          <div className="absolute bottom-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/60 to-background/80" />
 
         <div className="container mx-auto px-4 relative z-10">
           {/* Busca */}
@@ -212,8 +212,14 @@ export default function BrandsPageClient({
                   href={`/produtos?brand=${encodeURIComponent(brand.slug || String(brand.id ?? ''))}`}
                   className="group"
                 >
-                  <div className="border rounded-xl p-4 bg-background/80 hover:shadow-md transition">
-                    <div className="aspect-video bg-muted/20 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
+                  <div className="relative border rounded-xl p-4 bg-background hover:shadow-lg transition-all duration-300 group hover:border-red-200">
+                    {/* Linha decorativa sutil */}
+                    <div className="absolute inset-0 opacity-[0.03] rounded-xl">
+                      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+                      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+                    </div>
+                    
+                    <div className="relative aspect-video bg-muted/20 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
                       {brand.image ? (
                         <Image
                           src={brand.image}
@@ -227,9 +233,9 @@ export default function BrandsPageClient({
                         <div className="text-xs text-muted-foreground">Sem imagem</div>
                       )}
                     </div>
-                    <div className="text-sm font-medium group-hover:text-red-600 transition-colors line-clamp-2">{brand.name}</div>
+                    <div className="relative text-sm font-medium group-hover:text-red-600 transition-colors line-clamp-2">{brand.name}</div>
                     {brand.count ? (
-                      <div className="text-xs text-muted-foreground">{brand.count} produto(s)</div>
+                      <div className="relative text-xs text-muted-foreground">{brand.count} produto(s)</div>
                     ) : null}
                   </div>
                 </Link>
