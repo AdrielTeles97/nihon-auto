@@ -69,15 +69,21 @@ export async function GET(
         }
 
         // Tentar buscar do cache primeiro
+        // Durante desenvolvimento, cache menor para refletir mudanças rapidamente
+        const isDev = process.env.NODE_ENV === 'development'
+        const cacheTime = isDev ? 30 : 3600 // 30 segundos em dev, 1 hora em produção
+
         const cachedProduct = await cached(
             ['product', productId],
             () => fetchProductFromAPI(productId),
             {
                 tags: ['products'],
-                revalidate: 3600
+                revalidate: cacheTime
             }
         )
-        return NextResponse.json(cachedProduct, { headers: cacheHeaders(3600) })
+        return NextResponse.json(cachedProduct, {
+            headers: cacheHeaders(cacheTime)
+        })
     } catch (error) {
         console.error('Error in product API:', error)
         if ((error as AxiosError)?.response?.status === 404) {
@@ -115,8 +121,9 @@ async function fetchProductFromAPI(productId: string) {
                 image?: { id: number; src: string }
             }
 
+            // Buscar TODAS as variações (WooCommerce pagina em 10 por padrão, aumentar para 100)
             const variationsResponse = await wpApi.get<WCVariation[]>(
-                `/products/${productId}/variations`
+                `/products/${productId}/variations?per_page=100`
             )
             product.variations = variationsResponse.data.map(
                 (v: WCVariation) => ({
@@ -124,10 +131,14 @@ async function fetchProductFromAPI(productId: string) {
                     sku: v.sku,
                     image: v.image?.src || null,
                     attributes: Object.fromEntries(
-                        (v.attributes || []).map((attr: VariationAttribute) => [
-                            attr.name?.toLowerCase() || '',
-                            attr.option
-                        ])
+                        (v.attributes || []).map((attr: VariationAttribute) => {
+                            // Normalizar chave: minúscula e remover prefixo pa_
+                            const key = (attr.name || '')
+                                .toLowerCase()
+                                .trim()
+                                .replace(/^pa_/, '')
+                            return [key, attr.option]
+                        })
                     ),
                     inStock: v.stock_status === 'instock',
                     price: v.price ? parseFloat(v.price) : null

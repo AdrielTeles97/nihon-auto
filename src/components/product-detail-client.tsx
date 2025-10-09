@@ -10,6 +10,9 @@ import type { Product as APIProduct } from '@/types/products'
 import { prepareDescription } from '@/lib/description'
 import type { Product as CartProduct } from '@/types'
 import { getWhatsAppQuoteUrl } from '@/lib/whatsapp'
+import { ProductVariations } from '@/components/product-variations'
+import { StockStatus } from '@/components/stock-status'
+import { RelatedProducts } from '@/components/related-products'
 
 function toCartProduct(p: APIProduct): CartProduct {
     return {
@@ -43,44 +46,80 @@ export default function ProductDetailClient({
         {}
     )
 
-    // Inicializa seleção de variações
+    // Normalização de chaves e valores
+    const normalizeKey = (key: string) =>
+        (key || '').toLowerCase().trim().replace(/^pa_/, '')
+    const normalizeValue = (val: string) => (val || '').toLowerCase().trim()
+
+    // Inicializar seleção de atributos
     useEffect(() => {
         const defaults: Record<string, string> = {}
-        ;(product.attributes || [])
-            .filter(a => a.variation && (a.options || []).length)
-            .forEach(a => {
-                const key = (a.name || '').toLowerCase()
-                const def = product.defaultAttributes?.[key]
-                defaults[key] = def || a.options?.[0] || ''
-            })
+
+        if (product.variations?.length) {
+            // Inicializar APENAS com a primeira cor (atributo principal)
+            // Deixar os demais atributos vazios para o usuário escolher
+            const firstInStock = product.variations.find(
+                v => v.inStock !== false
+            )
+            const targetVariation = firstInStock || product.variations[0]
+
+            // Pegar apenas o atributo de cor
+            const corKey = normalizeKey('cor')
+            if (targetVariation.attributes?.[corKey]) {
+                defaults[corKey] = targetVariation.attributes[corKey]
+            }
+
+            // Não inicializar outros atributos (costura, etc.)
+            // O usuário deve selecionar manualmente
+        }
+
         setSelectedAttrs(defaults)
         setActiveIdx(0)
     }, [product])
 
+    // Encontrar variação atual baseada na seleção
     const currentVariation = useMemo(() => {
         if (!product?.variations?.length) return null
-        const keys = Object.keys(selectedAttrs)
-        const match = product.variations.find(v =>
-            keys.every(
-                k =>
-                    (v.attributes?.[k] || '').toLowerCase() ===
-                    (selectedAttrs[k] || '').toLowerCase()
-            )
-        )
-        return match || null
-    }, [product, selectedAttrs])
 
+        return (
+            product.variations.find(variation => {
+                return Object.entries(selectedAttrs).every(([key, value]) => {
+                    if (!value) return true
+
+                    const normKey = normalizeKey(key)
+                    const normValue = normalizeValue(value)
+
+                    // As chaves já vêm normalizadas do backend (sem pa_)
+                    const varValue = normalizeValue(
+                        variation.attributes?.[normKey] || ''
+                    )
+
+                    // Se a variação não define este atributo, tratamos como match
+                    if (!varValue) return true
+
+                    return varValue === normValue
+                })
+            }) || null
+        )
+    }, [product.variations, selectedAttrs])
+
+    // Galeria de imagens
     const displayedGallery = useMemo(() => {
-        const base = product?.gallery || []
-        const varImg = currentVariation?.image || null
-        if (!varImg) return base
-        const dedup = base.filter(g => g !== varImg)
-        return [varImg, ...dedup]
+        const baseGallery = product?.gallery || []
+        const varImg = currentVariation?.image
+
+        if (varImg) {
+            // Remover duplicatas e colocar imagem da variação primeiro
+            const filtered = baseGallery.filter(img => img !== varImg)
+            return [varImg, ...filtered]
+        }
+
+        return baseGallery
     }, [product?.gallery, currentVariation?.image])
 
-    // Sempre que a variação muda, reseta o índice
+    // Resetar índice da galeria quando trocar variação
     useEffect(() => {
-        setActiveIdx(prev => (prev === 0 ? prev : 0))
+        setActiveIdx(0)
     }, [currentVariation?.id])
 
     const addToCartAndGo = () => {
@@ -134,15 +173,15 @@ export default function ProductDetailClient({
                             priority
                         />
                     </div>
-                    {displayedGallery && displayedGallery.length > 0 && (
+                    {displayedGallery && displayedGallery.length > 1 && (
                         <div className="mt-4 grid grid-cols-5 gap-3">
                             {displayedGallery.map((src, i) => (
                                 <button
                                     key={`thumb-${i}`}
-                                    className={`aspect-square rounded-md bg-gray-50 overflow-hidden border ${
+                                    className={`aspect-square rounded-md bg-gray-50 overflow-hidden border-2 transition-all ${
                                         i === activeIdx
                                             ? 'border-red-600'
-                                            : 'border-transparent'
+                                            : 'border-transparent hover:border-gray-300'
                                     }`}
                                     onClick={() => setActiveIdx(i)}
                                     aria-label={`Imagem ${i + 1}`}
@@ -164,7 +203,7 @@ export default function ProductDetailClient({
                     )}
                 </div>
 
-                {/* Lateral (dados + variações) */}
+                {/* Informações do produto */}
                 <div className="space-y-4">
                     <h1 className="text-2xl font-semibold leading-tight">
                         {product.name}
@@ -182,52 +221,26 @@ export default function ProductDetailClient({
                         </p>
                     )}
 
-                    {(product.attributes || []).some(
-                        a => a.variation && (a.options || []).length
-                    ) && (
-                        <div className="space-y-3 pt-2">
-                            {(product.attributes || [])
-                                .filter(
-                                    a => a.variation && (a.options || []).length
-                                )
-                                .map(attr => {
-                                    const key = (attr.name || '').toLowerCase()
-                                    const value = selectedAttrs[key] || ''
-                                    return (
-                                        <div
-                                            key={key}
-                                            className="flex items-center gap-3"
-                                        >
-                                            <label className="text-sm w-20 shrink-0">
-                                                {attr.name}:
-                                            </label>
-                                            <select
-                                                className="border rounded-md px-2 py-1 text-sm"
-                                                value={value}
-                                                onChange={e =>
-                                                    setSelectedAttrs(prev => ({
-                                                        ...prev,
-                                                        [key]: e.target.value
-                                                    }))
-                                                }
-                                            >
-                                                {(attr.options || []).map(
-                                                    opt => (
-                                                        <option
-                                                            key={opt}
-                                                            value={opt}
-                                                        >
-                                                            {opt}
-                                                        </option>
-                                                    )
-                                                )}
-                                            </select>
-                                        </div>
-                                    )
-                                })}
-                        </div>
-                    )}
+                    {/* Variações */}
+                    <ProductVariations
+                        product={product}
+                        selectedAttrs={selectedAttrs}
+                        onSelectionChange={setSelectedAttrs}
+                    />
 
+                    {/* Status do estoque */}
+                    <div className="pt-4">
+                        <StockStatus
+                            inStock={currentVariation?.inStock ?? true}
+                            stockStatus={
+                                currentVariation?.inStock === false
+                                    ? 'outofstock'
+                                    : 'instock'
+                            }
+                        />
+                    </div>
+
+                    {/* Botões de ação */}
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
                         <Button
                             variant="outline"
@@ -243,12 +256,13 @@ export default function ProductDetailClient({
                     <div className="pt-2">
                         <Link
                             href="/produtos"
-                            className="inline-flex items-center text-sm underline"
+                            className="inline-flex items-center text-sm underline hover:text-red-600"
                         >
                             Voltar aos produtos
                         </Link>
                     </div>
 
+                    {/* Tags de categoria e marca */}
                     {(product.categories?.length || product.brands?.length) && (
                         <div className="mt-6 flex flex-wrap gap-2">
                             {product.categories?.map(c => (
@@ -272,6 +286,7 @@ export default function ProductDetailClient({
                 </div>
             </div>
 
+            {/* Descrição do produto */}
             {product.description && (
                 <section className="mt-10 w-full">
                     <h2 className="text-lg font-semibold text-left">
@@ -285,6 +300,11 @@ export default function ProductDetailClient({
                     />
                 </section>
             )}
+
+            {/* Produtos Relacionados */}
+            <section className="mt-12 w-full">
+                <RelatedProducts productId={product.id} limit={4} />
+            </section>
         </main>
     )
 }

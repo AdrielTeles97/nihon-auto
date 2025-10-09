@@ -71,7 +71,10 @@ export async function GET(request: NextRequest) {
                     currentPage: page
                 }
             },
-            { tags: ['wc:brands'], revalidate: 3600 }
+            {
+                tags: ['wc:brands'],
+                revalidate: process.env.NODE_ENV === 'development' ? 30 : 3600
+            }
         )
 
         let brands: Brand[] = responseData.data.map(brand => ({

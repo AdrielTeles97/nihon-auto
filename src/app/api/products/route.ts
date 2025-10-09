@@ -202,7 +202,10 @@ export async function GET(request: NextRequest) {
                 )
                 return { items: resp.data, total, totalPages }
             },
-            { tags: ['wc:products'], revalidate: 600 }
+            {
+                tags: ['wc:products'],
+                revalidate: process.env.NODE_ENV === 'development' ? 30 : 600
+            }
         )
 
         let products: Product[] = []
