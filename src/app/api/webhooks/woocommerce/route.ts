@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Se for um teste de conectividade (sem headers de webhook), aceitar
-    if (!signature && !topicHeader && rawLength < 50) {
+    if (!signature && !topicHeader && raw.length < 50) {
         console.log('[WEBHOOK] Teste de conectividade aceito')
         return NextResponse.json({ 
             ok: true, 
