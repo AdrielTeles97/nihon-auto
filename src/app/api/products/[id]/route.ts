@@ -68,21 +68,24 @@ export async function GET(
             return NextResponse.json(result, { headers: cacheHeaders(3600) })
         }
 
-        // Tentar buscar do cache primeiro
-        // Durante desenvolvimento, cache menor para refletir mudanças rapidamente
+        // Cache granular por produto individual
+        // Pode ser invalidado instantaneamente via webhook quando o produto for atualizado
         const isDev = process.env.NODE_ENV === 'development'
-        const cacheTime = isDev ? 30 : 3600 // 30 segundos em dev, 1 hora em produção
+        const cacheTime = isDev ? 30 : 3600 // 30s em dev, 1 hora em produção
 
         const cachedProduct = await cached(
             ['product', productId],
             () => fetchProductFromAPI(productId),
             {
-                tags: ['products'],
+                // Tag específica do produto para revalidação granular
+                tags: [`wc:product:${productId}`, 'wc:products'],
                 revalidate: cacheTime
             }
         )
+
+        // CDN cache com stale-while-revalidate para resposta instantânea
         return NextResponse.json(cachedProduct, {
-            headers: cacheHeaders(cacheTime)
+            headers: cacheHeaders(cacheTime, 300) // 5min de stale-while-revalidate
         })
     } catch (error) {
         console.error('Error in product API:', error)

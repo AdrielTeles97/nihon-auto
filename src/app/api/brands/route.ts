@@ -73,7 +73,8 @@ export async function GET(request: NextRequest) {
             },
             {
                 tags: ['wc:brands'],
-                revalidate: process.env.NODE_ENV === 'development' ? 30 : 3600
+                // Marcas mudam raramente: 6 horas de cache
+                revalidate: process.env.NODE_ENV === 'development' ? 30 : 21600
             }
         )
 

@@ -181,6 +181,8 @@ export async function GET(request: NextRequest) {
             Math.floor(Date.now() / (1000 * 60 * 10)) // 10 minutos
         ]
 
+        // Cache inteligente: lista de produtos revalida a cada 10 minutos
+        // mas pode ser invalidada instantaneamente via webhook
         const raw = await cached(
             key,
             async () => {
@@ -204,6 +206,7 @@ export async function GET(request: NextRequest) {
             },
             {
                 tags: ['wc:products'],
+                // Dev: 30s | Prod: 10min (600s)
                 revalidate: process.env.NODE_ENV === 'development' ? 30 : 600
             }
         )

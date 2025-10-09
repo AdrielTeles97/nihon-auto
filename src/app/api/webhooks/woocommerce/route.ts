@@ -57,48 +57,120 @@ export async function POST(request: NextRequest) {
             payload?.resource || resourceHeader || ''
         ).toLowerCase()
         const topic = String(payload?.topic || topicHeader || '').toLowerCase()
+        const event = String(payload?.event || eventHeader || '').toLowerCase()
         const id =
             String(
                 payload?.id || payload?.resource_id || payload?.data?.id || ''
             ) || undefined
 
-        // Produtos
+        const revalidated: string[] = []
+
+        // Produtos - Revalidação granular e inteligente
         if (resource.includes('product') || topic.includes('product')) {
+            // Sempre revalida a lista de produtos
             revalidateTag('wc:products')
-            if (id) revalidateTag(`wc:product:${id}`)
+            revalidated.push('wc:products')
+
+            // Se for um produto específico, revalida apenas ele
+            if (id) {
+                revalidateTag(`wc:product:${id}`)
+                revalidated.push(`wc:product:${id}`)
+
+                // Se o produto foi deletado, revalida também produtos relacionados
+                if (event.includes('deleted')) {
+                    revalidateTag(`wc:product:${id}:related`)
+                    revalidated.push(`wc:product:${id}:related`)
+                }
+            }
+
+            // Log para debug
+            if (debug) {
+                console.log(`[WEBHOOK] Produto ${event}: ID ${id}`)
+            }
         }
 
-        // Categorias
+        // Categorias - Afeta produtos e listagens
         if (
             resource.includes('category') ||
             resource.includes('product_cat') ||
             topic.includes('product.category')
         ) {
             revalidateTag('wc:categories')
+            revalidated.push('wc:categories')
+
+            // Mudanças em categorias afetam listagem de produtos
             revalidateTag('wc:products')
+            revalidated.push('wc:products')
+
+            if (debug) {
+                console.log(`[WEBHOOK] Categoria ${event}: ID ${id}`)
+            }
         }
 
-        // Marcas (plugin comum usa product_brand)
+        // Marcas - Muito raro de mudar
         if (
             resource.includes('brand') ||
             resource.includes('product_brand') ||
             topic.includes('product.brand')
         ) {
             revalidateTag('wc:brands')
+            revalidated.push('wc:brands')
+
+            // Mudanças em marcas afetam produtos
             revalidateTag('wc:products')
+            revalidated.push('wc:products')
+
+            if (debug) {
+                console.log(`[WEBHOOK] Marca ${event}: ID ${id}`)
+            }
         }
+
+        // Variações de produto
+        if (
+            topic.includes('product_variation') ||
+            resource.includes('variation')
+        ) {
+            // Revalida o produto pai
+            const parentId = payload?.parent_id || payload?.product_id
+            if (parentId) {
+                revalidateTag(`wc:product:${parentId}`)
+                revalidated.push(`wc:product:${parentId}`)
+            }
+
+            // Revalida lista de produtos
+            revalidateTag('wc:products')
+            revalidated.push('wc:products')
+
+            if (debug) {
+                console.log(
+                    `[WEBHOOK] Variação ${event}: ID ${id}, Produto Pai: ${parentId}`
+                )
+            }
+        }
+
+        // Log de sucesso
+        const timestamp = new Date().toISOString()
+        console.log(
+            `[${timestamp}] Webhook processado: ${topic} | Revalidados: ${revalidated.join(
+                ', '
+            )}`
+        )
 
         if (debug) {
             return NextResponse.json({
                 ok: true,
-                revalidated: true,
+                revalidated,
                 resource,
                 topic,
-                id
+                event,
+                id,
+                timestamp
             })
         }
-        return NextResponse.json({ ok: true, revalidated: true })
+        return NextResponse.json({ ok: true, revalidated: revalidated.length })
     } catch (e) {
-        return NextResponse.json({ ok: false }, { status: 200 })
+        const error = e instanceof Error ? e.message : 'Unknown error'
+        console.error('[WEBHOOK ERROR]', error)
+        return NextResponse.json({ ok: false, error }, { status: 200 })
     }
 }
