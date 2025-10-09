@@ -84,6 +84,16 @@ function ProductCard({
                     }
                     header={
                         <div className="relative overflow-hidden rounded-lg h-48 group">
+                            {/* Linhas decorativas de fundo - Estilo moderno */}
+                            <div className="absolute inset-0 opacity-[0.06]">
+                                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-900 to-transparent" />
+                                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-900 to-transparent" />
+                                <div className="absolute top-0 left-1/3 w-[1px] h-full bg-gradient-to-b from-transparent via-black to-transparent" />
+                                <div className="absolute top-0 right-1/3 w-[1px] h-full bg-gradient-to-b from-transparent via-black to-transparent" />
+                                <div className="absolute top-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+                                <div className="absolute bottom-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+                            </div>
+
                             <Image
                                 src={
                                     product.image ||
@@ -179,7 +189,11 @@ function ProductPlaceholder({ index }: { index: number }) {
     )
 }
 
-export function ProductsGrid({ initialProducts = [] }: { initialProducts?: Product[] }) {
+export function ProductsGrid({
+    initialProducts = []
+}: {
+    initialProducts?: Product[]
+}) {
     const [products, setProducts] = useState<Product[]>(initialProducts)
     const [isLoading, setIsLoading] = useState(initialProducts.length === 0)
     const [addingToCart, setAddingToCart] = useState<string | null>(null)
@@ -191,7 +205,9 @@ export function ProductsGrid({ initialProducts = [] }: { initialProducts?: Produ
         if (initialProducts.length > 0) return
         async function fetchProducts() {
             try {
-                const response = await fetch('/api/products?per_page=6&page=1&order=desc')
+                const response = await fetch(
+                    '/api/products?per_page=12&page=1&order=desc'
+                )
                 const data: ProductsApiResponse = await response.json()
                 if (data.success) setProducts(data.data)
             } catch (error) {
@@ -243,10 +259,15 @@ export function ProductsGrid({ initialProducts = [] }: { initialProducts?: Produ
         }
     }
 
-    // Completar com placeholders até 6 itens
+    // Só completar com placeholders se tiver produtos mas não atingir 12
+    // Se não tiver nenhum produto, não mostra placeholders
     const displayProducts: (Product | null)[] = [...products]
-    while (displayProducts.length < 6) {
-        displayProducts.push(null)
+
+    // Só adiciona placeholders se já tiver pelo menos 1 produto
+    if (products.length > 0 && products.length < 12) {
+        while (displayProducts.length < 12) {
+            displayProducts.push(null)
+        }
     }
 
     if (isLoading) {
@@ -282,6 +303,16 @@ export function ProductsGrid({ initialProducts = [] }: { initialProducts?: Produ
             {/* Linhas divisórias */}
             <DividerLines variant="subtle" />
 
+            {/* Grid decorativo de fundo - Design moderno inspirado em chanhdai.com */}
+            <div className="absolute inset-0 opacity-[0.08] pointer-events-none">
+                <div className="absolute top-0 left-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-gray-900 to-transparent" />
+                <div className="absolute top-0 left-2/4 w-[1px] h-full bg-gradient-to-b from-transparent via-black to-transparent" />
+                <div className="absolute top-0 right-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-gray-900 to-transparent" />
+                <div className="absolute top-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+                <div className="absolute top-2/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-black to-transparent" />
+                <div className="absolute bottom-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+            </div>
+
             <div className="relative container mx-auto px-4">
                 {/* Título da seção */}
                 <div className="text-center mb-16">
@@ -295,9 +326,9 @@ export function ProductsGrid({ initialProducts = [] }: { initialProducts?: Produ
                     </div>
                 </div>
 
-                {/* Grid de produtos */}
+                {/* Grid de produtos - Layout moderno 2x2 */}
                 <div className="relative mb-16">
-                    <BentoGrid className="max-w-4xl mx-auto gap-6 md:gap-8">
+                    <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                         {displayProducts.map((product, index) =>
                             product ? (
                                 <ProductCard
@@ -319,7 +350,7 @@ export function ProductsGrid({ initialProducts = [] }: { initialProducts?: Produ
                                 />
                             )
                         )}
-                    </BentoGrid>
+                    </div>
                 </div>
 
                 {/* Call to Action */}

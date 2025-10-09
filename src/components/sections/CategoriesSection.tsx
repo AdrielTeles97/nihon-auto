@@ -141,17 +141,31 @@ export function CategoriesSection() {
                                     />
 
                                     <div className="relative p-4 text-center">
-                                        <div className="relative h-40 mb-4 overflow-hidden rounded-lg bg-gray-50/80">
-                                            <Image
-                                                src={
-                                                    category.image ||
-                                                    '/images/placeholder-product.svg'
-                                                }
-                                                alt={category.name}
-                                                fill
-                                                className="object-contain p-3 transition-transform duration-300 group-hover:scale-110"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        <div className="relative h-40 mb-4 overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-gray-100/80">
+                                            {category.image ? (
+                                                <>
+                                                    <Image
+                                                        src={category.image}
+                                                        alt={category.name}
+                                                        fill
+                                                        className="object-contain p-3 transition-transform duration-300 group-hover:scale-110"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                </>
+                                            ) : (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-gray-50 group-hover:from-red-100 group-hover:via-red-50 transition-all duration-300">
+                                                    <div className="text-center px-2">
+                                                        <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                                            {category.name.charAt(
+                                                                0
+                                                            )}
+                                                        </div>
+                                                        <p className="text-sm font-semibold text-gray-700 group-hover:text-red-600 transition-colors line-clamp-2">
+                                                            {category.name}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <h3 className="font-medium mb-2 text-gray-900 group-hover:text-red-600 transition-colors">
