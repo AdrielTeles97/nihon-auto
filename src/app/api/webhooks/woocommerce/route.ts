@@ -30,6 +30,16 @@ export async function POST(request: NextRequest) {
     const eventHeader = request.headers.get('x-wc-webhook-event') || ''
     const raw = await request.text()
 
+    // Log para debug
+    console.log('[WEBHOOK DEBUG]', {
+        hasSecret: !!secret,
+        hasSignature: !!signature,
+        topic: topicHeader,
+        resource: resourceHeader,
+        event: eventHeader,
+        rawLength: raw.length
+    })
+
     // Signature verification
     if (secret) {
         const expected = computeSignature(raw, secret)
