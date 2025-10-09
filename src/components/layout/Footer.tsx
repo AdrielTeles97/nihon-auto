@@ -59,14 +59,11 @@ export function Footer() {
                                         : companyData.company_name}
                                 </span>
                                 <span className="text-sm text-primary-foreground/80">
-                                    Sua especialista na região norte    
+                                    Sua especialista na região norte
                                 </span>
-                                
                             </div>
-                            
                         </div>
-                        
-                        
+
                         <div className="flex space-x-3">
                             {companyData.social_media.facebook && (
                                 <Button
@@ -92,7 +89,9 @@ export function Footer() {
                                     asChild
                                 >
                                     <a
-                                        href={companyData.social_media.instagram}
+                                        href={
+                                            companyData.social_media.instagram
+                                        }
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >

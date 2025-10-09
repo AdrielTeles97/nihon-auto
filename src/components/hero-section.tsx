@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 // Definir o tipo do slide
 interface Slide {
     src: string
+    srcMobile?: string // Versão mobile do banner
     alt: string
     title: string
     description: string
@@ -18,24 +19,40 @@ interface Slide {
 
 export default function HeroSection() {
     const [currentSlide, setCurrentSlide] = useState(0)
+    const [isMobile, setIsMobile] = useState(false)
+
+    // Detectar se é mobile
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768)
+        }
+
+        checkMobile()
+        window.addEventListener('resize', checkMobile)
+
+        return () => window.removeEventListener('resize', checkMobile)
+    }, [])
 
     const slides: Slide[] = [
         {
-            src: '/images/nihon-hero-2.png',
+            src: '/images/nihon-hero-23.webp',
+            srcMobile: '/images/nihon-hero-23.webp', // Adicione versão mobile quando tiver
             alt: 'Nihon acessórios Hero Image 2',
             title: '',
             description: '',
             showButtons: true
         },
         {
-            src: '/images/slideweb1.webp',
+            src: '/images/banner-02-nihon.webp',
+            srcMobile: '/images/banner-02-nihon-1080.webp',
             alt: 'Nihon acessórios Hero Image 4',
             title: '',
             description: '',
             showButtons: false
         },
         {
-            src: '/images/nihon-hero-3.jpeg',
+            src: '/images/banner-03-nihon.webp',
+            srcMobile: '/images/banner-03-nihon-1080.webp',
             alt: 'Nihon acessórios Hero Image 3',
             title: '',
             description: '',
@@ -67,29 +84,40 @@ export default function HeroSection() {
     return (
         <>
             <main className="overflow-x-hidden">
-                <section className="relative overflow-hidden h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px] pt-20">
-                    {/* Background Images Slider */}
-                    <div className="absolute inset-0 z-0">
-                        {slides.map((slide, index) => (
-                            <div
-                                key={index}
-                                className={`absolute inset-0 transition-opacity duration-1000 ${
-                                    index === currentSlide
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
-                                }`}
-                            >
-                                <Image
-                                    src={slide.src}
-                                    alt={slide.alt || 'Banner'}
-                                    fill
-                                    className="object-cover object-center"
-                                    priority={index === 0}
-                                    unoptimized
-                                    sizes="100vw"
-                                />
-                            </div>
-                        ))}
+                <section className="relative overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[725px] pt-20 bg-black">
+                    {/* Background Images Slider - Otimizado para banners 1900x725 (desktop) e 1080x1080 (mobile) */}
+                    <div className="absolute inset-0 z-0 flex items-center justify-center">
+                        {slides.map((slide, index) => {
+                            const imageSrc =
+                                isMobile && slide.srcMobile
+                                    ? slide.srcMobile
+                                    : slide.src
+
+                            return (
+                                <div
+                                    key={index}
+                                    className={`absolute inset-0 transition-opacity duration-1000 flex items-center justify-center ${
+                                        index === currentSlide
+                                            ? 'opacity-100'
+                                            : 'opacity-0'
+                                    }`}
+                                >
+                                    <Image
+                                        src={imageSrc}
+                                        alt={slide.alt || 'Banner'}
+                                        fill
+                                        className={`object-center ${
+                                            isMobile
+                                                ? 'object-cover'
+                                                : 'object-contain'
+                                        }`}
+                                        priority={index === 0}
+                                        unoptimized
+                                        sizes="100vw"
+                                    />
+                                </div>
+                            )
+                        })}
                     </div>
 
                     {/* Black Gradient Overlay */}
