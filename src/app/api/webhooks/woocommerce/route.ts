@@ -8,6 +8,26 @@ function computeSignature(raw: string, secret: string) {
     return hmac.digest('base64')
 }
 
+// Método GET para testes e verificação de conectividade
+export async function GET(request: NextRequest) {
+    const url = new URL(request.url)
+    const debug = url.searchParams.get('debug') === '1'
+    
+    if (debug) {
+        return NextResponse.json({
+            ok: true,
+            message: 'Webhook endpoint está ativo e pronto para receber eventos',
+            timestamp: new Date().toISOString(),
+            secretConfigured: !!process.env.WC_WEBHOOK_SECRET
+        })
+    }
+    
+    return NextResponse.json({ 
+        ok: true, 
+        message: 'Webhook endpoint ativo' 
+    })
+}
+
 export async function POST(request: NextRequest) {
     const url = new URL(request.url)
     const debug =
