@@ -140,13 +140,13 @@ export default function HeroSection() {
                         <ChevronRight className="w-6 h-6" />
                     </button>
 
-                    {/* Slide Indicators */}
-                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex space-x-2">
+                    {/* Slide Indicators - Apenas Desktop */}
+                    <div className="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-30 gap-2">
                         {slides.map((_, index) => (
                             <button
                                 key={index}
                                 onClick={() => goToSlide(index)}
-                                className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                                className={`w-2 h-2 rounded-full transition-all duration-200 ${
                                     index === currentSlide
                                         ? 'bg-white'
                                         : 'bg-white/50 hover:bg-white/70'
