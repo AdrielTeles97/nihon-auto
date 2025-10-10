@@ -51,8 +51,8 @@ export default function HeroSection() {
             showButtons: false
         },
         {
-            src: '/images/banner-03-nihon.webp',
-            srcMobile: '/images/banner-03-nihon-1080.webp',
+            src: '/images/banner-05-nihon.webp',
+            srcMobile: '/images/banner-04-nihon-1080.webp',
             alt: 'Nihon acessórios Hero Image 3',
             title: '',
             description: '',
