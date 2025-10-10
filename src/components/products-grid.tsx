@@ -1,9 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
+import {
+    MobileLoading,
+    MobileCardSkeleton
+} from '@/components/ui/mobile-loading'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/contexts/cart-context'
@@ -78,20 +82,26 @@ export function ProductsGrid() {
         [searchParams]
     )
 
-    // Fetch filters (once)
+    // Fetch filters (once) - otimizado
     useEffect(() => {
         let ignore = false
         const load = async () => {
             try {
                 const [catsRes, brandsRes] = await Promise.all([
-                    fetch('/api/categories').then(r => r.json()),
-                    fetch('/api/brands?calc_counts=true').then(r => r.json())
+                    fetch('/api/categories', {
+                        headers: { 'Content-Type': 'application/json' }
+                    }).then(r => r.json()),
+                    fetch('/api/brands?calc_counts=true', {
+                        headers: { 'Content-Type': 'application/json' }
+                    }).then(r => r.json())
                 ])
                 if (!ignore) {
                     setCategories(catsRes.data || [])
                     setBrands(brandsRes.data || [])
                 }
-            } catch {}
+            } catch (error) {
+                console.error('Erro ao carregar filtros:', error)
+            }
         }
         load()
         return () => {
@@ -99,7 +109,7 @@ export function ProductsGrid() {
         }
     }, [])
 
-    // Fetch products when filters/pagination change
+    // Fetch products when filters/pagination change - otimizado
     useEffect(() => {
         let ignore = false
         const load = async () => {
@@ -110,7 +120,9 @@ export function ProductsGrid() {
                 if (!url.searchParams.get('per_page'))
                     url.searchParams.set('per_page', '12')
 
-                const res = await fetch(url.toString())
+                const res = await fetch(url.toString(), {
+                    headers: { 'Content-Type': 'application/json' }
+                })
                 const json: ProductsResponse = await res.json()
 
                 if (!ignore) {
@@ -130,39 +142,52 @@ export function ProductsGrid() {
         }
     }, [searchParams])
 
-    const toggleToken = (list: string[], token: string) => {
+    const toggleToken = useCallback((list: string[], token: string) => {
         const s = new Set(list)
         if (s.has(token)) s.delete(token)
         else s.add(token)
         return Array.from(s)
-    }
+    }, [])
 
-    const updateQuery = (key: string, values: string[]) => {
-        const params = new URLSearchParams(searchParams.toString())
-        if (values.length) params.set(key, values.join(','))
-        else params.delete(key)
-        params.delete('page') // reset page
-        router.push(`${pathname}?${params.toString()}`)
-    }
+    const updateQuery = useCallback(
+        (key: string, values: string[]) => {
+            const params = new URLSearchParams(searchParams.toString())
+            if (values.length) params.set(key, values.join(','))
+            else params.delete(key)
+            params.delete('page') // reset page
+            router.push(`${pathname}?${params.toString()}`)
+        },
+        [searchParams, router, pathname]
+    )
 
-    const handleCategoryCheck = (slug: string) => {
-        updateQuery('category', toggleToken(selectedCategories, slug))
-    }
-    const handleBrandCheck = (slug: string) => {
-        updateQuery('brand', toggleToken(selectedBrands, slug))
-    }
+    const handleCategoryCheck = useCallback(
+        (slug: string) => {
+            updateQuery('category', toggleToken(selectedCategories, slug))
+        },
+        [updateQuery, toggleToken, selectedCategories]
+    )
 
-    const goToPage = (p: number) => {
-        const params = new URLSearchParams(searchParams.toString())
-        params.set('page', String(Math.max(1, Math.min(totalPages, p))))
-        router.push(`${pathname}?${params.toString()}`)
-    }
+    const handleBrandCheck = useCallback(
+        (slug: string) => {
+            updateQuery('brand', toggleToken(selectedBrands, slug))
+        },
+        [updateQuery, toggleToken, selectedBrands]
+    )
 
-    const handleRequestQuote = (product: APIProduct) => {
+    const goToPage = useCallback(
+        (p: number) => {
+            const params = new URLSearchParams(searchParams.toString())
+            params.set('page', String(Math.max(1, Math.min(totalPages, p))))
+            router.push(`${pathname}?${params.toString()}`)
+        },
+        [searchParams, router, pathname, totalPages]
+    )
+
+    const handleRequestQuote = useCallback((product: APIProduct) => {
         const productCode = String(product.code || product.slug || product.id)
         const whatsappUrl = getWhatsAppQuoteUrl(product.name, productCode)
         window.open(whatsappUrl, '_blank')
-    }
+    }, [])
 
     return (
         <div className="flex flex-col lg:flex-row gap-6">
@@ -220,10 +245,10 @@ export function ProductsGrid() {
                                             key={cat.slug}
                                             className="flex items-center justify-between text-sm"
                                         >
-                                            <label className="flex items-center cursor-pointer">
+                                            <label className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
                                                 <input
                                                     type="checkbox"
-                                                    className="mr-2"
+                                                    className="mr-2 w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
                                                     checked={
                                                         cat.slug === '__all__'
                                                             ? selectedCategories.length ===
@@ -243,7 +268,7 @@ export function ProductsGrid() {
                                                               )
                                                     }
                                                 />
-                                                <span className="text-blue-600 hover:underline">
+                                                <span className="text-gray-700 hover:text-red-600 transition-colors">
                                                     {cat.slug === '__all__'
                                                         ? 'Todas'
                                                         : cat.name}
@@ -292,10 +317,10 @@ export function ProductsGrid() {
                                             key={b.slug}
                                             className="flex items-center justify-between text-sm"
                                         >
-                                            <label className="flex items-center cursor-pointer">
+                                            <label className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
                                                 <input
                                                     type="checkbox"
-                                                    className="mr-2"
+                                                    className="mr-2 w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
                                                     checked={selectedBrands.includes(
                                                         b.slug
                                                     )}
@@ -303,7 +328,7 @@ export function ProductsGrid() {
                                                         handleBrandCheck(b.slug)
                                                     }
                                                 />
-                                                <span className="text-blue-600 hover:underline">
+                                                <span className="text-gray-700 hover:text-red-600 transition-colors">
                                                     {b.name}
                                                 </span>
                                             </label>
@@ -331,8 +356,20 @@ export function ProductsGrid() {
             {/* Grid de produtos */}
             <div className="flex-1">
                 {loading && (
-                    <div className="text-sm text-muted-foreground mb-3">
-                        Carregando produtos...
+                    <div className="mb-4">
+                        <MobileLoading
+                            text="Carregando produtos..."
+                            size="md"
+                        />
+                    </div>
+                )}
+
+                {/* Loading skeletons */}
+                {loading && products.length === 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <MobileCardSkeleton key={i} />
+                        ))}
                     </div>
                 )}
 
@@ -407,7 +444,7 @@ export function ProductsGrid() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent mb-4 cursor-pointer"
+                                        className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent mb-4"
                                         onClick={() =>
                                             handleRequestQuote(product)
                                         }
@@ -417,7 +454,7 @@ export function ProductsGrid() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent cursor-pointer"
+                                        className="w-full text-red-600 border-red-600 hover:bg-red-50 bg-transparent"
                                         onClick={() => {
                                             // Se o produto tem variações, vai para página do produto
                                             if (
@@ -440,7 +477,7 @@ export function ProductsGrid() {
                                         {product.variations &&
                                         product.variations.length > 0
                                             ? 'Ver opções'
-                                            : 'Adicionar ao carinho'}
+                                            : 'Adicionar ao carrinho'}
                                     </Button>
                                 </CardContent>
                             </Card>
@@ -450,12 +487,13 @@ export function ProductsGrid() {
 
                 {/* Paginação - só aparece quando há produtos */}
                 {products.length > 0 && totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 mt-8">
+                    <div className="flex items-center justify-center gap-2 mt-8 flex-wrap">
                         <Button
                             variant="outline"
                             size="sm"
                             disabled={page <= 1}
                             onClick={() => goToPage(page - 1)}
+                            className="min-w-[80px]"
                         >
                             Anterior
                         </Button>
@@ -471,6 +509,7 @@ export function ProductsGrid() {
                                         }
                                         size="sm"
                                         onClick={() => goToPage(p)}
+                                        className="min-w-[40px]"
                                     >
                                         {p}
                                     </Button>
@@ -481,6 +520,7 @@ export function ProductsGrid() {
                             size="sm"
                             disabled={page >= totalPages}
                             onClick={() => goToPage(page + 1)}
+                            className="min-w-[80px]"
                         >
                             Próxima
                         </Button>

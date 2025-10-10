@@ -90,7 +90,7 @@ export const HeroHeader = () => {
                             <Link
                                 href="/"
                                 aria-label="home"
-                                className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                                className="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200"
                             >
                                 <Image
                                     src="/images/logo-nihon.png"
@@ -110,7 +110,7 @@ export const HeroHeader = () => {
                                         ? 'Close Menu'
                                         : 'Open Menu'
                                 }
-                                className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden"
+                                className="relative z-20 -m-2.5 -mr-4 block p-2.5 lg:hidden"
                             >
                                 <Menu className="in-data-[state=active]:rotate-180 in-data-[state=active]:scale-0 in-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
                                 <X className="in-data-[state=active]:rotate-0 in-data-[state=active]:scale-100 in-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
@@ -122,7 +122,7 @@ export const HeroHeader = () => {
                                         <li key={index}>
                                             <Link
                                                 href={item.href}
-                                                className="text-muted-foreground hover:text-red-600 cursor-pointer block duration-200 hover:scale-105 transition-all"
+                                                className="text-muted-foreground hover:text-red-600 block duration-200 hover:scale-105 transition-all"
                                             >
                                                 <span>{item.name}</span>
                                             </Link>
@@ -139,7 +139,7 @@ export const HeroHeader = () => {
                                         <li key={index}>
                                             <Link
                                                 href={item.href}
-                                                className="text-muted-foreground hover:text-red-600 cursor-pointer block duration-200 hover:scale-105 transition-all"
+                                                className="text-muted-foreground hover:text-red-600 block duration-200 hover:scale-105 transition-all"
                                             >
                                                 <span>{item.name}</span>
                                             </Link>
@@ -188,7 +188,7 @@ export const HeroHeader = () => {
                                             href="/carrinho"
                                             aria-label="Abrir carinho"
                                         >
-                                            <ShoppingCart className="h-6 w-6 cursor-pointer hover:text-accent-foreground transition-colors" />
+                                            <ShoppingCart className="h-6 w-6 hover:text-red-600 transition-colors" />
                                         </Link>
                                         {cart.itemCount > 0 && (
                                             <span className="absolute -top-2 -right-2 min-w-[1rem] h-4 px-1 rounded-full bg-red-600 text-white text-[10px] leading-4 text-center">

@@ -261,11 +261,12 @@ export function ProductVariations({
                                                     className={cn(
                                                         'relative w-10 h-10 rounded-full border-2 transition-all duration-200 shadow-sm',
                                                         'focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2',
+                                                        'cursor-pointer active:scale-95',
                                                         isSelected
                                                             ? 'border-red-500 ring-2 ring-red-200 scale-110'
-                                                            : 'border-gray-300',
+                                                            : 'border-gray-300 hover:border-red-400',
                                                         !isDisabled
-                                                            ? 'hover:scale-110 cursor-pointer hover:shadow-md'
+                                                            ? 'hover:scale-110 hover:shadow-md'
                                                             : 'opacity-40 cursor-not-allowed',
                                                         getColorStyle(
                                                             originalValue
@@ -329,14 +330,14 @@ export function ProductVariations({
                                                 }
                                                 disabled={isDisabled}
                                                 className={cn(
-                                                    'relative px-3 py-2 text-xs border rounded-md transition-all duration-200',
+                                                    'relative px-3 py-2 text-xs border rounded-lg transition-all duration-200',
                                                     'focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1',
-                                                    'min-w-[70px] text-center font-medium',
+                                                    'min-w-[70px] text-center font-medium cursor-pointer active:scale-95',
                                                     isSelected
                                                         ? 'border-red-500 bg-red-50 text-red-700 shadow-sm ring-1 ring-red-200'
-                                                        : 'border-gray-300 bg-white text-gray-700',
+                                                        : 'border-gray-300 bg-white text-gray-700 hover:border-red-400',
                                                     !isDisabled
-                                                        ? 'hover:border-red-400 cursor-pointer shadow-sm hover:shadow-md'
+                                                        ? 'hover:shadow-md'
                                                         : 'cursor-not-allowed bg-gray-50 text-gray-400 opacity-60'
                                                 )}
                                                 title={

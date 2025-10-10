@@ -122,6 +122,37 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    /* Cursor pointer para elementos clicáveis */
+    button,
+    [role='button'],
+    a,
+    input[type='checkbox'],
+    input[type='radio'],
+    select,
+    .clickable,
+    [onclick] {
+        cursor: pointer;
+    }
+
+    /* Otimizações de performance mobile */
+    * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+    }
+
+    /* Melhor scroll no mobile */
+    html {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+
+    /* Otimização de fontes */
+    body {
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 }
 
 /* Motion Primitives Animations */
@@ -488,6 +519,42 @@ p {
         width: 100% !important;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    /* Otimizações específicas para mobile */
+    .mobile-optimized {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+
+    /* Botões maiores para touch */
+    button,
+    .clickable {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Melhor espaçamento para touch */
+    .touch-target {
+        padding: 12px;
+        margin: 4px;
+    }
+
+    /* Otimização de scroll */
+    .scroll-container {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+
+    /* Reduzir animações em mobile para melhor performance */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 }
 
