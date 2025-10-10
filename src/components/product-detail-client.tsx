@@ -13,6 +13,7 @@ import { getWhatsAppQuoteUrl } from '@/lib/whatsapp'
 import { ProductVariations } from '@/components/product-variations'
 import { StockStatus } from '@/components/stock-status'
 import { RelatedProducts } from '@/components/related-products'
+import { ImageZoomGallery } from '@/components/ui/image-zoom-gallery'
 
 function toCartProduct(p: APIProduct): CartProduct {
     return {
@@ -156,51 +157,19 @@ export default function ProductDetailClient({
     return (
         <main className="container mx-auto px-4 pt-24 pb-10 flex-1">
             <div className="grid gap-8 md:grid-cols-2">
-                {/* Galeria */}
+                {/* Galeria com Zoom */}
                 <div>
-                    <div className="aspect-square rounded-lg bg-gray-50 overflow-hidden">
-                        <Image
-                            src={
-                                displayedGallery?.[activeIdx] ||
-                                product.image ||
-                                '/images/placeholder-product.svg'
-                            }
-                            alt={product.name}
-                            width={800}
-                            height={800}
-                            className="h-full w-full object-contain"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                            priority
-                        />
-                    </div>
-                    {displayedGallery && displayedGallery.length > 1 && (
-                        <div className="mt-4 grid grid-cols-5 gap-3">
-                            {displayedGallery.map((src, i) => (
-                                <button
-                                    key={`thumb-${i}`}
-                                    className={`aspect-square rounded-md bg-gray-50 overflow-hidden border-2 transition-all ${
-                                        i === activeIdx
-                                            ? 'border-red-600'
-                                            : 'border-transparent hover:border-gray-300'
-                                    }`}
-                                    onClick={() => setActiveIdx(i)}
-                                    aria-label={`Imagem ${i + 1}`}
-                                >
-                                    <Image
-                                        src={src}
-                                        alt={`${product.name} - Imagem ${
-                                            i + 1
-                                        }`}
-                                        width={120}
-                                        height={120}
-                                        className="h-full w-full object-contain"
-                                        sizes="120px"
-                                        loading="lazy"
-                                    />
-                                </button>
-                            ))}
-                        </div>
-                    )}
+                    <ImageZoomGallery
+                        images={
+                            displayedGallery && displayedGallery.length > 0
+                                ? displayedGallery
+                                : [
+                                      product.image ||
+                                          '/images/placeholder-product.svg'
+                                  ]
+                        }
+                        productName={product.name}
+                    />
                 </div>
 
                 {/* Informações do produto */}
