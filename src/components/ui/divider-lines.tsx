@@ -19,9 +19,9 @@ export function DividerLines({
             case 'red':
                 return {
                     horizontal:
-                        'bg-gradient-to-r from-transparent via-red-200/30 to-transparent',
+                        'bg-gradient-to-r from-transparent via-red-400/40 to-transparent',
                     vertical:
-                        'bg-gradient-to-b from-transparent via-red-100/20 to-transparent'
+                        'bg-gradient-to-b from-transparent via-red-300/35 to-transparent'
                 }
             case 'subtle':
                 return {
@@ -67,25 +67,25 @@ export function DividerLines({
                 <>
                     <div
                         className={cn(
-                            'absolute top-0 left-16 w-px h-full opacity-50',
+                            'absolute top-0 left-16 w-px h-full opacity-60',
                             styles.vertical
                         )}
                     />
                     <div
                         className={cn(
-                            'absolute top-0 right-16 w-px h-full opacity-50',
+                            'absolute top-0 right-16 w-px h-full opacity-60',
                             styles.vertical
                         )}
                     />
                     <div
                         className={cn(
-                            'absolute top-0 left-1/4 w-px h-full opacity-30',
+                            'absolute top-0 left-1/4 w-px h-full opacity-40',
                             styles.vertical
                         )}
                     />
                     <div
                         className={cn(
-                            'absolute top-0 right-1/4 w-px h-full opacity-30',
+                            'absolute top-0 right-1/4 w-px h-full opacity-40',
                             styles.vertical
                         )}
                     />

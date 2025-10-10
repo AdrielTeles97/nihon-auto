@@ -282,7 +282,7 @@ export function ProductsGrid({
     }
 
     return (
-        <section className="relative py-24 overflow-hidden bg-gradient-to-br from-gray-50 via-white to-red-50/20">
+        <section className="relative py-20 overflow-hidden bg-gradient-to-br from-white via-gray-50/50 to-red-50/30">
             {/* Background com noise */}
             <NoiseBackground intensity="light" color="neutral" />
 
@@ -291,38 +291,71 @@ export function ProductsGrid({
                 variant="circle"
                 color="red"
                 size="lg"
-                className="top-10 -left-20 opacity-40"
+                className="top-10 -left-20 opacity-30"
             />
             <DecorativeShape
                 variant="rectangle"
                 color="neutral"
                 size="md"
-                className="bottom-20 -right-32 opacity-30"
+                className="bottom-20 -right-32 opacity-20"
             />
 
-            {/* Linhas divisórias */}
-            <DividerLines variant="subtle" />
+            {/* Linhas divisórias sutis em vermelho */}
+            <DividerLines variant="red" />
 
-            {/* Grid decorativo de fundo - Design moderno inspirado em chanhdai.com */}
+            {/* Grid decorativo de fundo - Tom vermelho suave */}
             <div className="absolute inset-0 opacity-[0.08] pointer-events-none">
-                <div className="absolute top-0 left-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-gray-900 to-transparent" />
-                <div className="absolute top-0 left-2/4 w-[1px] h-full bg-gradient-to-b from-transparent via-black to-transparent" />
-                <div className="absolute top-0 right-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-gray-900 to-transparent" />
-                <div className="absolute top-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
-                <div className="absolute top-2/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-black to-transparent" />
-                <div className="absolute bottom-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+                <div className="absolute top-0 left-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-red-300/40 to-transparent" />
+                <div className="absolute top-0 left-2/4 w-[1px] h-full bg-gradient-to-b from-transparent via-red-400/50 to-transparent" />
+                <div className="absolute top-0 right-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-red-300/40 to-transparent" />
+                <div className="absolute top-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-red-300/40 to-transparent" />
+                <div className="absolute top-2/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-red-400/50 to-transparent" />
+                <div className="absolute bottom-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-red-300/40 to-transparent" />
             </div>
 
+            {/* Gradiente decorativo no topo */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-400/30 to-transparent" />
+
             <div className="relative container mx-auto px-4">
-                {/* Título da seção */}
-                <div className="text-center mb-16">
-                    <div className="relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 lg:p-8 shadow-lg">
-                        <SectionTitle
-                            title="Nossos"
-                            emphasis="Produtos"
-                            subtitle="Descubra nossa seleção exclusiva de peças automotivas premium com qualidade garantida"
-                            theme="light"
-                        />
+                {/* Título da seção - Redesenhado */}
+                <div className="text-center mb-16 relative">
+                    {/* Badge decorativo */}
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-100 rounded-full mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                        <Package className="w-4 h-4 text-red-600" />
+                        <span className="text-sm font-medium text-red-700">
+                            Premium Quality
+                        </span>
+                    </div>
+
+                    {/* Título principal */}
+                    <div
+                        className="animate-in fade-in slide-in-from-bottom-4 duration-700"
+                        style={{ animationDelay: '0.1s' }}
+                    >
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
+                            <span className="text-gray-900">Nossos </span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-500">
+                                Produtos
+                            </span>
+                        </h2>
+                        <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                            Descubra nossa seleção exclusiva de peças
+                            automotivas premium
+                            <span className="text-red-600 font-semibold">
+                                {' '}
+                                com qualidade garantida
+                            </span>
+                        </p>
+                    </div>
+
+                    {/* Linha decorativa */}
+                    <div
+                        className="flex items-center justify-center gap-3 mt-8 animate-in fade-in duration-700"
+                        style={{ animationDelay: '0.2s' }}
+                    >
+                        <div className="h-px w-16 bg-gradient-to-r from-transparent to-red-500/50" />
+                        <div className="w-2 h-2 rounded-full bg-red-500" />
+                        <div className="h-px w-16 bg-gradient-to-l from-transparent to-red-500/50" />
                     </div>
                 </div>
 

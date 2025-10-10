@@ -140,22 +140,43 @@ export function CategoriesSection() {
                                         className="rounded-xl"
                                     />
 
-                                    <div className="relative p-4 text-center">
-                                        <div className="relative h-40 mb-4 overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-gray-100/80">
-                                            {category.image ? (
-                                                <>
-                                                    <Image
-                                                        src={category.image}
-                                                        alt={category.name}
-                                                        fill
-                                                        className="object-contain p-3 transition-transform duration-300 group-hover:scale-110"
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                </>
-                                            ) : (
-                                                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-gray-50 group-hover:from-red-100 group-hover:via-red-50 transition-all duration-300">
+                                    {category.image ? (
+                                        // Card com imagem - imagem ocupa 100% do espaço
+                                        <div className="relative h-full min-h-[280px] flex flex-col">
+                                            {/* Imagem ocupa todo o espaço */}
+                                            <div className="relative flex-1 overflow-hidden">
+                                                <Image
+                                                    src={category.image}
+                                                    alt={category.name}
+                                                    fill
+                                                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                                                />
+                                                {/* Overlay gradiente para melhor legibilidade do texto */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                            </div>
+
+                                            {/* Texto sobre a imagem */}
+                                            <div className="absolute bottom-0 left-0 right-0 p-4 text-center">
+                                                <h3 className="font-bold text-lg text-white drop-shadow-lg mb-1">
+                                                    {category.name}
+                                                </h3>
+                                                {category.description && (
+                                                    <p className="text-sm text-white/90 line-clamp-2 drop-shadow">
+                                                        {category.description}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            {/* Indicador de hover */}
+                                            <div className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg" />
+                                        </div>
+                                    ) : (
+                                        // Card sem imagem - layout original
+                                        <div className="relative p-4 text-center">
+                                            <div className="relative h-40 mb-4 overflow-hidden rounded-lg">
+                                                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-50 group-hover:from-gray-100 group-hover:via-gray-50 transition-all duration-300">
                                                     <div className="text-center px-2">
-                                                        <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                                        <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br from-red-400/80 to-red-500/80 flex items-center justify-center text-white font-bold text-xl shadow-md group-hover:shadow-lg group-hover:from-red-500/90 group-hover:to-red-600/90 transition-all duration-300">
                                                             {category.name.charAt(
                                                                 0
                                                             )}
@@ -165,22 +186,22 @@ export function CategoriesSection() {
                                                         </p>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <h3 className="font-medium mb-2 text-gray-900 group-hover:text-red-600 transition-colors">
+                                                {category.name}
+                                            </h3>
+
+                                            {category.description && (
+                                                <p className="text-sm text-gray-600 line-clamp-2">
+                                                    {category.description}
+                                                </p>
                                             )}
+
+                                            {/* Indicador de hover */}
+                                            <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                         </div>
-
-                                        <h3 className="font-medium mb-2 text-gray-900 group-hover:text-red-600 transition-colors">
-                                            {category.name}
-                                        </h3>
-
-                                        {category.description && (
-                                            <p className="text-sm text-gray-600 line-clamp-2">
-                                                {category.description}
-                                            </p>
-                                        )}
-
-                                        {/* Indicador de hover */}
-                                        <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                    </div>
+                                    )}
                                 </div>
                             </Link>
                         </div>
