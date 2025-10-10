@@ -2,15 +2,11 @@
 
 import React, { Suspense } from 'react'
 import HeroSection from '@/components/hero-section'
-import { BrandsCarouselOptimized } from '@/components/sections/BrandsCarouselOptimized'
-import { ProductsGridOptimized } from '@/components/sections/ProductsGridOptimized'
+import { BrandsSlider } from '@/components/sections/BrandsSlider'
+import { ProductsGrid } from '@/components/sections/ProductsGrid'
 import { CallToActionSection } from '@/components/sections/CallToActionSection'
 import { CategoriesSection } from '@/components/sections/CategoriesSection'
 import { WhyChooseSection } from '@/components/sections/WhyChooseSection'
-import {
-    ProductsGridSkeleton,
-    BrandsCarouselSkeleton
-} from '@/components/ui/brands-skeleton'
 
 // Componente de loading para a página inicial
 function HomePageSkeleton() {
@@ -33,14 +29,21 @@ function HomePageSkeleton() {
             {/* Brands Section Skeleton */}
             <div className="py-16 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-4">
-                    <BrandsCarouselSkeleton />
+                    <div className="h-32 bg-gray-200 rounded-lg animate-pulse"></div>
                 </div>
             </div>
 
             {/* Products Section Skeleton */}
             <div className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4">
-                    <ProductsGridSkeleton count={6} />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[...Array(6)].map((_, i) => (
+                            <div
+                                key={i}
+                                className="h-64 bg-gray-200 rounded-lg animate-pulse"
+                            ></div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,15 +58,21 @@ function HomePageContent() {
             <HeroSection />
 
             {/* Brands Section - Com Suspense */}
-            <Suspense fallback={<BrandsCarouselSkeleton />}>
-                <BrandsCarouselOptimized />
+            <Suspense
+                fallback={
+                    <div className="py-16 bg-gray-50">
+                        <div className="h-32 bg-gray-200 rounded-lg mx-4 animate-pulse"></div>
+                    </div>
+                }
+            >
+                <BrandsSlider />
             </Suspense>
 
             {/* Categories Section - Carrega instantaneamente */}
             <Suspense
                 fallback={
                     <div className="py-16 bg-gray-50">
-                        <div className="h-64 bg-gray-200 rounded-lg mx-4"></div>
+                        <div className="h-64 bg-gray-200 rounded-lg mx-4 animate-pulse"></div>
                     </div>
                 }
             >
@@ -71,15 +80,30 @@ function HomePageContent() {
             </Suspense>
 
             {/* Products Section - Com carregamento progressivo */}
-            <Suspense fallback={<ProductsGridSkeleton count={6} />}>
-                <ProductsGridOptimized />
+            <Suspense
+                fallback={
+                    <div className="py-16 bg-white">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {[...Array(6)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="h-64 bg-gray-200 rounded-lg animate-pulse"
+                                    ></div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                }
+            >
+                <ProductsGrid />
             </Suspense>
 
             {/* Why Choose Section - Carrega instantaneamente */}
             <Suspense
                 fallback={
                     <div className="py-16 bg-gray-50">
-                        <div className="h-64 bg-gray-200 rounded-lg mx-4"></div>
+                        <div className="h-64 bg-gray-200 rounded-lg mx-4 animate-pulse"></div>
                     </div>
                 }
             >
@@ -90,7 +114,7 @@ function HomePageContent() {
             <Suspense
                 fallback={
                     <div className="py-16 bg-red-600">
-                        <div className="h-32 bg-red-700 rounded-lg mx-4"></div>
+                        <div className="h-32 bg-red-700 rounded-lg mx-4 animate-pulse"></div>
                     </div>
                 }
             >
