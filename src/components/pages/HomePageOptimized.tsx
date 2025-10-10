@@ -1,7 +1,7 @@
 'use client'
 
 import React, { Suspense } from 'react'
-import { HeroSection } from '@/components/hero-section'
+import HeroSection from '@/components/hero-section'
 import { BrandsCarouselOptimized } from '@/components/sections/BrandsCarouselOptimized'
 import { ProductsGridOptimized } from '@/components/sections/ProductsGridOptimized'
 import { CallToActionSection } from '@/components/sections/CallToActionSection'
