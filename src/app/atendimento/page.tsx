@@ -286,65 +286,144 @@ export default function AtendimentoPage() {
         <div className="min-h-screen bg-background">
             <HeroHeader />
 
-            {/* Hero Banner Section */}
-            <section className="relative py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-black via-red-950 to-black">
+            {/* Hero Section Moderna */}
+            <section className="relative bg-gradient-to-br from-red-500 via-red-400 to-red-500 text-white py-16 pt-24 overflow-hidden">
+                {/* Overlay para melhorar contraste do texto */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-600/40 via-transparent to-red-600/40" />
+
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-10">
-                    <div
-                        className="w-full h-full bg-repeat"
-                        style={{
-                            backgroundImage: `url('/noise.svg')`,
-                            backgroundSize: '200px 200px'
-                        }}
-                    />
+                    <div className="absolute top-0 left-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-white to-transparent" />
+                    <div className="absolute top-0 left-2/4 w-[1px] h-full bg-gradient-to-b from-transparent via-white to-transparent" />
+                    <div className="absolute top-0 right-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-white to-transparent" />
+                    <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
                 </div>
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-red-900/20 to-black/20" />
+                {/* Shapes Decorativas */}
+                <div className="absolute top-10 right-10 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
+                <div className="absolute bottom-10 left-10 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
 
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="max-w-4xl mx-auto text-center text-white">
-                        <Badge className="mb-6 bg-red-600/20 text-red-100 border-red-500/30 text-base px-4 py-2">
-                            <HeadphonesIcon className="h-4 w-4 mr-2" />
-                            Atendimento Especializado
-                        </Badge>
-
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-red-100 to-red-200 bg-clip-text text-transparent">
-                            Entre em Contato
-                        </h1>
-
-                        <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
-                            Nossa equipe está pronta para atender suas
-                            necessidades em peças automotivas. Entre em contato
-                            conosco através dos canais abaixo ou preencha nosso
-                            formulário.
-                        </p>
-
-                        <div className="flex flex-wrap justify-center gap-4">
-                            <Button
-                                asChild
-                                size="lg"
-                                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 text-base w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-300"
+                <div className="container mx-auto px-4 relative">
+                    {/* Breadcrumb */}
+                    <nav className="flex items-center gap-2 text-sm text-white/80 mb-6 animate-in fade-in slide-in-from-left-4 duration-500">
+                        <a
+                            href="/"
+                            className="flex items-center gap-1 hover:text-white transition-colors"
+                        >
+                            <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                             >
-                                <a href="tel:91982337100">
-                                    <Phone className="h-5 w-5 mr-2" />
-                                    Ligar Agora
-                                </a>
-                            </Button>
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                />
+                            </svg>
+                            <span>Início</span>
+                        </a>
+                        <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                            />
+                        </svg>
+                        <span className="text-white font-medium">
+                            Atendimento
+                        </span>
+                    </nav>
 
-                            <Button
-                                asChild
-                                variant="secondary"
-                                size="lg"
-                                className="bg-white/90 text-black border-2 border-white hover:bg-white hover:scale-105 px-8 py-3 text-base w-full sm:w-auto font-semibold transition-all duration-300 shadow-lg"
-                            >
-                                <a href="mailto:adrielt008@gmail.com">
-                                    <Mail className="h-5 w-5 mr-2" />
-                                    Enviar E-mail
-                                </a>
-                            </Button>
+                    {/* Título */}
+                    <div className="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <div className="p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+                            <HeadphonesIcon className="w-10 h-10" />
+                        </div>
+                        <div>
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-2">
+                                Entre em Contato
+                            </h1>
+                            <p className="text-lg md:text-xl text-white/90">
+                                Nossa equipe está pronta para atender suas
+                                necessidades
+                            </p>
                         </div>
                     </div>
+
+                    {/* Stats / Botões */}
+                    <div
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700"
+                        style={{ animationDelay: '0.1s' }}
+                    >
+                        <a
+                            href="tel:91982337100"
+                            className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all duration-300 group"
+                        >
+                            <div className="flex items-center gap-3">
+                                <Phone className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                <div>
+                                    <p className="text-sm text-white/80">
+                                        Telefone
+                                    </p>
+                                    <p className="font-bold">(91) 98233-7100</p>
+                                </div>
+                            </div>
+                        </a>
+                        <a
+                            href="mailto:adrielt008@gmail.com"
+                            className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all duration-300 group"
+                        >
+                            <div className="flex items-center gap-3">
+                                <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                <div>
+                                    <p className="text-sm text-white/80">
+                                        E-mail
+                                    </p>
+                                    <p className="font-bold text-sm">
+                                        adrielt008@gmail.com
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4">
+                            <div className="flex items-center gap-3">
+                                <Clock className="w-5 h-5" />
+                                <div>
+                                    <p className="text-sm text-white/80">
+                                        Horário
+                                    </p>
+                                    <p className="font-bold text-sm">
+                                        Seg-Sex: 8h-18h
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Wave Divider */}
+                <div className="absolute bottom-0 left-0 right-0">
+                    <svg
+                        viewBox="0 0 1440 48"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-full h-auto"
+                    >
+                        <path
+                            d="M0 48h1440V0c-240 48-480 48-720 24C480 0 240 0 0 24v24z"
+                            fill="currentColor"
+                            className="text-background"
+                        />
+                    </svg>
                 </div>
             </section>
 
