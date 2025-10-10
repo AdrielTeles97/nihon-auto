@@ -38,6 +38,7 @@ type WCProductsQuery = {
     order?: Order
     category?: string
     brand?: string
+    status?: string
 }
 
 // GET /api/products
@@ -88,6 +89,7 @@ export async function GET(request: NextRequest) {
         const params: WCProductsQuery = {
             page,
             per_page: perPage,
+            status: 'publish', // Apenas produtos publicados
             ...(search ? { search } : {}),
             ...(inStock ? { in_stock: inStock === 'true' } : {}),
             ...(minPrice ? { min_price: minPrice } : {}),

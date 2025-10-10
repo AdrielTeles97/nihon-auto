@@ -20,9 +20,22 @@ export function ImageZoomGallery({
     const [isZooming, setIsZooming] = useState(false)
     const [zoomEnabled, setZoomEnabled] = useState(true)
     const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 })
+    const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
     const imageRef = useRef<HTMLDivElement>(null)
 
-    const currentImage = images[selectedIndex] || images[0]
+    // Filtrar imagens válidas (não vazias e não com erro)
+    const validImages = images.filter(
+        (img, index) => img && img.trim() !== '' && !imageErrors.has(index)
+    )
+    const currentImage =
+        validImages[selectedIndex] ||
+        validImages[0] ||
+        '/images/placeholder-product.svg'
+
+    const handleImageError = (index: number) => {
+        console.warn(`Erro ao carregar imagem ${index}:`, images[index])
+        setImageErrors(prev => new Set(prev).add(index))
+    }
 
     // Navegação por teclado e controle de scroll
     useEffect(() => {
@@ -50,11 +63,15 @@ export function ImageZoomGallery({
     }, [isModalOpen, selectedIndex])
 
     const handlePrevious = () => {
-        setSelectedIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))
+        setSelectedIndex(prev =>
+            prev === 0 ? validImages.length - 1 : prev - 1
+        )
     }
 
     const handleNext = () => {
-        setSelectedIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))
+        setSelectedIndex(prev =>
+            prev === validImages.length - 1 ? 0 : prev + 1
+        )
     }
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -110,6 +127,10 @@ export function ImageZoomGallery({
                         }
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                         priority
+                        onError={() => handleImageError(selectedIndex)}
+                        unoptimized={currentImage.includes(
+                            'nihonacessoriosautomotivos.com.br'
+                        )}
                     />
 
                     {/* Botão Toggle Zoom */}
@@ -170,9 +191,9 @@ export function ImageZoomGallery({
                 </div>
 
                 {/* Miniaturas */}
-                {images.length > 1 && (
+                {validImages.length > 1 && (
                     <div className="flex gap-2 overflow-x-auto pb-2">
-                        {images.map((image, index) => (
+                        {validImages.map((image, index) => (
                             <button
                                 key={index}
                                 onClick={() => setSelectedIndex(index)}
@@ -191,6 +212,10 @@ export function ImageZoomGallery({
                                     fill
                                     className="object-contain bg-gray-50"
                                     sizes="80px"
+                                    onError={() => handleImageError(index)}
+                                    unoptimized={image.includes(
+                                        'nihonacessoriosautomotivos.com.br'
+                                    )}
                                 />
                             </button>
                         ))}
@@ -224,14 +249,14 @@ export function ImageZoomGallery({
 
                     {/* Contador de Imagens e Instruções */}
                     <div className="absolute top-4 left-4 z-10 space-y-2">
-                        {images.length > 1 && (
+                        {validImages.length > 1 && (
                             <div className="text-white bg-black/70 px-4 py-2 rounded-full text-sm shadow-xl border-2 border-white/20">
-                                {selectedIndex + 1} / {images.length}
+                                {selectedIndex + 1} / {validImages.length}
                             </div>
                         )}
                         <div className="text-white bg-black/70 px-4 py-2 rounded-full text-xs shadow-xl border-2 border-white/20 flex items-center gap-2">
                             <span>ESC para fechar</span>
-                            {images.length > 1 && (
+                            {validImages.length > 1 && (
                                 <span>• ← → para navegar</span>
                             )}
                         </div>
@@ -253,7 +278,7 @@ export function ImageZoomGallery({
                     </div>
 
                     {/* Navegação no Modal */}
-                    {images.length > 1 && (
+                    {validImages.length > 1 && (
                         <>
                             <button
                                 onClick={e => {
@@ -279,9 +304,9 @@ export function ImageZoomGallery({
                     )}
 
                     {/* Miniaturas no Modal */}
-                    {images.length > 1 && (
+                    {validImages.length > 1 && (
                         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 p-2 rounded-lg">
-                            {images.map((image, index) => (
+                            {validImages.map((image, index) => (
                                 <button
                                     key={index}
                                     onClick={e => {

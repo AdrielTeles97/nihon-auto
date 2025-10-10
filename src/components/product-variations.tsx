@@ -213,6 +213,15 @@ export function ProductVariations({
                     attrKey.includes('costura') ||
                     attrKey.includes('acabamento')
 
+                // Log para debug
+                console.log(`Atributo: ${attrKey}`, {
+                    displayName,
+                    options,
+                    currentValue,
+                    isColorAttribute,
+                    isStitchAttribute
+                })
+
                 return (
                     <div key={attrKey} className="space-y-3">
                         <div className="flex items-center gap-2">
@@ -370,45 +379,70 @@ export function ProductVariations({
                                 )}
                             </div>
                         ) : (
-                            <select
-                                className="border rounded-md px-3 py-2 text-sm w-full max-w-xs"
-                                value={currentValue}
-                                onChange={e =>
-                                    handleAttributeChange(
-                                        attrKey,
-                                        e.target.value
-                                    )
-                                }
-                            >
-                                <option value="">Selecione...</option>
+                            <div className="flex flex-wrap gap-2">
                                 {options.map(
                                     ({ value, available, inStock }) => {
                                         const originalValue = getOriginalValue(
                                             attrKey,
                                             value
                                         )
+                                        const isSelected =
+                                            normalizeValue(currentValue) ===
+                                            value
                                         const isDisabled =
                                             !available || !inStock
+
                                         return (
-                                            <option
+                                            <button
                                                 key={value}
-                                                value={originalValue}
+                                                onClick={() =>
+                                                    !isDisabled &&
+                                                    handleAttributeChange(
+                                                        attrKey,
+                                                        originalValue
+                                                    )
+                                                }
                                                 disabled={isDisabled}
-                                                className={
+                                                className={cn(
+                                                    'relative px-4 py-2 text-sm border rounded-lg transition-all duration-200',
+                                                    'focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1',
+                                                    'min-w-[80px] text-center font-medium cursor-pointer active:scale-95',
+                                                    isSelected
+                                                        ? 'border-red-500 bg-red-50 text-red-700 shadow-sm ring-1 ring-red-200'
+                                                        : 'border-gray-300 bg-white text-gray-700 hover:border-red-400',
+                                                    !isDisabled
+                                                        ? 'hover:shadow-md'
+                                                        : 'cursor-not-allowed bg-gray-50 text-gray-400 opacity-60'
+                                                )}
+                                                title={
                                                     isDisabled
-                                                        ? 'text-gray-400'
-                                                        : ''
+                                                        ? `${originalValue} (indisponível)`
+                                                        : originalValue
                                                 }
                                             >
-                                                {originalValue}
-                                                {isDisabled
-                                                    ? ' (indisponível)'
-                                                    : ''}
-                                            </option>
+                                                <span
+                                                    className={cn(
+                                                        isDisabled &&
+                                                            'line-through decoration-2'
+                                                    )}
+                                                >
+                                                    {originalValue}
+                                                </span>
+                                                {isDisabled && (
+                                                    <div className="absolute -top-1 -right-1">
+                                                        <div className="w-4 h-4 rounded-full flex items-center justify-center shadow-sm bg-red-500">
+                                                            <X
+                                                                className="w-2.5 h-2.5 text-white"
+                                                                strokeWidth={3}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </button>
                                         )
                                     }
                                 )}
-                            </select>
+                            </div>
                         )}
                     </div>
                 )

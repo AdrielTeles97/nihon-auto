@@ -105,7 +105,14 @@ export async function GET(
 async function fetchProductFromAPI(productId: string) {
     // Buscar produto base
     const productResponse = await wpApi.get<WCProduct>(`/products/${productId}`)
-    const product = mapProduct(productResponse.data)
+    const wcProduct = productResponse.data
+
+    // Verificar se o produto está publicado
+    if (wcProduct.status !== 'publish') {
+        throw new Error('Product not published')
+    }
+
+    const product = mapProduct(wcProduct)
 
     // Se for produto variável, buscar variações
     if ((product.type || '').toLowerCase() === 'variable') {
