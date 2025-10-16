@@ -22,7 +22,7 @@ export function Footer() {
     // Dados padrão enquanto carrega ou em caso de erro
     const companyData = settings || {
         whatsapp: '5591982337100',
-        email: 'adrielt008@gmail.com',
+        email: 'vendas01@nihonauto.com.br',
         working_hours: 'Seg-Sex: 8h às 18h',
         address: 'Travessa José Pio, 541 - Umarizal - Belém/PA',
         company_name: 'Nihon Peças e Acessórios',

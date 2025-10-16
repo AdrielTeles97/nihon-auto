@@ -379,7 +379,7 @@ export default function AtendimentoPage() {
                             </div>
                         </a>
                         <a
-                            href="mailto:adrielt008@gmail.com"
+                            href="mailto:vendas01@nihonauto.com.br"
                             className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all duration-300 group"
                         >
                             <div className="flex items-center gap-3">
@@ -389,7 +389,7 @@ export default function AtendimentoPage() {
                                         E-mail
                                     </p>
                                     <p className="font-bold text-sm">
-                                        adrielt008@gmail.com
+                                        vendas01@nihonauto.com.br
                                     </p>
                                 </div>
                             </div>
@@ -484,10 +484,10 @@ export default function AtendimentoPage() {
                                     Envie sua solicitação por e-mail
                                 </p>
                                 <a
-                                    href="mailto:adrielt008@gmail.com"
+                                    href="mailto:vendas01@nihonauto.com.br"
                                     className="text-black font-semibold hover:text-red-600 transition-colors text-sm break-words"
                                 >
-                                    adrielt008@gmail.com
+                                    vendas01@nihonauto.com.br
                                 </a>
                             </div>
 
