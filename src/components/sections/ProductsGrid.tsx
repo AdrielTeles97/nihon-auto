@@ -323,7 +323,7 @@ export function ProductsGrid({
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-100 rounded-full mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
                         <Package className="w-4 h-4 text-red-600" />
                         <span className="text-sm font-medium text-red-700">
-                            Premium Quality
+                            Produtos de Qualidade
                         </span>
                     </div>
 

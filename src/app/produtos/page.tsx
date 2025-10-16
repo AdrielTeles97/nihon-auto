@@ -4,6 +4,29 @@ import { ProductsGrid } from '@/components/products-grid'
 import { Footer } from '@/components/layout/Footer'
 import { Suspense } from 'react'
 import { Package, Home, ChevronRight } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: 'Todos os Produtos',
+    description:
+        'Explore nossa linha completa de acessórios automotivos. Peças de qualidade premium para todos os modelos de veículos. Entrega para todo o Brasil.',
+    keywords: [
+        'produtos automotivos',
+        'peças para carro',
+        'acessórios automotivos',
+        'catálogo de peças',
+        'loja de autopeças'
+    ],
+    openGraph: {
+        title: 'Todos os Produtos - Nihon Acessórios',
+        description:
+            'Explore nossa linha completa de acessórios automotivos. Peças de qualidade premium para todos os modelos de veículos.',
+        type: 'website'
+    },
+    alternates: {
+        canonical: '/produtos'
+    }
+}
 
 function ProductsGridWrapper() {
     return (

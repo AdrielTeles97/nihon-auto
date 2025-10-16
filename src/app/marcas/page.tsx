@@ -2,6 +2,28 @@ import { HeroHeader } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import BrandsPageClient from '@/components/brands-page-client'
 import { headers } from 'next/headers'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: 'Marcas',
+    description:
+        'Conheça todas as marcas de produtos automotivos disponíveis no catálogo Nihon. Trabalhamos com as melhores marcas do mercado automotivo.',
+    keywords: [
+        'marcas automotivas',
+        'fabricantes de peças',
+        'marcas de autopeças',
+        'marcas parceiras'
+    ],
+    openGraph: {
+        title: 'Marcas - Nihon Acessórios',
+        description:
+            'Conheça todas as marcas de produtos automotivos disponíveis no catálogo Nihon.',
+        type: 'website'
+    },
+    alternates: {
+        canonical: '/marcas'
+    }
+}
 
 type BrandsApiResponse = {
     success: boolean
